@@ -21,15 +21,23 @@
 }
 
 @utility max-w-app {
-  @apply max-w-4xl;
+  @apply max-w-5xl;
 }
 
 @utility app-layout {
-  @apply max-w-app mx-auto w-full px-4;
+  @apply max-w-app mx-auto w-full px-2 sm:px-4;
 }
 
 @utility active-nav {
   @apply text-accent underline decoration-2 underline-offset-8;
+}
+
+.news-board {
+  box-shadow: 0 1px 0 rgba(17, 24, 39, 0.04);
+}
+
+.news-item:hover {
+  background: color-mix(in srgb, var(--accent) 7%, transparent);
 }
 
 :target {
