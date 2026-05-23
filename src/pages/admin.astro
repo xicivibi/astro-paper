@@ -18,11 +18,11 @@ import config from "@/config";
         <div>
           <h1 class="text-3xl font-bold tracking-tight sm:text-5xl">운영 관리자</h1>
           <p class="text-muted-foreground mt-4 max-w-3xl leading-8">
-            발행된 글, 로컬 초안, 복구함, 사이트 제목과 색상 설정을 한곳에서 제어합니다. API 키가 검증되기 전에는 운영 데이터가 표시되지 않습니다.
+            발행글, 초안, 복구함, 사이트 UI 설정을 한곳에서 제어합니다. 목록 체크박스로 여러 글을 선택해 숨김, 공개, 삭제, 복구를 한 번에 처리할 수 있습니다.
           </p>
         </div>
         <div class="rounded-xl border border-border bg-muted/40 px-4 py-3 text-sm text-muted-foreground">
-          <strong class="text-foreground">보안:</strong> 페이지는 noindex 처리되어 있고, 모든 데이터 작업은 BLOG_API_KEY로 보호됩니다.
+          <strong class="text-foreground">보안:</strong> 운영 데이터와 수정 작업은 BLOG_API_KEY 검증 후에만 열립니다.
         </div>
       </div>
     </section>
@@ -51,15 +51,15 @@ import config from "@/config";
           <p id="statMode" class="mt-2 text-2xl font-bold">발행글</p>
         </div>
         <div class="rounded-2xl border border-border bg-background p-4 shadow-sm">
-          <p class="text-muted-foreground text-sm font-semibold">항목 수</p>
+          <p class="text-muted-foreground text-sm font-semibold">표시 항목</p>
           <p id="statCount" class="mt-2 text-2xl font-bold">0</p>
         </div>
         <div class="rounded-2xl border border-border bg-background p-4 shadow-sm">
-          <p class="text-muted-foreground text-sm font-semibold">선택 글</p>
-          <p id="statFile" class="mt-2 truncate text-lg font-bold">없음</p>
+          <p class="text-muted-foreground text-sm font-semibold">선택 항목</p>
+          <p id="statSelected" class="mt-2 text-2xl font-bold">0</p>
         </div>
         <div class="rounded-2xl border border-border bg-background p-4 shadow-sm">
-          <p class="text-muted-foreground text-sm font-semibold">글자 수</p>
+          <p class="text-muted-foreground text-sm font-semibold">현재 글자 수</p>
           <p id="statChars" class="mt-2 text-2xl font-bold">0</p>
         </div>
       </div>
@@ -75,17 +75,33 @@ import config from "@/config";
 
       <p id="status" class="mt-4 min-h-6 rounded-xl border border-border bg-muted/35 px-4 py-3 text-sm text-muted-foreground">대기 중</p>
 
-      <div id="contentPanel" class="mt-5 grid gap-5 lg:grid-cols-[380px_1fr]">
+      <div id="contentPanel" class="mt-5 grid gap-5 lg:grid-cols-[420px_1fr]">
         <aside class="rounded-2xl border border-border bg-background p-4 shadow-sm">
           <div class="flex items-center justify-between gap-3">
             <h2 id="listTitle" class="text-lg font-bold">발행글</h2>
             <button id="newBtn" class="rounded-xl border border-border px-3 py-2 text-sm font-bold">새 초안</button>
           </div>
+
           <div class="mt-3 flex gap-2">
             <input id="searchInput" class="w-full rounded-xl border border-border bg-background px-3 py-2 text-sm" placeholder="제목, 파일명, 태그 검색" />
             <button id="searchBtn" class="rounded-xl border border-border px-3 py-2 text-sm font-bold">검색</button>
           </div>
-          <div id="articleList" class="mt-4 max-h-[680px] space-y-2 overflow-auto pr-1"></div>
+
+          <div id="bulkBar" class="mt-4 rounded-xl border border-border bg-muted/35 p-3">
+            <label class="flex items-center gap-2 text-sm font-bold">
+              <input id="selectAll" type="checkbox" class="size-4 accent-current" />
+              현재 목록 전체 선택
+            </label>
+            <div class="mt-3 flex flex-wrap gap-2">
+              <button id="bulkHideBtn" class="bulkPublished rounded-lg border border-amber-400 px-3 py-2 text-xs font-bold text-amber-600">선택 숨김</button>
+              <button id="bulkShowBtn" class="bulkPublished rounded-lg border border-border px-3 py-2 text-xs font-bold">선택 공개</button>
+              <button id="bulkDeletePublishedBtn" class="bulkPublished rounded-lg border border-red-400 px-3 py-2 text-xs font-bold text-red-500">선택 삭제</button>
+              <button id="bulkDeleteDraftBtn" class="bulkDraft rounded-lg border border-red-400 px-3 py-2 text-xs font-bold text-red-500">선택 삭제</button>
+              <button id="bulkRestoreBtn" class="bulkTrash rounded-lg border border-amber-400 px-3 py-2 text-xs font-bold text-amber-600">선택 복구</button>
+            </div>
+          </div>
+
+          <div id="articleList" class="mt-4 max-h-[660px] space-y-2 overflow-auto pr-1"></div>
         </aside>
 
         <section class="rounded-2xl border border-border bg-background p-4 shadow-sm sm:p-5">
@@ -133,37 +149,16 @@ import config from "@/config";
           </div>
         </div>
         <div class="mt-5 grid gap-4 lg:grid-cols-2">
-          <div>
-            <label class="text-sm font-semibold text-muted-foreground" for="siteTitle">사이트 이름</label>
-            <input id="siteTitle" class="mt-2 w-full rounded-xl border border-border bg-background px-3 py-2" />
-          </div>
-          <div>
-            <label class="text-sm font-semibold text-muted-foreground" for="siteAuthor">작성자 / 브랜드</label>
-            <input id="siteAuthor" class="mt-2 w-full rounded-xl border border-border bg-background px-3 py-2" />
-          </div>
-          <div class="lg:col-span-2">
-            <label class="text-sm font-semibold text-muted-foreground" for="siteDescription">사이트 설명</label>
-            <input id="siteDescription" class="mt-2 w-full rounded-xl border border-border bg-background px-3 py-2" />
-          </div>
-          <div>
-            <label class="text-sm font-semibold text-muted-foreground" for="siteUrl">사이트 URL</label>
-            <input id="siteUrl" class="mt-2 w-full rounded-xl border border-border bg-background px-3 py-2" />
-          </div>
-          <div>
-            <label class="text-sm font-semibold text-muted-foreground" for="profileUrl">프로필 URL</label>
-            <input id="profileUrl" class="mt-2 w-full rounded-xl border border-border bg-background px-3 py-2" />
-          </div>
+          <div><label class="text-sm font-semibold text-muted-foreground" for="siteTitle">사이트 이름</label><input id="siteTitle" class="mt-2 w-full rounded-xl border border-border bg-background px-3 py-2" /></div>
+          <div><label class="text-sm font-semibold text-muted-foreground" for="siteAuthor">작성자 / 브랜드</label><input id="siteAuthor" class="mt-2 w-full rounded-xl border border-border bg-background px-3 py-2" /></div>
+          <div class="lg:col-span-2"><label class="text-sm font-semibold text-muted-foreground" for="siteDescription">사이트 설명</label><input id="siteDescription" class="mt-2 w-full rounded-xl border border-border bg-background px-3 py-2" /></div>
+          <div><label class="text-sm font-semibold text-muted-foreground" for="siteUrl">사이트 URL</label><input id="siteUrl" class="mt-2 w-full rounded-xl border border-border bg-background px-3 py-2" /></div>
+          <div><label class="text-sm font-semibold text-muted-foreground" for="profileUrl">프로필 URL</label><input id="profileUrl" class="mt-2 w-full rounded-xl border border-border bg-background px-3 py-2" /></div>
           <div>
             <label class="text-sm font-semibold text-muted-foreground" for="accentColor">포인트 색상</label>
-            <div class="mt-2 flex gap-2">
-              <input id="accentColor" type="color" class="h-11 w-16 rounded-xl border border-border bg-background p-1" />
-              <input id="accentColorText" class="w-full rounded-xl border border-border bg-background px-3 py-2" placeholder="#0f766e" />
-            </div>
+            <div class="mt-2 flex gap-2"><input id="accentColor" type="color" class="h-11 w-16 rounded-xl border border-border bg-background p-1" /><input id="accentColorText" class="w-full rounded-xl border border-border bg-background px-3 py-2" placeholder="#0f766e" /></div>
           </div>
-          <div>
-            <label class="text-sm font-semibold text-muted-foreground" for="postsPerPage">목록당 글 수</label>
-            <input id="postsPerPage" type="number" min="1" max="30" class="mt-2 w-full rounded-xl border border-border bg-background px-3 py-2" />
-          </div>
+          <div><label class="text-sm font-semibold text-muted-foreground" for="postsPerPage">목록당 글 수</label><input id="postsPerPage" type="number" min="1" max="30" class="mt-2 w-full rounded-xl border border-border bg-background px-3 py-2" /></div>
         </div>
       </section>
     </section>
@@ -171,10 +166,7 @@ import config from "@/config";
 
   <div id="modal" class="fixed inset-0 z-50 hidden bg-black/65 p-4 backdrop-blur-sm">
     <article class="mx-auto flex h-full max-w-4xl flex-col overflow-hidden rounded-2xl border border-border bg-background shadow-2xl">
-      <div class="flex items-center justify-between border-b border-border p-4">
-        <h2 id="previewTitle" class="font-bold">미리보기</h2>
-        <button id="closeModalBtn" class="rounded-xl border border-border px-3 py-2 text-sm font-bold">닫기</button>
-      </div>
+      <div class="flex items-center justify-between border-b border-border p-4"><h2 id="previewTitle" class="font-bold">미리보기</h2><button id="closeModalBtn" class="rounded-xl border border-border px-3 py-2 text-sm font-bold">닫기</button></div>
       <div id="preview" class="prose prose-neutral dark:prose-invert max-w-none overflow-auto p-6 leading-8"></div>
     </article>
   </div>
@@ -185,47 +177,12 @@ import config from "@/config";
 <script>
   // @ts-nocheck
   const $ = id => document.getElementById(id);
-  const state = {
-    mode: "published",
-    currentKind: null,
-    currentPath: null,
-    currentFilename: null,
-    isTrash: false,
-    items: [],
-  };
-
+  const state = { mode: "published", currentKind: null, currentPath: null, currentFilename: null, isTrash: false, items: [], visible: [], selected: new Set() };
   const fields = {
-    lockPanel: $("lockPanel"),
-    adminConsole: $("adminConsole"),
-    apiBase: $("apiBase"),
-    apiKey: $("apiKey"),
-    lockStatus: $("lockStatus"),
-    status: $("status"),
-    list: $("articleList"),
-    listTitle: $("listTitle"),
-    search: $("searchInput"),
-    keyword: $("keyword"),
-    tags: $("tags"),
-    description: $("description"),
-    currentPath: $("currentPath"),
-    markdown: $("markdown"),
-    statMode: $("statMode"),
-    statCount: $("statCount"),
-    statFile: $("statFile"),
-    statChars: $("statChars"),
-    contentPanel: $("contentPanel"),
-    sitePanel: $("sitePanel"),
-    modal: $("modal"),
-    preview: $("preview"),
-    previewTitle: $("previewTitle"),
-    siteTitle: $("siteTitle"),
-    siteAuthor: $("siteAuthor"),
-    siteDescription: $("siteDescription"),
-    siteUrl: $("siteUrl"),
-    profileUrl: $("profileUrl"),
-    accentColor: $("accentColor"),
-    accentColorText: $("accentColorText"),
-    postsPerPage: $("postsPerPage"),
+    lockPanel: $("lockPanel"), adminConsole: $("adminConsole"), apiBase: $("apiBase"), apiKey: $("apiKey"), lockStatus: $("lockStatus"), status: $("status"),
+    list: $("articleList"), listTitle: $("listTitle"), search: $("searchInput"), selectAll: $("selectAll"), keyword: $("keyword"), tags: $("tags"), description: $("description"), currentPath: $("currentPath"), markdown: $("markdown"),
+    statMode: $("statMode"), statCount: $("statCount"), statSelected: $("statSelected"), statChars: $("statChars"), contentPanel: $("contentPanel"), sitePanel: $("sitePanel"), modal: $("modal"), preview: $("preview"), previewTitle: $("previewTitle"),
+    siteTitle: $("siteTitle"), siteAuthor: $("siteAuthor"), siteDescription: $("siteDescription"), siteUrl: $("siteUrl"), profileUrl: $("profileUrl"), accentColor: $("accentColor"), accentColorText: $("accentColorText"), postsPerPage: $("postsPerPage"),
   };
 
   fields.apiBase.value = localStorage.getItem("admin_api_base") || "http://127.0.0.1:8080";
@@ -233,49 +190,26 @@ import config from "@/config";
   updateStats();
   setEditorMode("published");
 
-  function baseUrl() {
-    return fields.apiBase.value.replace(/\/+$/, "");
-  }
-
-  function encodePath(path) {
-    return String(path || "").split("/").map(encodeURIComponent).join("/");
-  }
+  function baseUrl() { return fields.apiBase.value.replace(/\/+$/, ""); }
+  function encodePath(path) { return String(path || "").split("/").map(encodeURIComponent).join("/"); }
+  function itemKey(item) { return state.mode === "published" ? item.path : item.filename; }
+  function selectedItems() { return state.items.filter(item => state.selected.has(itemKey(item))); }
+  function compactText(value) { return String(value || "").replace(/\s+/g, ""); }
+  function escapeHtml(value) { return String(value || "").replace(/[&<>"']/g, char => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[char])); }
 
   async function api(path, options = {}) {
-    const response = await fetch(`${baseUrl()}${path}`, {
-      ...options,
-      headers: {
-        "Content-Type": "application/json; charset=utf-8",
-        "X-API-Key": fields.apiKey.value.trim(),
-        ...(options.headers || {}),
-      },
-    });
+    const response = await fetch(`${baseUrl()}${path}`, { ...options, headers: { "Content-Type": "application/json; charset=utf-8", "X-API-Key": fields.apiKey.value.trim(), ...(options.headers || {}) } });
     const text = await response.text();
     if (!response.ok) throw new Error(text || `${response.status} ${response.statusText}`);
     return text ? JSON.parse(text) : null;
   }
 
   async function safe(label, fn) {
-    try {
-      setStatus(`${label} 중...`);
-      toggleButtons(true);
-      const result = await fn();
-      setStatus(`${label} 완료`, "ok");
-      updateStats();
-      return result;
-    } catch (error) {
-      setStatus(error?.message || String(error), "bad");
-    } finally {
-      toggleButtons(false);
-    }
+    try { setStatus(`${label} 중...`); toggleButtons(true); const result = await fn(); setStatus(`${label} 완료`, "ok"); updateStats(); return result; }
+    catch (error) { setStatus(error?.message || String(error), "bad"); }
+    finally { toggleButtons(false); }
   }
-
-  function toggleButtons(disabled) {
-    document.querySelectorAll("button").forEach(button => {
-      if (button.id !== "closeModalBtn") button.disabled = disabled;
-    });
-  }
-
+  function toggleButtons(disabled) { document.querySelectorAll("button").forEach(button => { if (button.id !== "closeModalBtn") button.disabled = disabled; }); }
   function setStatus(message, type = "") {
     const target = fields.adminConsole.classList.contains("hidden") ? fields.lockStatus : fields.status;
     target.textContent = message;
@@ -285,331 +219,113 @@ import config from "@/config";
   }
 
   async function unlock() {
-    localStorage.setItem("admin_api_base", fields.apiBase.value.trim());
-    localStorage.setItem("blog_api_key", fields.apiKey.value.trim());
+    localStorage.setItem("admin_api_base", fields.apiBase.value.trim()); localStorage.setItem("blog_api_key", fields.apiKey.value.trim());
     await api("/dashboard/status");
-    fields.lockPanel.classList.add("hidden");
-    fields.adminConsole.classList.remove("hidden");
-    setStatus("관리자 인증 완료", "ok");
-    await loadMode("published");
+    fields.lockPanel.classList.add("hidden"); fields.adminConsole.classList.remove("hidden");
+    setStatus("관리자 인증 완료", "ok"); await loadMode("published");
   }
-
-  function lockAgain() {
-    localStorage.removeItem("blog_api_key");
-    fields.apiKey.value = "";
-    fields.adminConsole.classList.add("hidden");
-    fields.lockPanel.classList.remove("hidden");
-    setStatus("잠금 상태입니다.");
-  }
+  function lockAgain() { localStorage.removeItem("blog_api_key"); fields.apiKey.value = ""; fields.adminConsole.classList.add("hidden"); fields.lockPanel.classList.remove("hidden"); setStatus("잠금 상태입니다."); }
 
   async function loadMode(mode = state.mode) {
-    state.mode = mode;
-    clearCurrent(false);
-    setTabActive(mode);
-    setEditorMode(mode);
-    if (mode === "site") {
-      fields.contentPanel.classList.add("hidden");
-      fields.sitePanel.classList.remove("hidden");
-      await loadSiteSettings();
-      return;
-    }
-    fields.contentPanel.classList.remove("hidden");
-    fields.sitePanel.classList.add("hidden");
+    state.mode = mode; state.selected.clear(); clearCurrent(false); setTabActive(mode); setEditorMode(mode);
+    if (mode === "site") { fields.contentPanel.classList.add("hidden"); fields.sitePanel.classList.remove("hidden"); await loadSiteSettings(); updateBulkUi(); return; }
+    fields.contentPanel.classList.remove("hidden"); fields.sitePanel.classList.add("hidden");
     if (mode === "published") return loadPublishedPosts();
     if (mode === "drafts") return loadDrafts(false);
     if (mode === "trash") return loadDrafts(true);
   }
-
   function setTabActive(mode) {
     document.querySelectorAll(".tabBtn").forEach(button => {
       const active = button.dataset.tab === mode;
-      button.className = active
-        ? "tabBtn rounded-xl bg-accent px-4 py-2 text-sm font-bold text-accent-foreground"
-        : "tabBtn rounded-xl border border-border px-4 py-2 text-sm font-bold";
+      button.className = active ? "tabBtn rounded-xl bg-accent px-4 py-2 text-sm font-bold text-accent-foreground" : "tabBtn rounded-xl border border-border px-4 py-2 text-sm font-bold";
     });
     const labels = { published: "발행글", drafts: "초안", trash: "복구함", site: "사이트 설정" };
-    fields.statMode.textContent = labels[mode] || mode;
-    fields.listTitle.textContent = labels[mode] || mode;
+    fields.statMode.textContent = labels[mode] || mode; fields.listTitle.textContent = labels[mode] || mode;
   }
-
   function setEditorMode(mode) {
-    const published = mode === "published";
-    const drafts = mode === "drafts";
-    const trash = mode === "trash";
-    document.querySelectorAll(".actionPublished").forEach(el => el.classList.toggle("hidden", !published));
-    document.querySelectorAll(".actionDraft").forEach(el => el.classList.toggle("hidden", !drafts));
-    document.querySelectorAll(".actionTrash").forEach(el => el.classList.toggle("hidden", !trash));
+    document.querySelectorAll(".actionPublished").forEach(el => el.classList.toggle("hidden", mode !== "published"));
+    document.querySelectorAll(".actionDraft").forEach(el => el.classList.toggle("hidden", mode !== "drafts"));
+    document.querySelectorAll(".actionTrash").forEach(el => el.classList.toggle("hidden", mode !== "trash"));
     $("newBtn").classList.toggle("hidden", mode !== "drafts");
   }
-
-  async function loadPublishedPosts() {
-    const data = await api("/github/posts?limit=300");
-    state.items = data.posts || [];
-    renderList();
+  function updateBulkUi() {
+    const selected = state.selected.size;
+    fields.statSelected.textContent = String(selected);
+    fields.selectAll.checked = state.visible.length > 0 && state.visible.every(item => state.selected.has(itemKey(item)));
+    fields.selectAll.indeterminate = selected > 0 && !fields.selectAll.checked;
+    document.querySelectorAll(".bulkPublished").forEach(el => el.classList.toggle("hidden", state.mode !== "published"));
+    document.querySelectorAll(".bulkDraft").forEach(el => el.classList.toggle("hidden", state.mode !== "drafts"));
+    document.querySelectorAll(".bulkTrash").forEach(el => el.classList.toggle("hidden", state.mode !== "trash"));
   }
 
-  async function loadDrafts(isTrash) {
-    state.isTrash = isTrash;
-    const data = await api(isTrash ? "/articles/trash?limit=300" : "/articles?limit=300");
-    state.items = data.articles || [];
-    renderList();
-  }
-
+  async function loadPublishedPosts() { const data = await api("/github/posts?limit=300"); state.items = data.posts || []; renderList(); }
+  async function loadDrafts(isTrash) { state.isTrash = isTrash; const data = await api(isTrash ? "/articles/trash?limit=300" : "/articles?limit=300"); state.items = data.articles || []; renderList(); }
+  function searchableText(item) { return `${item.title || ""} ${item.filename || ""} ${item.path || ""} ${(item.tags || []).join(" ")}`.toLowerCase(); }
   function renderList() {
     const keyword = fields.search.value.trim().toLowerCase();
-    const visible = keyword ? state.items.filter(item => searchableText(item).includes(keyword)) : state.items;
-    fields.statCount.textContent = String(visible.length);
+    state.visible = keyword ? state.items.filter(item => searchableText(item).includes(keyword)) : state.items;
+    fields.statCount.textContent = String(state.visible.length);
     fields.list.replaceChildren();
-    if (!visible.length) {
-      const empty = document.createElement("p");
-      empty.className = "rounded-xl border border-dashed border-border p-4 text-sm text-muted-foreground";
-      empty.textContent = "표시할 항목이 없습니다.";
-      fields.list.append(empty);
-      return;
+    if (!state.visible.length) {
+      const empty = document.createElement("p"); empty.className = "rounded-xl border border-dashed border-border p-4 text-sm text-muted-foreground"; empty.textContent = "표시할 항목이 없습니다."; fields.list.append(empty); updateBulkUi(); return;
     }
-    visible.forEach(item => fields.list.append(listButton(item)));
+    state.visible.forEach(item => fields.list.append(listRow(item)));
+    updateBulkUi();
   }
-
-  function searchableText(item) {
-    return `${item.title || ""} ${item.filename || ""} ${item.path || ""} ${(item.tags || []).join(" ")}`.toLowerCase();
-  }
-
-  function listButton(item) {
-    const button = document.createElement("button");
-    button.type = "button";
-    button.className = "w-full rounded-xl border border-border bg-muted/35 p-3 text-left transition hover:border-accent hover:bg-muted/60";
-    const filename = item.filename || item.path || "";
-    const metaDate = item.pub_datetime || item.created_at || "";
+  function listRow(item) {
+    const key = itemKey(item); const filename = item.filename || item.path || ""; const metaDate = item.pub_datetime || item.created_at || "";
     const badge = state.mode === "published" ? (item.draft ? "숨김" : "공개") : state.mode === "trash" ? "복구함" : "초안";
-    button.innerHTML = `<div class="flex items-start justify-between gap-2"><strong class="block min-w-0 truncate">${escapeHtml(item.title || filename)}</strong><span class="shrink-0 rounded-full bg-background px-2 py-1 text-[11px] font-bold text-muted-foreground">${badge}</span></div><span class="mt-1 block truncate text-xs text-muted-foreground">${escapeHtml(filename)}</span><small class="mt-2 block text-muted-foreground">${escapeHtml(metaDate)} · ${Number(item.compact_chars || 0).toLocaleString("ko-KR")}자</small>`;
-    button.addEventListener("click", () => state.mode === "published" ? loadPublishedDetail(item.path) : loadDraftDetail(item.filename, state.mode === "trash"));
-    return button;
+    const row = document.createElement("div"); row.className = "flex gap-3 rounded-xl border border-border bg-muted/35 p-3 transition hover:border-accent hover:bg-muted/60";
+    row.innerHTML = `<input type="checkbox" class="mt-1 size-4 shrink-0 accent-current itemCheck" data-key="${escapeHtml(key)}" ${state.selected.has(key) ? "checked" : ""} /><button type="button" class="min-w-0 flex-1 text-left"><div class="flex items-start justify-between gap-2"><strong class="block min-w-0 truncate">${escapeHtml(item.title || filename)}</strong><span class="shrink-0 rounded-full bg-background px-2 py-1 text-[11px] font-bold text-muted-foreground">${badge}</span></div><span class="mt-1 block truncate text-xs text-muted-foreground">${escapeHtml(filename)}</span><small class="mt-2 block text-muted-foreground">${escapeHtml(metaDate)} · ${Number(item.compact_chars || 0).toLocaleString("ko-KR")}자</small></button>`;
+    row.querySelector("button").addEventListener("click", () => state.mode === "published" ? loadPublishedDetail(item.path) : loadDraftDetail(item.filename, state.mode === "trash"));
+    row.querySelector(".itemCheck").addEventListener("change", event => { event.target.checked ? state.selected.add(key) : state.selected.delete(key); updateBulkUi(); });
+    return row;
   }
 
-  async function loadPublishedDetail(path) {
-    const post = await api(`/github/posts/${encodePath(path)}`);
-    state.currentKind = "published";
-    state.currentPath = post.path;
-    state.currentFilename = null;
-    fillEditor({
-      title: post.title,
-      description: post.description,
-      tags: post.tags,
-      path: post.path,
-      markdown: post.markdown,
-    });
-    setStatus(`발행글 불러오기: ${post.title}`, "ok");
+  async function loadPublishedDetail(path) { const post = await api(`/github/posts/${encodePath(path)}`); state.currentKind = "published"; state.currentPath = post.path; state.currentFilename = null; fillEditor({ title: post.title, description: post.description, tags: post.tags, path: post.path, markdown: post.markdown }); setStatus(`발행글 불러오기: ${post.title}`, "ok"); }
+  async function loadDraftDetail(filename, isTrash) { const article = await api(isTrash ? `/articles/trash/${encodeURIComponent(filename)}` : `/articles/${encodeURIComponent(filename)}`); state.currentKind = isTrash ? "trash" : "draft"; state.currentFilename = article.filename; state.currentPath = null; fillEditor({ title: article.title, description: extractFrontmatterValue(article.markdown, "description"), tags: extractFrontmatterTags(article.markdown), path: article.filename, markdown: article.markdown }); setStatus(`${isTrash ? "복구함" : "초안"} 불러오기: ${article.title}`, "ok"); }
+  function fillEditor({ title, description, tags, path, markdown }) { fields.keyword.value = title || ""; fields.description.value = description || ""; fields.tags.value = (tags || []).join(", "); fields.currentPath.value = path || ""; fields.markdown.value = markdown || ""; updateStats(); }
+  function clearCurrent(clearMarkdown = true) { state.currentKind = null; state.currentPath = null; state.currentFilename = null; fields.keyword.value = ""; fields.tags.value = ""; fields.description.value = ""; fields.currentPath.value = ""; if (clearMarkdown) fields.markdown.value = ""; updateStats(); }
+
+  async function bulkPublishedDraft(draft) {
+    const items = selectedItems(); if (!items.length) throw new Error("선택된 글이 없습니다.");
+    for (let index = 0; index < items.length; index += 1) { setStatus(`${index + 1}/${items.length} 처리 중...`); await api("/github/posts/draft", { method: "POST", body: JSON.stringify({ path: items[index].path, draft }) }); }
+    state.selected.clear(); await loadPublishedPosts();
+  }
+  async function bulkDeletePublished() {
+    const items = selectedItems(); if (!items.length) throw new Error("선택된 글이 없습니다.");
+    if (!confirm(`선택한 발행글 ${items.length}개를 GitHub에서 삭제할까요?`)) return;
+    for (let index = 0; index < items.length; index += 1) { setStatus(`${index + 1}/${items.length} 삭제 중...`); await api(`/github/posts/${encodePath(items[index].path)}`, { method: "DELETE" }); }
+    state.selected.clear(); clearCurrent(); await loadPublishedPosts();
+  }
+  async function bulkDeleteDrafts() {
+    const items = selectedItems(); if (!items.length) throw new Error("선택된 초안이 없습니다.");
+    if (!confirm(`선택한 초안 ${items.length}개를 복구함으로 이동할까요?`)) return;
+    for (let index = 0; index < items.length; index += 1) { setStatus(`${index + 1}/${items.length} 삭제 중...`); await api(`/articles/${encodeURIComponent(items[index].filename)}`, { method: "DELETE" }); }
+    state.selected.clear(); clearCurrent(); await loadDrafts(false);
+  }
+  async function bulkRestoreDrafts() {
+    const items = selectedItems(); if (!items.length) throw new Error("선택된 복구 항목이 없습니다.");
+    for (let index = 0; index < items.length; index += 1) { setStatus(`${index + 1}/${items.length} 복구 중...`); await api(`/articles/trash/${encodeURIComponent(items[index].filename)}/restore`, { method: "POST" }); }
+    state.selected.clear(); clearCurrent(); await loadDrafts(true);
   }
 
-  async function loadDraftDetail(filename, isTrash) {
-    const article = await api(isTrash ? `/articles/trash/${encodeURIComponent(filename)}` : `/articles/${encodeURIComponent(filename)}`);
-    state.currentKind = isTrash ? "trash" : "draft";
-    state.currentFilename = article.filename;
-    state.currentPath = null;
-    fillEditor({
-      title: article.title,
-      description: extractFrontmatterValue(article.markdown, "description"),
-      tags: extractFrontmatterTags(article.markdown),
-      path: article.filename,
-      markdown: article.markdown,
-    });
-    setStatus(`${isTrash ? "복구함" : "초안"} 불러오기: ${article.title}`, "ok");
-  }
+  async function savePublished() { if (!state.currentPath) throw new Error("수정할 발행글을 선택하세요."); return api(`/github/posts/${encodePath(state.currentPath)}`, { method: "PUT", body: JSON.stringify({ markdown: fields.markdown.value }) }); }
+  async function setPublishedDraft(draft) { if (!state.currentPath) throw new Error("상태를 바꿀 발행글을 선택하세요."); return api("/github/posts/draft", { method: "POST", body: JSON.stringify({ path: state.currentPath, draft }) }); }
+  async function deletePublished() { if (!state.currentPath) throw new Error("삭제할 발행글을 선택하세요."); if (!confirm("GitHub에서 이 글 파일을 삭제합니다. 계속할까요?")) return; const result = await api(`/github/posts/${encodePath(state.currentPath)}`, { method: "DELETE" }); clearCurrent(); await loadPublishedPosts(); return result; }
+  async function saveDraft(updateExisting) { const markdown = fields.markdown.value.trim(); const keyword = fields.keyword.value.trim() || "manual-article"; if (!markdown) throw new Error("저장할 Markdown이 없습니다."); if (updateExisting && state.currentFilename && state.currentKind === "draft") { const data = await api(`/articles/${encodeURIComponent(state.currentFilename)}`, { method: "PUT", body: JSON.stringify({ markdown }) }); state.currentFilename = data.filename; await loadDrafts(false); return data; } const data = await api("/articles", { method: "POST", body: JSON.stringify({ keyword, markdown }) }); state.currentKind = "draft"; state.currentFilename = data.filename; await loadDrafts(false); return data; }
+  async function deleteDraft() { if (!state.currentFilename || state.currentKind !== "draft") throw new Error("삭제할 초안을 선택하세요."); if (!confirm("선택한 초안을 복구함으로 이동할까요?")) return; const data = await api(`/articles/${encodeURIComponent(state.currentFilename)}`, { method: "DELETE" }); clearCurrent(); await loadDrafts(false); return data; }
+  async function restoreDraft() { if (!state.currentFilename || state.currentKind !== "trash") throw new Error("복구함에서 글을 선택하세요."); const data = await api(`/articles/trash/${encodeURIComponent(state.currentFilename)}/restore`, { method: "POST" }); clearCurrent(); await loadDrafts(true); return data; }
+  async function publishCurrent() { const markdown = fields.markdown.value.trim(); const keyword = fields.keyword.value.trim() || "manual-article"; if (!markdown) throw new Error("발행할 Markdown이 없습니다."); const tags = fields.tags.value.split(",").map(x => x.trim()).filter(Boolean); return api("/publish/github", { method: "POST", body: JSON.stringify({ keyword, markdown, github_tags: tags, github_description: fields.description.value.trim() || null }) }); }
 
-  function fillEditor({ title, description, tags, path, markdown }) {
-    fields.keyword.value = title || "";
-    fields.description.value = description || "";
-    fields.tags.value = (tags || []).join(", ");
-    fields.currentPath.value = path || "";
-    fields.markdown.value = markdown || "";
-    updateStats();
-  }
-
-  function clearCurrent(clearMarkdown = true) {
-    state.currentKind = null;
-    state.currentPath = null;
-    state.currentFilename = null;
-    fields.keyword.value = "";
-    fields.tags.value = "";
-    fields.description.value = "";
-    fields.currentPath.value = "";
-    if (clearMarkdown) fields.markdown.value = "";
-    updateStats();
-  }
-
-  async function savePublished() {
-    if (!state.currentPath) throw new Error("수정할 발행글을 선택하세요.");
-    return api(`/github/posts/${encodePath(state.currentPath)}`, {
-      method: "PUT",
-      body: JSON.stringify({ markdown: fields.markdown.value }),
-    });
-  }
-
-  async function setPublishedDraft(draft) {
-    if (!state.currentPath) throw new Error("상태를 바꿀 발행글을 선택하세요.");
-    return api("/github/posts/draft", {
-      method: "POST",
-      body: JSON.stringify({ path: state.currentPath, draft }),
-    });
-  }
-
-  async function deletePublished() {
-    if (!state.currentPath) throw new Error("삭제할 발행글을 선택하세요.");
-    if (!confirm("GitHub에서 이 글 파일을 삭제합니다. 계속할까요?")) return;
-    const result = await api(`/github/posts/${encodePath(state.currentPath)}`, { method: "DELETE" });
-    clearCurrent();
-    await loadPublishedPosts();
-    return result;
-  }
-
-  async function saveDraft(updateExisting) {
-    const markdown = fields.markdown.value.trim();
-    const keyword = fields.keyword.value.trim() || "manual-article";
-    if (!markdown) throw new Error("저장할 Markdown이 없습니다.");
-    if (updateExisting && state.currentFilename && state.currentKind === "draft") {
-      const data = await api(`/articles/${encodeURIComponent(state.currentFilename)}`, {
-        method: "PUT",
-        body: JSON.stringify({ markdown }),
-      });
-      state.currentFilename = data.filename;
-      await loadDrafts(false);
-      return data;
-    }
-    const data = await api("/articles", {
-      method: "POST",
-      body: JSON.stringify({ keyword, markdown }),
-    });
-    state.currentKind = "draft";
-    state.currentFilename = data.filename;
-    await loadDrafts(false);
-    return data;
-  }
-
-  async function deleteDraft() {
-    if (!state.currentFilename || state.currentKind !== "draft") throw new Error("삭제할 초안을 선택하세요.");
-    if (!confirm("선택한 초안을 복구함으로 이동할까요?")) return;
-    const data = await api(`/articles/${encodeURIComponent(state.currentFilename)}`, { method: "DELETE" });
-    clearCurrent();
-    await loadDrafts(false);
-    return data;
-  }
-
-  async function restoreDraft() {
-    if (!state.currentFilename || state.currentKind !== "trash") throw new Error("복구함에서 글을 선택하세요.");
-    const data = await api(`/articles/trash/${encodeURIComponent(state.currentFilename)}/restore`, { method: "POST" });
-    clearCurrent();
-    await loadDrafts(true);
-    return data;
-  }
-
-  async function publishCurrent() {
-    const markdown = fields.markdown.value.trim();
-    const keyword = fields.keyword.value.trim() || "manual-article";
-    if (!markdown) throw new Error("발행할 Markdown이 없습니다.");
-    const tags = fields.tags.value.split(",").map(x => x.trim()).filter(Boolean);
-    return api("/publish/github", {
-      method: "POST",
-      body: JSON.stringify({
-        keyword,
-        markdown,
-        github_tags: tags,
-        github_description: fields.description.value.trim() || null,
-      }),
-    });
-  }
-
-  async function loadSiteSettings() {
-    const data = await api("/github/site-ui");
-    const settings = data.settings || {};
-    fields.siteTitle.value = settings.site_title || "";
-    fields.siteAuthor.value = settings.site_author || "";
-    fields.siteDescription.value = settings.site_description || "";
-    fields.siteUrl.value = settings.site_url || "";
-    fields.profileUrl.value = settings.profile_url || "";
-    fields.accentColor.value = settings.accent_color || "#0f766e";
-    fields.accentColorText.value = settings.accent_color || "#0f766e";
-    fields.postsPerPage.value = settings.posts_per_page || 6;
-    setStatus("사이트 설정을 불러왔습니다.", "ok");
-  }
-
-  async function saveSiteSettings() {
-    const color = fields.accentColorText.value.trim() || fields.accentColor.value;
-    if (!/^#[0-9a-fA-F]{6}$/.test(color)) throw new Error("포인트 색상은 #0f766e 형식이어야 합니다.");
-    return api("/github/site-ui", {
-      method: "PUT",
-      body: JSON.stringify({
-        site_title: fields.siteTitle.value.trim() || null,
-        site_author: fields.siteAuthor.value.trim() || null,
-        site_description: fields.siteDescription.value.trim() || null,
-        site_url: fields.siteUrl.value.trim() || null,
-        profile_url: fields.profileUrl.value.trim() || null,
-        accent_color: color,
-        posts_per_page: Number(fields.postsPerPage.value || 6),
-      }),
-    });
-  }
-
-  function newDraft() {
-    loadMode("drafts");
-    clearCurrent();
-    state.currentKind = "draft";
-    setStatus("새 초안을 작성할 수 있습니다.", "ok");
-  }
-
-  function updateStats() {
-    fields.statFile.textContent = state.currentPath || state.currentFilename || "없음";
-    fields.statChars.textContent = compactText(fields.markdown.value).length.toLocaleString("ko-KR");
-  }
-
-  function compactText(value) {
-    return String(value || "").replace(/\s+/g, "");
-  }
-
-  function escapeHtml(value) {
-    return String(value || "").replace(/[&<>"']/g, char => ({
-      "&": "&amp;",
-      "<": "&lt;",
-      ">": "&gt;",
-      '"': "&quot;",
-      "'": "&#39;",
-    }[char]));
-  }
-
-  function extractFrontmatterValue(markdown, key) {
-    const match = String(markdown || "").match(new RegExp(`^---[\\s\\S]*?^${key}:\\s*[\"']?([^\\n\"']+)`, "m"));
-    return match ? match[1].trim() : "";
-  }
-
-  function extractFrontmatterTags(markdown) {
-    const text = String(markdown || "");
-    const inline = text.match(/^---[\s\S]*?^tags:\s*\[([^\]]*)\]/m);
-    if (inline) return inline[1].split(",").map(tag => tag.replace(/["']/g, "").trim()).filter(Boolean);
-    const block = text.match(/^---[\s\S]*?^tags:\s*\n((?:\s+-\s+.*\n?)+)/m);
-    if (!block) return [];
-    return block[1].split("\n").map(line => line.replace(/^\s+-\s+/, "").replace(/["']/g, "").trim()).filter(Boolean);
-  }
-
-  function markdownToHtml(markdown) {
-    return String(markdown || "")
-      .replace(/^---[\s\S]*?---\s*/, "")
-      .split(/\n{2,}/)
-      .map(block => {
-        const text = block.trim();
-        if (!text) return "";
-        if (text.startsWith("## ")) return `<h2>${escapeHtml(text.slice(3))}</h2>`;
-        if (text.startsWith("### ")) return `<h3>${escapeHtml(text.slice(4))}</h3>`;
-        if (text.startsWith("# ")) return `<h1>${escapeHtml(text.slice(2))}</h1>`;
-        if (text.startsWith("- ")) return `<ul>${text.split("\n").map(line => `<li>${escapeHtml(line.replace(/^-\s*/, ""))}</li>`).join("")}</ul>`;
-        return `<p>${escapeHtml(text)}</p>`;
-      })
-      .join("\n");
-  }
-
-  function openPreview() {
-    fields.previewTitle.textContent = fields.keyword.value || "미리보기";
-    fields.preview.innerHTML = markdownToHtml(fields.markdown.value);
-    fields.modal.classList.remove("hidden");
-  }
+  async function loadSiteSettings() { const data = await api("/github/site-ui"); const settings = data.settings || {}; fields.siteTitle.value = settings.site_title || ""; fields.siteAuthor.value = settings.site_author || ""; fields.siteDescription.value = settings.site_description || ""; fields.siteUrl.value = settings.site_url || ""; fields.profileUrl.value = settings.profile_url || ""; fields.accentColor.value = settings.accent_color || "#0f766e"; fields.accentColorText.value = settings.accent_color || "#0f766e"; fields.postsPerPage.value = settings.posts_per_page || 6; setStatus("사이트 설정을 불러왔습니다.", "ok"); }
+  async function saveSiteSettings() { const color = fields.accentColorText.value.trim() || fields.accentColor.value; if (!/^#[0-9a-fA-F]{6}$/.test(color)) throw new Error("포인트 색상은 #0f766e 형식이어야 합니다."); return api("/github/site-ui", { method: "PUT", body: JSON.stringify({ site_title: fields.siteTitle.value.trim() || null, site_author: fields.siteAuthor.value.trim() || null, site_description: fields.siteDescription.value.trim() || null, site_url: fields.siteUrl.value.trim() || null, profile_url: fields.profileUrl.value.trim() || null, accent_color: color, posts_per_page: Number(fields.postsPerPage.value || 6) }) }); }
+  function newDraft() { loadMode("drafts"); clearCurrent(); state.currentKind = "draft"; setStatus("새 초안을 작성할 수 있습니다.", "ok"); }
+  function updateStats() { fields.statSelected.textContent = String(state.selected.size); fields.statChars.textContent = compactText(fields.markdown.value).length.toLocaleString("ko-KR"); }
+  function extractFrontmatterValue(markdown, key) { const match = String(markdown || "").match(new RegExp(`^---[\\s\\S]*?^${key}:\\s*[\"']?([^\\n\"']+)`, "m")); return match ? match[1].trim() : ""; }
+  function extractFrontmatterTags(markdown) { const text = String(markdown || ""); const inline = text.match(/^---[\s\S]*?^tags:\s*\[([^\]]*)\]/m); if (inline) return inline[1].split(",").map(tag => tag.replace(/["']/g, "").trim()).filter(Boolean); const block = text.match(/^---[\s\S]*?^tags:\s*\n((?:\s+-\s+.*\n?)+)/m); if (!block) return []; return block[1].split("\n").map(line => line.replace(/^\s+-\s+/, "").replace(/["']/g, "").trim()).filter(Boolean); }
+  function markdownToHtml(markdown) { return String(markdown || "").replace(/^---[\s\S]*?---\s*/, "").split(/\n{2,}/).map(block => { const text = block.trim(); if (!text) return ""; if (text.startsWith("## ")) return `<h2>${escapeHtml(text.slice(3))}</h2>`; if (text.startsWith("### ")) return `<h3>${escapeHtml(text.slice(4))}</h3>`; if (text.startsWith("# ")) return `<h1>${escapeHtml(text.slice(2))}</h1>`; if (text.startsWith("- ")) return `<ul>${text.split("\n").map(line => `<li>${escapeHtml(line.replace(/^-\s*/, ""))}</li>`).join("")}</ul>`; return `<p>${escapeHtml(text)}</p>`; }).join("\n"); }
+  function openPreview() { fields.previewTitle.textContent = fields.keyword.value || "미리보기"; fields.preview.innerHTML = markdownToHtml(fields.markdown.value); fields.modal.classList.remove("hidden"); }
 
   $("unlockBtn").addEventListener("click", () => safe("관리자 인증", unlock));
   $("lockAgainBtn").addEventListener("click", lockAgain);
@@ -617,6 +333,12 @@ import config from "@/config";
   document.querySelectorAll(".tabBtn").forEach(button => button.addEventListener("click", () => safe(button.textContent.trim(), () => loadMode(button.dataset.tab))));
   fields.search.addEventListener("input", renderList);
   $("searchBtn").addEventListener("click", renderList);
+  fields.selectAll.addEventListener("change", () => { state.visible.forEach(item => fields.selectAll.checked ? state.selected.add(itemKey(item)) : state.selected.delete(itemKey(item))); renderList(); });
+  $("bulkHideBtn").addEventListener("click", () => safe("선택 숨김", () => bulkPublishedDraft(true)));
+  $("bulkShowBtn").addEventListener("click", () => safe("선택 공개", () => bulkPublishedDraft(false)));
+  $("bulkDeletePublishedBtn").addEventListener("click", () => safe("선택 발행글 삭제", bulkDeletePublished));
+  $("bulkDeleteDraftBtn").addEventListener("click", () => safe("선택 초안 삭제", bulkDeleteDrafts));
+  $("bulkRestoreBtn").addEventListener("click", () => safe("선택 복구", bulkRestoreDrafts));
   $("newBtn").addEventListener("click", newDraft);
   $("savePublishedBtn").addEventListener("click", () => safe("발행글 수정 저장", async () => { const result = await savePublished(); await loadPublishedPosts(); return result; }));
   $("hidePublishedBtn").addEventListener("click", () => safe("공개 숨김", async () => { const result = await setPublishedDraft(true); await loadPublishedPosts(); return result; }));
@@ -632,10 +354,7 @@ import config from "@/config";
   $("loadSiteBtn").addEventListener("click", () => safe("사이트 설정 불러오기", loadSiteSettings));
   $("saveSiteBtn").addEventListener("click", () => safe("사이트 설정 저장", saveSiteSettings));
   fields.accentColor.addEventListener("input", () => fields.accentColorText.value = fields.accentColor.value);
-  fields.accentColorText.addEventListener("input", () => {
-    if (/^#[0-9a-fA-F]{6}$/.test(fields.accentColorText.value)) fields.accentColor.value = fields.accentColorText.value;
-  });
+  fields.accentColorText.addEventListener("input", () => { if (/^#[0-9a-fA-F]{6}$/.test(fields.accentColorText.value)) fields.accentColor.value = fields.accentColorText.value; });
   fields.markdown.addEventListener("input", updateStats);
-
   if (fields.apiKey.value) safe("관리자 인증", unlock);
 </script>
