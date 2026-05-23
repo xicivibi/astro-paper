@@ -22,15 +22,10 @@ export default defineAstroPaperConfig({
     dynamicOgImage: true,
     showArchives: true,
     showBackButton: true,
-    editPost: {
-      enabled: true,
-      url: "https://github.com/xicivibi/astro-paper/edit/main/",
-    },
+    editPost: { enabled: false },
     search: "pagefind",
   },
-  socials: [
-    { name: "github", url: "https://github.com/xicivibi/astro-paper" },
-  ],
+  socials: [],
   shareLinks: [
     { name: "facebook", url: "https://www.facebook.com/sharer.php?u=" },
     { name: "x", url: "https://x.com/intent/post?url=" },
