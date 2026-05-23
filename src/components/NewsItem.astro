@@ -1,0 +1,61 @@
+---
+import type { CollectionEntry } from "astro:content";
+import { getPostUrl } from "@/utils/getPostPaths";
+import Datetime from "./Datetime.astro";
+
+interface Props extends CollectionEntry<"posts"> {
+  index?: number;
+}
+
+const { id, data, filePath, index = 0 } = Astro.props;
+const { title, description, tags = [], author = "AI SEO Lab", ...props } = data;
+const href = getPostUrl(id, filePath, Astro.currentLocale);
+const rank = index + 1;
+const visibleTags = tags.slice(0, 4);
+const seed = Array.from(`${id}:${title}`).reduce((sum, char) => sum + char.charCodeAt(0), 0);
+const points = (seed % 87) + 3;
+const comments = seed % 9;
+const domain = "xici.vercel.app";
+const hot = points >= 65;
+---
+
+<li class="news-item group grid grid-cols-[2.25rem_1.4rem_1fr] gap-2 border-b border-border px-2 py-3 last:border-b-0 sm:grid-cols-[2.75rem_1.5rem_1fr] sm:px-3">
+  <div class="pt-1 text-right text-sm font-semibold tabular-nums text-muted-foreground">
+    {rank}
+  </div>
+  <div class="pt-1 text-center text-[11px] leading-none text-accent" aria-hidden="true">
+    ▲
+  </div>
+  <article>
+    <h2 class="text-[15px] leading-6 font-semibold sm:text-base">
+      <a href={href} class="text-foreground no-underline group-hover:text-accent">
+        {title}
+      </a>
+      <span class="ml-1 text-xs font-normal text-muted-foreground">({domain})</span>
+      {hot && <span class="ml-2 rounded bg-accent px-1.5 py-0.5 text-[10px] font-bold text-accent-foreground">HOT</span>}
+    </h2>
+
+    {description && (
+      <p class="mt-1 max-w-3xl text-[13px] leading-6 text-muted-foreground sm:text-sm">
+        {description}
+      </p>
+    )}
+
+    <div class="mt-1.5 flex flex-wrap items-center gap-x-1.5 gap-y-1 text-[11px] leading-5 text-muted-foreground sm:text-xs">
+      <span>{points} points</span>
+      <span>by {author}</span>
+      <span>·</span>
+      <Datetime {...props} />
+      <span>|</span>
+      <a href={href} class="text-muted-foreground no-underline hover:text-accent">
+        {comments > 0 ? `댓글 ${comments}개` : "토론"}
+      </a>
+      {visibleTags.length > 0 && <span>|</span>}
+      {visibleTags.map(tag => (
+        <a href={`/tags/${tag}/`} class="text-muted-foreground no-underline hover:text-accent">
+          #{tag}
+        </a>
+      ))}
+    </div>
+  </article>
+</li>
