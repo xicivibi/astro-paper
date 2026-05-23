@@ -11,34 +11,86 @@ type Props = {
 const { variant: Heading = "h2", id, data, filePath } = Astro.props;
 const { title, description, tags = [], ...props } = data;
 const previewTags = tags.slice(0, 3);
+const text = `${title} ${description} ${tags.join(" ")}`.toLowerCase();
+
+function imageForPost(value: string) {
+  if (["세금", "연금", "금융", "투자", "재테크", "대출", "암호화폐"].some(term => value.includes(term))) {
+    return {
+      src: "https://images.unsplash.com/photo-1554224155-6726b3ff858f?auto=format&fit=crop&w=900&q=78",
+      alt: "재무 서류와 계산기가 놓인 책상",
+    };
+  }
+  if (["지원금", "정부", "전입", "정책", "신청", "복지"].some(term => value.includes(term))) {
+    return {
+      src: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=900&q=78",
+      alt: "도시의 공공기관 건물 전경",
+    };
+  }
+  if (["운동", "다이어트", "보디빌딩", "스윙", "당구", "야구", "kbo", "lck"].some(term => value.includes(term))) {
+    return {
+      src: "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&w=900&q=78",
+      alt: "운동 장비가 있는 실내 공간",
+    };
+  }
+  if (["패션", "사복", "연예", "배우", "필모그래피", "음악", "추천"].some(term => value.includes(term))) {
+    return {
+      src: "https://images.unsplash.com/photo-1445205170230-053b83016050?auto=format&fit=crop&w=900&q=78",
+      alt: "정돈된 패션 매장과 의류",
+    };
+  }
+  if (["맛집", "날씨", "관저동", "서울", "출근", "여행", "직관"].some(term => value.includes(term))) {
+    return {
+      src: "https://images.unsplash.com/photo-1514565131-fce0801e5785?auto=format&fit=crop&w=900&q=78",
+      alt: "도시의 거리와 건물 풍경",
+    };
+  }
+  return {
+    src: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=900&q=78",
+    alt: "노트북 화면의 데이터 분석 대시보드",
+  };
+}
+
+const cover = imageForPost(text);
 ---
 
-<li class="group border-border bg-background hover:border-accent/60 rounded-lg border p-5 transition-colors">
+<li class="group overflow-hidden rounded-[1.15rem] border border-border bg-background transition-colors hover:border-accent/60">
   <a
     href={getPostUrl(id, filePath, Astro.currentLocale)}
     class="block no-underline"
     aria-label={title}
   >
-    <Heading
-      transition:name={slugifyStr(title.replaceAll(".", "-"))}
-      class="group-hover:text-accent text-lg leading-7 font-semibold"
-    >
-      {title}
-    </Heading>
-  </a>
-  <div class="text-muted-foreground mt-3 text-sm">
-    <Datetime {...props} />
-  </div>
-  <p class="text-muted-foreground mt-3 line-clamp-3 leading-7">{description}</p>
-  {
-    previewTags.length > 0 && (
-      <div class="mt-4 flex flex-wrap gap-2">
-        {previewTags.map(tag => (
-          <span class="border-border bg-muted/50 rounded-lg border px-2 py-1 text-xs font-semibold">
-            {tag}
-          </span>
-        ))}
+    <div class="relative aspect-[16/10] overflow-hidden bg-muted">
+      <img
+        src={cover.src}
+        alt={cover.alt}
+        class="size-full object-cover transition duration-300 group-hover:scale-[1.03]"
+        loading="lazy"
+        decoding="async"
+      />
+      <div class="absolute inset-0 bg-gradient-to-t from-black/35 via-transparent to-transparent"></div>
+    </div>
+    <div class="p-5">
+      <Heading
+        transition:name={slugifyStr(title.replaceAll(".", "-"))}
+        class="group-hover:text-accent text-lg leading-7 font-semibold"
+      >
+        {title}
+      </Heading>
+      <div class="text-muted-foreground mt-3 text-sm">
+        <Datetime {...props} />
       </div>
-    )
-  }
+      <p class="text-muted-foreground mt-3 line-clamp-3 leading-7">{description}</p>
+      {
+        previewTags.length > 0 && (
+          <div class="mt-4 flex flex-wrap gap-2">
+            {previewTags.map(tag => (
+              <span class="border-border bg-muted/60 rounded-lg border px-2 py-1 text-xs font-semibold">
+                {tag}
+              </span>
+            ))}
+          </div>
+        )
+      }
+    </div>
+  </a>
 </li>
