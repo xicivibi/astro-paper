@@ -45,7 +45,7 @@ export default {
     tagsDesc: "블로그에서 사용한 태그 모음입니다.",
 
     postsTitle: "전체 글",
-    postsDesc: "발행된 모든 글입니다.",
+    postsDesc: "카드 보기와 사진 없는 리스트 보기를 선택할 수 있습니다.",
 
     archivesTitle: "아카이브",
     archivesDesc: "월별 글 모음입니다.",
