@@ -4,9 +4,9 @@ import { getPostUrl } from "@/utils/getPostPaths";
 import { slugifyStr } from "@/utils/slugify";
 import Datetime from "./Datetime.astro";
 
-interface Props extends CollectionEntry<"posts"> {
+type Props = {
   index?: number;
-}
+} & CollectionEntry<"posts">;
 
 const { id, data, filePath, index = 0 } = Astro.props;
 const { title, description, tags = [], author = "AI SEO Lab", ...props } = data;
