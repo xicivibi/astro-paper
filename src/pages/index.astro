@@ -6,6 +6,7 @@ import Header from "@/components/Header.astro";
 import Footer from "@/components/Footer.astro";
 import NewsItem from "@/components/NewsItem.astro";
 import { getSortedPosts } from "@/utils/getSortedPosts";
+import { slugifyStr } from "@/utils/slugify";
 import config from "@/config";
 
 const locale = Astro.currentLocale ?? config.site.lang;
@@ -75,7 +76,7 @@ const topTags = Object.entries(tagCount)
         <div class="flex flex-wrap gap-x-3 gap-y-1 border-b border-border bg-background px-3 py-2 text-xs text-muted-foreground sm:px-4">
           <span class="font-semibold text-foreground">Hot tags</span>
           {topTags.map(([tag, count]) => (
-            <a href={`/tags/${tag}/`} class="no-underline hover:text-accent">
+            <a href={`/tags/${slugifyStr(tag)}/`} class="no-underline hover:text-accent">
               #{tag} <span class="text-[10px]">{count}</span>
             </a>
           ))}
