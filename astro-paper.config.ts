@@ -4,7 +4,7 @@ export default defineAstroPaperConfig({
   site: {
     url: "https://xici.vercel.app/",
     title: "AI SEO Lab",
-    description: "트렌드, 검색 데이터, 수익화 실험을 근거 기반으로 정리하는 한국어 SEO 인사이트 블로그.",
+    description: "트렌드, 검색 데이터, 수익화 실험을 근거 기반으로 정리하는 한국어 SEO 인사이트 뉴스보드.",
     author: "AI SEO Lab",
     profile: "https://xici.vercel.app/",
     ogImage: "default-og.jpg",
@@ -13,8 +13,8 @@ export default defineAstroPaperConfig({
     dir: "ltr",
   },
   posts: {
-    perPage: 6,
-    perIndex: 6,
+    perPage: 30,
+    perIndex: 30,
     scheduledPostMargin: 15 * 60 * 1000,
   },
   features: {
