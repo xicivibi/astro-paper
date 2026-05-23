@@ -10,19 +10,35 @@ import Socials from "@/components/Socials.astro";
 import Card from "@/components/Card.astro";
 import LinkButton from "@/components/LinkButton.astro";
 import { getSortedPosts } from "@/utils/getSortedPosts";
-import { useTranslations } from "@/i18n";
 import config from "@/config";
 
 const { socials, posts: postsConfig } = config;
 
 const locale = Astro.currentLocale ?? config.site.lang;
-const t = useTranslations(locale);
-
 const posts = await getCollection("posts");
 const sortedPosts = getSortedPosts(posts);
 const featuredPosts = sortedPosts.filter(({ data }) => data.featured);
-const recentPosts = sortedPosts.filter(({ data }) => !data.featured);
+const spotlightPosts = (featuredPosts.length > 0 ? featuredPosts : sortedPosts).slice(0, 3);
+const spotlightIds = new Set(spotlightPosts.map(({ id }) => id));
+const recentPosts = sortedPosts
+  .filter(({ id }) => !spotlightIds.has(id))
+  .slice(0, postsConfig.perIndex);
+const latestPost = sortedPosts[0];
+const latestDate = latestPost?.data.pubDatetime
+  ? latestPost.data.pubDatetime.toLocaleDateString("ko-KR", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    })
+  : "준비 중";
 const homePath = getRelativeLocaleUrl(locale, "");
+const postsPath = getRelativeLocaleUrl(locale, "posts");
+const rssPath = getRelativeLocaleUrl(locale, "rss.xml");
+const stats = [
+  { label: "발행 글", value: `${sortedPosts.length}개` },
+  { label: "최근 업데이트", value: latestDate },
+  { label: "운영 방식", value: "Fact Pack" },
+];
 ---
 
 <Layout>
@@ -31,68 +47,81 @@ const homePath = getRelativeLocaleUrl(locale, "");
     id="main-content"
     data-layout="index"
     data-home-path={homePath}
-    class="app-layout"
+    class="mx-auto w-full max-w-5xl px-4"
   >
-    <section id="hero" class="border-border border-b pt-8 pb-6">
-      <h1 class="my-4 inline-block text-4xl font-bold sm:my-8 sm:text-5xl">
-        Mingalaba
-      </h1>
-      <a
-        target="_blank"
-        href={getRelativeLocaleUrl(locale, "rss.xml")}
-        class="inline-block"
-        aria-label="RSS Feed"
-        title="RSS Feed"
-      >
-        <IconRss
-          width={20}
-          height={20}
-          class="stroke-accent scale-125 stroke-3 rtl:-rotate-90"
-        />
-        <span class="sr-only">RSS Feed</span>
-      </a>
-
-      <p>
-        AstroPaper is a minimal, responsive, accessible and SEO-friendly Astro
-        blog theme. This theme follows best practices and provides accessibility
-        out of the box. Light and dark mode are supported by default. Moreover,
-        additional color schemes can also be configured.
-      </p>
-      <p class="mt-2">
-        Read the blog posts or check
-        <LinkButton
-          class="hover:text-accent underline decoration-dashed underline-offset-4"
-          href="https://github.com/satnaing/astro-paper#readme"
-        >
-          README
-        </LinkButton> for more info.
-      </p>
-      {
-        socials.length > 0 && (
-          <div class="mt-4 flex max-sm:flex-col sm:items-center">
-            <div class="me-2 mb-1 whitespace-nowrap sm:mb-0">
-              {t.home.socialLinks}:
-            </div>
-            <Socials />
+    <section id="hero" class="border-border border-b py-10 sm:py-14">
+      <div class="grid gap-8 lg:grid-cols-[1.25fr_0.75fr] lg:items-end">
+        <div>
+          <p class="text-accent text-sm font-semibold tracking-[0.18em] uppercase">
+            AI SEO Lab
+          </p>
+          <h1 class="mt-4 max-w-3xl text-4xl leading-tight font-bold sm:text-6xl">
+            검색 데이터로 읽고, 근거로 쓰고, 성과로 고칩니다.
+          </h1>
+          <p class="text-muted-foreground mt-5 max-w-2xl text-lg leading-8">
+            한국 트렌드, Search Console 기회, Fact Pack 기반 리서치를 묶어
+            실무자가 바로 써먹을 수 있는 SEO 콘텐츠와 수익화 실험을 정리합니다.
+          </p>
+          <div class="mt-6 flex flex-wrap gap-3">
+            <LinkButton href={postsPath} class="bg-accent text-accent-foreground rounded-lg px-4 py-2 font-semibold no-underline">
+              글 둘러보기
+              <IconArrowRight class="ms-1 inline-block rtl:-rotate-180" />
+            </LinkButton>
+            <a
+              target="_blank"
+              href={rssPath}
+              class="border-border hover:border-accent inline-flex items-center rounded-lg border px-4 py-2 font-semibold no-underline"
+              aria-label="RSS Feed"
+              title="RSS Feed"
+            >
+              <IconRss width={18} height={18} class="stroke-accent me-2 stroke-3 rtl:-rotate-90" />
+              RSS
+            </a>
           </div>
-        )
-      }
+          {
+            socials.length > 0 && (
+              <div class="mt-6 flex flex-wrap items-center gap-2 text-sm">
+                <span class="text-muted-foreground font-semibold">채널</span>
+                <Socials />
+              </div>
+            )
+          }
+        </div>
+
+        <aside class="border-border bg-muted/40 rounded-lg border p-5">
+          <h2 class="text-base font-semibold">운영 원칙</h2>
+          <ul class="mt-4 space-y-3 text-sm leading-6">
+            <li><strong>근거 우선</strong> 공식 출처와 최신 RSS 기반 Fact Pack을 먼저 봅니다.</li>
+            <li><strong>품질 게이트</strong> 얇은 글, 반복 문장, 위험 주제는 발행 전에 막습니다.</li>
+            <li><strong>수익화 절제</strong> 구매 의도 글에만 제휴 고지와 sponsored 링크를 붙입니다.</li>
+          </ul>
+        </aside>
+      </div>
+
+      <dl class="mt-8 grid gap-3 sm:grid-cols-3">
+        {stats.map(stat => (
+          <div class="border-border bg-background rounded-lg border p-4">
+            <dt class="text-muted-foreground text-xs font-semibold tracking-wide uppercase">{stat.label}</dt>
+            <dd class="mt-1 text-xl font-bold">{stat.value}</dd>
+          </div>
+        ))}
+      </dl>
     </section>
 
     {
-      featuredPosts.length > 0 && (
-        <section
-          id="featured"
-          class:list={[
-            "pt-12 pb-6",
-            { "border-border border-b": recentPosts.length > 0 },
-          ]}
-        >
-          <h2 class="text-2xl font-semibold tracking-wide">
-            {t.home.featured}
-          </h2>
-          <ul>
-            {featuredPosts.map(data => (
+      spotlightPosts.length > 0 && (
+        <section id="featured" class:list={["py-10", { "border-border border-b": recentPosts.length > 0 }]}>
+          <div class="flex items-end justify-between gap-4">
+            <div>
+              <p class="text-accent text-sm font-semibold">Editor's Pick</p>
+              <h2 class="mt-1 text-2xl font-semibold tracking-wide">주목할 글</h2>
+            </div>
+            <LinkButton href={postsPath} class="text-sm underline decoration-dashed underline-offset-4">
+              전체 글
+            </LinkButton>
+          </div>
+          <ul class="mt-5 grid gap-4 lg:grid-cols-3">
+            {spotlightPosts.map(data => (
               <Card variant="h3" {...data} />
             ))}
           </ul>
@@ -102,12 +131,15 @@ const homePath = getRelativeLocaleUrl(locale, "");
 
     {
       recentPosts.length > 0 && (
-        <section id="recent-posts" class="pt-12 pb-6">
-          <h2 class="text-2xl font-semibold tracking-wide">
-            {t.home.recentPosts}
-          </h2>
-          <ul>
-            {recentPosts.slice(0, postsConfig.perIndex).map(data => (
+        <section id="recent-posts" class="py-10">
+          <div class="flex items-end justify-between gap-4">
+            <div>
+              <p class="text-accent text-sm font-semibold">Fresh Notes</p>
+              <h2 class="mt-1 text-2xl font-semibold tracking-wide">최신 글</h2>
+            </div>
+          </div>
+          <ul class="mt-5 grid gap-4 sm:grid-cols-2">
+            {recentPosts.map(data => (
               <Card variant="h3" {...data} />
             ))}
           </ul>
@@ -115,9 +147,12 @@ const homePath = getRelativeLocaleUrl(locale, "");
       )
     }
 
-    <div class="my-8 text-center">
-      <LinkButton href={getRelativeLocaleUrl(locale, "posts")}>
-        {t.home.allPosts}
+    <div class="border-border my-8 rounded-lg border p-6 text-center">
+      <p class="text-muted-foreground mb-4">
+        더 많은 글은 태그와 검색 페이지에서 빠르게 찾을 수 있습니다.
+      </p>
+      <LinkButton href={postsPath} class="text-accent font-semibold underline decoration-dashed underline-offset-4">
+        전체 글 보기
         <IconArrowRight class="inline-block rtl:-rotate-180" />
       </LinkButton>
     </div>
