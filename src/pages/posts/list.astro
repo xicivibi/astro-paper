@@ -5,7 +5,7 @@ import Header from "@/components/Header.astro";
 import Breadcrumb from "@/components/Breadcrumb.astro";
 import Main from "@/components/Main.astro";
 import Footer from "@/components/Footer.astro";
-import ListCard from "@/components/ListCard.astro";
+import NewsItem from "@/components/NewsItem.astro";
 import LinkButton from "@/components/LinkButton.astro";
 import { getSortedPosts } from "@/utils/getSortedPosts";
 import config from "@/config";
@@ -14,22 +14,22 @@ const posts = await getCollection("posts", ({ data }) => !data.draft);
 const sortedPosts = getSortedPosts(posts);
 ---
 
-<Layout title={`리스트 보기 | ${config.site.title}`} description="사진 없이 빠르게 훑는 전체 글 목록입니다.">
+<Layout title={`전체 리스트 | ${config.site.title}`} description="사진 없이 빠르게 훑는 전체 글 목록입니다.">
   <Header />
   <Breadcrumb />
 
-  <Main pageTitle="리스트 보기" pageDesc="사진 없이 제목, 날짜, 설명만 빠르게 훑는 전체 글 목록입니다.">
-    <div class="mb-6 flex flex-wrap gap-3">
-      <LinkButton href="/posts" class="border-border rounded-lg border px-3 py-2 text-sm font-semibold no-underline">
-        카드 보기
+  <Main pageTitle="전체 리스트" pageDesc="사진 없이 제목, 요약, 태그, 날짜만 빠르게 훑는 전체 글 목록입니다.">
+    <div class="mb-4 flex flex-wrap gap-2 border-b border-border pb-3 text-xs font-semibold">
+      <LinkButton href="/posts" class="border border-border px-2.5 py-1.5 no-underline">
+        최신글
       </LinkButton>
-      <span class="bg-accent text-accent-foreground rounded-lg px-3 py-2 text-sm font-semibold">
-        리스트 보기
-      </span>
+      <span class="bg-accent px-2.5 py-1.5 text-accent-foreground">전체 리스트</span>
+      <span class="border border-border px-2.5 py-1.5 text-muted-foreground">{sortedPosts.length} posts</span>
     </div>
-    <ul class="rounded-[1rem] border border-border bg-background p-5">
-      {sortedPosts.map(data => <ListCard {...data} />)}
-    </ul>
+
+    <ol class="overflow-hidden border border-border bg-background">
+      {sortedPosts.map((post, index) => <NewsItem {...post} index={index} />)}
+    </ol>
   </Main>
 
   <Footer />
