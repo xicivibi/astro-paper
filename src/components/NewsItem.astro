@@ -1,6 +1,7 @@
 ---
 import type { CollectionEntry } from "astro:content";
 import { getPostUrl } from "@/utils/getPostPaths";
+import { slugifyStr } from "@/utils/slugify";
 import Datetime from "./Datetime.astro";
 
 interface Props extends CollectionEntry<"posts"> {
@@ -52,7 +53,7 @@ const hot = points >= 65;
       </a>
       {visibleTags.length > 0 && <span>|</span>}
       {visibleTags.map(tag => (
-        <a href={`/tags/${tag}/`} class="text-muted-foreground no-underline hover:text-accent">
+        <a href={`/tags/${slugifyStr(tag)}/`} class="text-muted-foreground no-underline hover:text-accent">
           #{tag}
         </a>
       ))}
