@@ -6,11 +6,9 @@ import config from "@/config";
 ---
 
 <Layout title={`관리 | ${config.site.title}`} description="초안, 발행글, 복구함, 사이트 UI 설정을 제어하는 관리자 콘솔입니다.">
-  <Fragment slot="head">
-    <meta name="robots" content="noindex,nofollow" />
-  </Fragment>
-
+  <Fragment slot="head"><meta name="robots" content="noindex,nofollow" /></Fragment>
   <Header />
+
   <main id="main-content" class="mx-auto w-full max-w-7xl px-4 py-8">
     <section class="rounded-2xl border border-border bg-background p-5 shadow-sm sm:p-7">
       <p class="text-accent text-xs font-bold tracking-[0.2em] uppercase">Private Admin</p>
@@ -18,7 +16,7 @@ import config from "@/config";
         <div>
           <h1 class="text-3xl font-bold tracking-tight sm:text-5xl">운영 관리자</h1>
           <p class="text-muted-foreground mt-4 max-w-3xl leading-8">
-            발행글, 초안, 복구함, 사이트 UI 설정을 한곳에서 제어합니다. 목록 체크박스로 여러 글을 선택해 숨김, 공개, 삭제, 복구를 한 번에 처리할 수 있습니다.
+            발행글, 초안, 복구함, 사이트 UI 설정을 한곳에서 제어합니다. 체크박스로 여러 글을 선택해 숨김, 공개, 삭제, 복구, 초안 일괄 발행을 처리할 수 있습니다.
           </p>
         </div>
         <div class="rounded-xl border border-border bg-muted/40 px-4 py-3 text-sm text-muted-foreground">
@@ -46,22 +44,10 @@ import config from "@/config";
 
     <section id="adminConsole" class="mt-6 hidden">
       <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-        <div class="rounded-2xl border border-border bg-background p-4 shadow-sm">
-          <p class="text-muted-foreground text-sm font-semibold">현재 탭</p>
-          <p id="statMode" class="mt-2 text-2xl font-bold">발행글</p>
-        </div>
-        <div class="rounded-2xl border border-border bg-background p-4 shadow-sm">
-          <p class="text-muted-foreground text-sm font-semibold">표시 항목</p>
-          <p id="statCount" class="mt-2 text-2xl font-bold">0</p>
-        </div>
-        <div class="rounded-2xl border border-border bg-background p-4 shadow-sm">
-          <p class="text-muted-foreground text-sm font-semibold">선택 항목</p>
-          <p id="statSelected" class="mt-2 text-2xl font-bold">0</p>
-        </div>
-        <div class="rounded-2xl border border-border bg-background p-4 shadow-sm">
-          <p class="text-muted-foreground text-sm font-semibold">현재 글자 수</p>
-          <p id="statChars" class="mt-2 text-2xl font-bold">0</p>
-        </div>
+        <div class="rounded-2xl border border-border bg-background p-4 shadow-sm"><p class="text-muted-foreground text-sm font-semibold">현재 탭</p><p id="statMode" class="mt-2 text-2xl font-bold">발행글</p></div>
+        <div class="rounded-2xl border border-border bg-background p-4 shadow-sm"><p class="text-muted-foreground text-sm font-semibold">표시 항목</p><p id="statCount" class="mt-2 text-2xl font-bold">0</p></div>
+        <div class="rounded-2xl border border-border bg-background p-4 shadow-sm"><p class="text-muted-foreground text-sm font-semibold">선택 항목</p><p id="statSelected" class="mt-2 text-2xl font-bold">0</p></div>
+        <div class="rounded-2xl border border-border bg-background p-4 shadow-sm"><p class="text-muted-foreground text-sm font-semibold">현재 글자 수</p><p id="statChars" class="mt-2 text-2xl font-bold">0</p></div>
       </div>
 
       <div class="mt-5 flex flex-wrap gap-2">
@@ -81,12 +67,10 @@ import config from "@/config";
             <h2 id="listTitle" class="text-lg font-bold">발행글</h2>
             <button id="newBtn" class="rounded-xl border border-border px-3 py-2 text-sm font-bold">새 초안</button>
           </div>
-
           <div class="mt-3 flex gap-2">
             <input id="searchInput" class="w-full rounded-xl border border-border bg-background px-3 py-2 text-sm" placeholder="제목, 파일명, 태그 검색" />
             <button id="searchBtn" class="rounded-xl border border-border px-3 py-2 text-sm font-bold">검색</button>
           </div>
-
           <div id="bulkBar" class="mt-4 rounded-xl border border-border bg-muted/35 p-3">
             <label class="flex items-center gap-2 text-sm font-bold">
               <input id="selectAll" type="checkbox" class="size-4 accent-current" />
@@ -96,24 +80,18 @@ import config from "@/config";
               <button id="bulkHideBtn" class="bulkPublished rounded-lg border border-amber-400 px-3 py-2 text-xs font-bold text-amber-600">선택 숨김</button>
               <button id="bulkShowBtn" class="bulkPublished rounded-lg border border-border px-3 py-2 text-xs font-bold">선택 공개</button>
               <button id="bulkDeletePublishedBtn" class="bulkPublished rounded-lg border border-red-400 px-3 py-2 text-xs font-bold text-red-500">선택 삭제</button>
+              <button id="bulkPublishDraftBtn" class="bulkDraft rounded-lg bg-accent px-3 py-2 text-xs font-bold text-accent-foreground">선택 발행</button>
               <button id="bulkDeleteDraftBtn" class="bulkDraft rounded-lg border border-red-400 px-3 py-2 text-xs font-bold text-red-500">선택 삭제</button>
               <button id="bulkRestoreBtn" class="bulkTrash rounded-lg border border-amber-400 px-3 py-2 text-xs font-bold text-amber-600">선택 복구</button>
             </div>
           </div>
-
           <div id="articleList" class="mt-4 max-h-[660px] space-y-2 overflow-auto pr-1"></div>
         </aside>
 
         <section class="rounded-2xl border border-border bg-background p-4 shadow-sm sm:p-5">
           <div class="grid gap-3 sm:grid-cols-[1fr_1fr]">
-            <div>
-              <label class="block text-sm font-semibold text-muted-foreground" for="keyword">제목 / 키워드</label>
-              <input id="keyword" class="mt-2 w-full rounded-xl border border-border bg-background px-3 py-2" placeholder="글 제목 또는 키워드" />
-            </div>
-            <div>
-              <label class="block text-sm font-semibold text-muted-foreground" for="tags">태그</label>
-              <input id="tags" class="mt-2 w-full rounded-xl border border-border bg-background px-3 py-2" placeholder="쉼표로 구분" />
-            </div>
+            <div><label class="block text-sm font-semibold text-muted-foreground" for="keyword">제목 / 키워드</label><input id="keyword" class="mt-2 w-full rounded-xl border border-border bg-background px-3 py-2" placeholder="글 제목 또는 키워드" /></div>
+            <div><label class="block text-sm font-semibold text-muted-foreground" for="tags">태그</label><input id="tags" class="mt-2 w-full rounded-xl border border-border bg-background px-3 py-2" placeholder="쉼표로 구분" /></div>
           </div>
           <label class="mt-4 block text-sm font-semibold text-muted-foreground" for="description">Description</label>
           <input id="description" class="mt-2 w-full rounded-xl border border-border bg-background px-3 py-2" placeholder="검색 결과에 보일 설명" />
@@ -132,21 +110,14 @@ import config from "@/config";
             <button id="restoreDraftBtn" class="actionTrash rounded-xl border border-amber-400 px-3 py-2 text-sm font-bold text-amber-600">복구</button>
             <button id="previewBtn" class="rounded-xl border border-border px-3 py-2 text-sm font-bold">미리보기</button>
           </div>
-
           <textarea id="markdown" class="mt-4 min-h-[640px] w-full rounded-xl border border-border bg-background px-4 py-3 font-mono text-sm leading-7" spellcheck="false" placeholder="왼쪽 목록에서 글을 선택하거나 새 초안을 작성하세요."></textarea>
         </section>
       </div>
 
       <section id="sitePanel" class="mt-5 hidden rounded-2xl border border-border bg-background p-5 shadow-sm">
         <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <h2 class="text-xl font-bold">사이트 UI / UX 설정</h2>
-            <p class="text-muted-foreground mt-2 leading-7">저장하면 GitHub에 커밋되고 Vercel이 자동 재배포합니다.</p>
-          </div>
-          <div class="flex gap-2">
-            <button id="loadSiteBtn" class="rounded-xl border border-border px-4 py-2 text-sm font-bold">설정 불러오기</button>
-            <button id="saveSiteBtn" class="rounded-xl bg-accent px-4 py-2 text-sm font-bold text-accent-foreground">설정 저장</button>
-          </div>
+          <div><h2 class="text-xl font-bold">사이트 UI / UX 설정</h2><p class="text-muted-foreground mt-2 leading-7">저장하면 GitHub에 커밋되고 Vercel이 자동 재배포합니다.</p></div>
+          <div class="flex gap-2"><button id="loadSiteBtn" class="rounded-xl border border-border px-4 py-2 text-sm font-bold">설정 불러오기</button><button id="saveSiteBtn" class="rounded-xl bg-accent px-4 py-2 text-sm font-bold text-accent-foreground">설정 저장</button></div>
         </div>
         <div class="mt-5 grid gap-4 lg:grid-cols-2">
           <div><label class="text-sm font-semibold text-muted-foreground" for="siteTitle">사이트 이름</label><input id="siteTitle" class="mt-2 w-full rounded-xl border border-border bg-background px-3 py-2" /></div>
@@ -154,10 +125,7 @@ import config from "@/config";
           <div class="lg:col-span-2"><label class="text-sm font-semibold text-muted-foreground" for="siteDescription">사이트 설명</label><input id="siteDescription" class="mt-2 w-full rounded-xl border border-border bg-background px-3 py-2" /></div>
           <div><label class="text-sm font-semibold text-muted-foreground" for="siteUrl">사이트 URL</label><input id="siteUrl" class="mt-2 w-full rounded-xl border border-border bg-background px-3 py-2" /></div>
           <div><label class="text-sm font-semibold text-muted-foreground" for="profileUrl">프로필 URL</label><input id="profileUrl" class="mt-2 w-full rounded-xl border border-border bg-background px-3 py-2" /></div>
-          <div>
-            <label class="text-sm font-semibold text-muted-foreground" for="accentColor">포인트 색상</label>
-            <div class="mt-2 flex gap-2"><input id="accentColor" type="color" class="h-11 w-16 rounded-xl border border-border bg-background p-1" /><input id="accentColorText" class="w-full rounded-xl border border-border bg-background px-3 py-2" placeholder="#0f766e" /></div>
-          </div>
+          <div><label class="text-sm font-semibold text-muted-foreground" for="accentColor">포인트 색상</label><div class="mt-2 flex gap-2"><input id="accentColor" type="color" class="h-11 w-16 rounded-xl border border-border bg-background p-1" /><input id="accentColorText" class="w-full rounded-xl border border-border bg-background px-3 py-2" placeholder="#0f766e" /></div></div>
           <div><label class="text-sm font-semibold text-muted-foreground" for="postsPerPage">목록당 글 수</label><input id="postsPerPage" type="number" min="1" max="30" class="mt-2 w-full rounded-xl border border-border bg-background px-3 py-2" /></div>
         </div>
       </section>
@@ -195,6 +163,7 @@ import config from "@/config";
   function itemKey(item) { return state.mode === "published" ? item.path : item.filename; }
   function selectedItems() { return state.items.filter(item => state.selected.has(itemKey(item))); }
   function compactText(value) { return String(value || "").replace(/\s+/g, ""); }
+  function titleFromFilename(filename) { return String(filename || "manual-article").replace(/\.mdx?$/i, "").replace(/^\d{8}-\d{6}-/, "").replace(/-/g, " ").trim() || "manual-article"; }
   function escapeHtml(value) { return String(value || "").replace(/[&<>"']/g, char => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[char])); }
 
   async function api(path, options = {}) {
@@ -203,7 +172,6 @@ import config from "@/config";
     if (!response.ok) throw new Error(text || `${response.status} ${response.statusText}`);
     return text ? JSON.parse(text) : null;
   }
-
   async function safe(label, fn) {
     try { setStatus(`${label} 중...`); toggleButtons(true); const result = await fn(); setStatus(`${label} 완료`, "ok"); updateStats(); return result; }
     catch (error) { setStatus(error?.message || String(error), "bad"); }
@@ -225,7 +193,6 @@ import config from "@/config";
     setStatus("관리자 인증 완료", "ok"); await loadMode("published");
   }
   function lockAgain() { localStorage.removeItem("blog_api_key"); fields.apiKey.value = ""; fields.adminConsole.classList.add("hidden"); fields.lockPanel.classList.remove("hidden"); setStatus("잠금 상태입니다."); }
-
   async function loadMode(mode = state.mode) {
     state.mode = mode; state.selected.clear(); clearCurrent(false); setTabActive(mode); setEditorMode(mode);
     if (mode === "site") { fields.contentPanel.classList.add("hidden"); fields.sitePanel.classList.remove("hidden"); await loadSiteSettings(); updateBulkUi(); return; }
@@ -235,10 +202,7 @@ import config from "@/config";
     if (mode === "trash") return loadDrafts(true);
   }
   function setTabActive(mode) {
-    document.querySelectorAll(".tabBtn").forEach(button => {
-      const active = button.dataset.tab === mode;
-      button.className = active ? "tabBtn rounded-xl bg-accent px-4 py-2 text-sm font-bold text-accent-foreground" : "tabBtn rounded-xl border border-border px-4 py-2 text-sm font-bold";
-    });
+    document.querySelectorAll(".tabBtn").forEach(button => { const active = button.dataset.tab === mode; button.className = active ? "tabBtn rounded-xl bg-accent px-4 py-2 text-sm font-bold text-accent-foreground" : "tabBtn rounded-xl border border-border px-4 py-2 text-sm font-bold"; });
     const labels = { published: "발행글", drafts: "초안", trash: "복구함", site: "사이트 설정" };
     fields.statMode.textContent = labels[mode] || mode; fields.listTitle.textContent = labels[mode] || mode;
   }
@@ -266,9 +230,7 @@ import config from "@/config";
     state.visible = keyword ? state.items.filter(item => searchableText(item).includes(keyword)) : state.items;
     fields.statCount.textContent = String(state.visible.length);
     fields.list.replaceChildren();
-    if (!state.visible.length) {
-      const empty = document.createElement("p"); empty.className = "rounded-xl border border-dashed border-border p-4 text-sm text-muted-foreground"; empty.textContent = "표시할 항목이 없습니다."; fields.list.append(empty); updateBulkUi(); return;
-    }
+    if (!state.visible.length) { const empty = document.createElement("p"); empty.className = "rounded-xl border border-dashed border-border p-4 text-sm text-muted-foreground"; empty.textContent = "표시할 항목이 없습니다."; fields.list.append(empty); updateBulkUi(); return; }
     state.visible.forEach(item => fields.list.append(listRow(item)));
     updateBulkUi();
   }
@@ -287,28 +249,43 @@ import config from "@/config";
   function fillEditor({ title, description, tags, path, markdown }) { fields.keyword.value = title || ""; fields.description.value = description || ""; fields.tags.value = (tags || []).join(", "); fields.currentPath.value = path || ""; fields.markdown.value = markdown || ""; updateStats(); }
   function clearCurrent(clearMarkdown = true) { state.currentKind = null; state.currentPath = null; state.currentFilename = null; fields.keyword.value = ""; fields.tags.value = ""; fields.description.value = ""; fields.currentPath.value = ""; if (clearMarkdown) fields.markdown.value = ""; updateStats(); }
 
-  async function bulkPublishedDraft(draft) {
-    const items = selectedItems(); if (!items.length) throw new Error("선택된 글이 없습니다.");
-    for (let index = 0; index < items.length; index += 1) { setStatus(`${index + 1}/${items.length} 처리 중...`); await api("/github/posts/draft", { method: "POST", body: JSON.stringify({ path: items[index].path, draft }) }); }
-    state.selected.clear(); await loadPublishedPosts();
+  async function bulkPublishedDraft(draft) { const items = selectedItems(); if (!items.length) throw new Error("선택된 글이 없습니다."); for (let index = 0; index < items.length; index += 1) { setStatus(`${index + 1}/${items.length} 처리 중...`); await api("/github/posts/draft", { method: "POST", body: JSON.stringify({ path: items[index].path, draft }) }); } state.selected.clear(); await loadPublishedPosts(); }
+  async function bulkDeletePublished() { const items = selectedItems(); if (!items.length) throw new Error("선택된 글이 없습니다."); if (!confirm(`선택한 발행글 ${items.length}개를 GitHub에서 삭제할까요?`)) return; for (let index = 0; index < items.length; index += 1) { setStatus(`${index + 1}/${items.length} 삭제 중...`); await api(`/github/posts/${encodePath(items[index].path)}`, { method: "DELETE" }); } state.selected.clear(); clearCurrent(); await loadPublishedPosts(); }
+  async function bulkPublishDrafts() {
+    const items = selectedItems();
+    if (!items.length) throw new Error("선택된 초안이 없습니다.");
+    if (!confirm(`선택한 초안 ${items.length}개를 품질 검사 후 GitHub에 발행할까요?`)) return;
+    let published = 0;
+    const failures = [];
+    for (let index = 0; index < items.length; index += 1) {
+      const item = items[index];
+      setStatus(`${index + 1}/${items.length} 발행 중: ${item.title || item.filename}`);
+      try {
+        const article = await api(`/articles/${encodeURIComponent(item.filename)}`);
+        const markdown = article.markdown || "";
+        const tags = extractFrontmatterTags(markdown);
+        const description = extractFrontmatterValue(markdown, "description") || article.preview || null;
+        await api("/publish/github", {
+          method: "POST",
+          body: JSON.stringify({
+            keyword: article.title || titleFromFilename(item.filename),
+            markdown,
+            github_tags: tags,
+            github_description: description,
+          }),
+        });
+        published += 1;
+      } catch (error) {
+        failures.push(`${item.filename}: ${error?.message || String(error)}`);
+      }
+    }
+    state.selected.clear();
+    await loadDrafts(false);
+    if (failures.length) throw new Error(`${published}개 발행, ${failures.length}개 실패. 첫 실패: ${failures[0]}`);
+    setStatus(`${published}개 초안 발행 완료`, "ok");
   }
-  async function bulkDeletePublished() {
-    const items = selectedItems(); if (!items.length) throw new Error("선택된 글이 없습니다.");
-    if (!confirm(`선택한 발행글 ${items.length}개를 GitHub에서 삭제할까요?`)) return;
-    for (let index = 0; index < items.length; index += 1) { setStatus(`${index + 1}/${items.length} 삭제 중...`); await api(`/github/posts/${encodePath(items[index].path)}`, { method: "DELETE" }); }
-    state.selected.clear(); clearCurrent(); await loadPublishedPosts();
-  }
-  async function bulkDeleteDrafts() {
-    const items = selectedItems(); if (!items.length) throw new Error("선택된 초안이 없습니다.");
-    if (!confirm(`선택한 초안 ${items.length}개를 복구함으로 이동할까요?`)) return;
-    for (let index = 0; index < items.length; index += 1) { setStatus(`${index + 1}/${items.length} 삭제 중...`); await api(`/articles/${encodeURIComponent(items[index].filename)}`, { method: "DELETE" }); }
-    state.selected.clear(); clearCurrent(); await loadDrafts(false);
-  }
-  async function bulkRestoreDrafts() {
-    const items = selectedItems(); if (!items.length) throw new Error("선택된 복구 항목이 없습니다.");
-    for (let index = 0; index < items.length; index += 1) { setStatus(`${index + 1}/${items.length} 복구 중...`); await api(`/articles/trash/${encodeURIComponent(items[index].filename)}/restore`, { method: "POST" }); }
-    state.selected.clear(); clearCurrent(); await loadDrafts(true);
-  }
+  async function bulkDeleteDrafts() { const items = selectedItems(); if (!items.length) throw new Error("선택된 초안이 없습니다."); if (!confirm(`선택한 초안 ${items.length}개를 복구함으로 이동할까요?`)) return; for (let index = 0; index < items.length; index += 1) { setStatus(`${index + 1}/${items.length} 삭제 중...`); await api(`/articles/${encodeURIComponent(items[index].filename)}`, { method: "DELETE" }); } state.selected.clear(); clearCurrent(); await loadDrafts(false); }
+  async function bulkRestoreDrafts() { const items = selectedItems(); if (!items.length) throw new Error("선택된 복구 항목이 없습니다."); for (let index = 0; index < items.length; index += 1) { setStatus(`${index + 1}/${items.length} 복구 중...`); await api(`/articles/trash/${encodeURIComponent(items[index].filename)}/restore`, { method: "POST" }); } state.selected.clear(); clearCurrent(); await loadDrafts(true); }
 
   async function savePublished() { if (!state.currentPath) throw new Error("수정할 발행글을 선택하세요."); return api(`/github/posts/${encodePath(state.currentPath)}`, { method: "PUT", body: JSON.stringify({ markdown: fields.markdown.value }) }); }
   async function setPublishedDraft(draft) { if (!state.currentPath) throw new Error("상태를 바꿀 발행글을 선택하세요."); return api("/github/posts/draft", { method: "POST", body: JSON.stringify({ path: state.currentPath, draft }) }); }
@@ -337,6 +314,7 @@ import config from "@/config";
   $("bulkHideBtn").addEventListener("click", () => safe("선택 숨김", () => bulkPublishedDraft(true)));
   $("bulkShowBtn").addEventListener("click", () => safe("선택 공개", () => bulkPublishedDraft(false)));
   $("bulkDeletePublishedBtn").addEventListener("click", () => safe("선택 발행글 삭제", bulkDeletePublished));
+  $("bulkPublishDraftBtn").addEventListener("click", () => safe("선택 초안 발행", bulkPublishDrafts));
   $("bulkDeleteDraftBtn").addEventListener("click", () => safe("선택 초안 삭제", bulkDeleteDrafts));
   $("bulkRestoreBtn").addEventListener("click", () => safe("선택 복구", bulkRestoreDrafts));
   $("newBtn").addEventListener("click", newDraft);
