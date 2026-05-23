@@ -1,37 +1,22 @@
 ---
-title: "About"
-description: "A bit about me and this blog."
+title: "소개"
+description: "AI SEO Lab이 어떤 기준으로 글을 만들고 개선하는지 설명합니다."
 ---
 
-AstroPaper is a minimal, accessible and SEO-friendly blog theme built with [Astro](https://astro.build/) and [Tailwind CSS](https://tailwindcss.com/).
+AI SEO Lab은 트렌드, 검색 데이터, 공식 출처를 바탕으로 한국어 SEO 콘텐츠를 실험하고 정리하는 블로그입니다.
 
-![Astro Paper](@/assets/images/astropaper-og.jpg)
+단순히 검색어를 많이 넣은 글을 만들기보다, 독자가 실제로 궁금해하는 맥락과 최신 근거를 먼저 확인합니다. 정책, 금융, 세금, 의료처럼 정확도가 중요한 주제는 공식 출처와 주의 문구를 우선합니다.
 
-AstroPaper provides a solid foundation for blogs, or even portfolios\_ with full markdown support, built-in dark mode, and a clean layout that works out-of-the-box.
+## 운영 기준
 
-The blog posts in this theme also serve as guides, docs or example articles\_ making AstroPaper a flexible starting point for your next content-driven site.
+- Google Trends와 Search Console 데이터를 참고합니다.
+- 최신 뉴스와 공식 출처를 Fact Pack으로 정리한 뒤 글을 작성합니다.
+- Quality Gate를 통해 반복 문장, 얇은 정보, 과장 표현을 걸러냅니다.
+- 내부링크로 관련 글을 연결해 독자가 이어서 읽기 쉽게 만듭니다.
+- 제휴 링크가 들어갈 때는 고지 문구와 `rel="sponsored nofollow noopener"`를 적용합니다.
 
-## Features
+## 다루는 주제
 
-AstroPaper comes with a set of useful features that make content publishing easy and effective:
+SEO, 콘텐츠 자동화, 검색 트렌드, 블로그 수익화, 생활 정보, 정책 정보처럼 검색 수요와 실용성이 만나는 주제를 다룹니다.
 
-- SEO-friendly
-- Fast performance
-- Light & dark mode
-- Highly customizable
-- Organizable blog posts
-- Responsive & accessible
-- Static search with [PageFind](https://pagefind.app/)
-- Automatic social image generation
-
-and so much more.
-
-## Show your support
-
-If you like [AstroPaper](https://github.com/satnaing/astro-paper), consider giving it a star ⭐️.
-
-Found a bug 🐛 or have an improvement ✨ in mind? Feel free to open an [issue](https://github.com/satnaing/astro-paper/issues), submit a [pull request](https://github.com/satnaing/astro-paper/pulls) or start a [discussion](https://github.com/satnaing/astro-paper/discussions).
-
-If you find this theme helpful, you can also [sponsor me on GitHub](https://github.com/sponsors/satnaing) or [buy me a coffee](https://buymeacoffee.com/satnaing) to show your support — every penny counts.
-
-Kyay zuu! 🙏🏼
+이 블로그의 목표는 빠르게 많이 쓰는 것이 아니라, 시간이 지나도 고칠 수 있고 성과를 추적할 수 있는 콘텐츠 자산을 쌓는 것입니다.
