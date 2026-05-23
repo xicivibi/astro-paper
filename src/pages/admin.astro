@@ -5,93 +5,166 @@ import Footer from "@/components/Footer.astro";
 import config from "@/config";
 ---
 
-<Layout title={`관리 | ${config.site.title}`} description="저장된 원고를 수정, 삭제, 복구하고 승인 발행하는 관리자 페이지입니다.">
+<Layout title={`관리 | ${config.site.title}`} description="초안, 발행글, 복구함, 사이트 UI 설정을 제어하는 관리자 콘솔입니다.">
   <Fragment slot="head">
     <meta name="robots" content="noindex,nofollow" />
   </Fragment>
 
   <Header />
   <main id="main-content" class="mx-auto w-full max-w-7xl px-4 py-8">
-    <section class="grid gap-4 lg:grid-cols-[1.1fr_0.9fr]">
-      <div class="rounded-2xl border border-border bg-background p-5 shadow-sm sm:p-7">
-        <p class="text-accent text-xs font-bold tracking-[0.2em] uppercase">Admin Console</p>
-        <h1 class="mt-3 text-3xl font-bold tracking-tight sm:text-5xl">글 관리</h1>
-        <p class="text-muted-foreground mt-4 max-w-2xl leading-8">
-          저장된 초안과 삭제된 글을 한 화면에서 관리합니다. 공개 블로그에는 관리 버튼을 노출하지 않고, 이 페이지에서만 수정, 삭제, 복구, 승인 발행을 처리합니다.
-        </p>
-      </div>
-      <div class="grid gap-3 rounded-2xl border border-border bg-muted/35 p-4 sm:grid-cols-3">
-        <div class="rounded-xl bg-background p-4">
-          <p class="text-muted-foreground text-sm font-semibold">상태</p>
-          <p id="statMode" class="mt-2 text-2xl font-bold">대기</p>
+    <section class="rounded-2xl border border-border bg-background p-5 shadow-sm sm:p-7">
+      <p class="text-accent text-xs font-bold tracking-[0.2em] uppercase">Private Admin</p>
+      <div class="mt-3 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+        <div>
+          <h1 class="text-3xl font-bold tracking-tight sm:text-5xl">운영 관리자</h1>
+          <p class="text-muted-foreground mt-4 max-w-3xl leading-8">
+            발행된 글, 로컬 초안, 복구함, 사이트 제목과 색상 설정을 한곳에서 제어합니다. API 키가 검증되기 전에는 운영 데이터가 표시되지 않습니다.
+          </p>
         </div>
-        <div class="rounded-xl bg-background p-4">
-          <p class="text-muted-foreground text-sm font-semibold">선택 글</p>
-          <p id="statFile" class="mt-2 truncate text-lg font-bold">없음</p>
-        </div>
-        <div class="rounded-xl bg-background p-4">
-          <p class="text-muted-foreground text-sm font-semibold">글자 수</p>
-          <p id="statChars" class="mt-2 text-2xl font-bold">0</p>
+        <div class="rounded-xl border border-border bg-muted/40 px-4 py-3 text-sm text-muted-foreground">
+          <strong class="text-foreground">보안:</strong> 페이지는 noindex 처리되어 있고, 모든 데이터 작업은 BLOG_API_KEY로 보호됩니다.
         </div>
       </div>
     </section>
 
-    <section class="mt-6 grid gap-5 lg:grid-cols-[360px_1fr]">
-      <aside class="space-y-5">
-        <div class="rounded-2xl border border-border bg-background p-4 shadow-sm">
-          <div class="flex items-center justify-between gap-3">
-            <h2 class="text-lg font-bold">연결</h2>
-            <span id="connectionBadge" class="rounded-full bg-muted px-3 py-1 text-xs font-bold text-muted-foreground">미저장</span>
-          </div>
-          <label class="mt-4 block text-sm font-semibold text-muted-foreground" for="apiBase">Backend URL</label>
+    <section id="lockPanel" class="mt-6 rounded-2xl border border-border bg-background p-5 shadow-sm sm:p-6">
+      <h2 class="text-xl font-bold">관리자 잠금 해제</h2>
+      <p class="text-muted-foreground mt-2 leading-7">FastAPI 백엔드와 API 키를 검증해야 글 목록과 설정 화면을 볼 수 있습니다.</p>
+      <div class="mt-5 grid gap-3 lg:grid-cols-[1fr_1fr_auto]">
+        <div>
+          <label class="text-sm font-semibold text-muted-foreground" for="apiBase">Backend URL</label>
           <input id="apiBase" class="mt-2 w-full rounded-xl border border-border bg-background px-3 py-2" value="http://127.0.0.1:8080" />
-          <label class="mt-4 block text-sm font-semibold text-muted-foreground" for="apiKey">BLOG_API_KEY</label>
-          <input id="apiKey" type="password" class="mt-2 w-full rounded-xl border border-border bg-background px-3 py-2" placeholder="API Key" />
-          <div class="mt-4 grid grid-cols-3 gap-2">
-            <button id="saveConnectionBtn" class="rounded-xl bg-accent px-3 py-2 text-sm font-bold text-accent-foreground">저장</button>
-            <button id="loadBtn" class="rounded-xl border border-border px-3 py-2 text-sm font-bold">초안</button>
-            <button id="trashBtn" class="rounded-xl border border-border px-3 py-2 text-sm font-bold">복구함</button>
-          </div>
-          <p id="status" class="mt-3 min-h-6 text-sm text-muted-foreground"></p>
         </div>
+        <div>
+          <label class="text-sm font-semibold text-muted-foreground" for="apiKey">BLOG_API_KEY</label>
+          <input id="apiKey" type="password" class="mt-2 w-full rounded-xl border border-border bg-background px-3 py-2" placeholder="API Key" />
+        </div>
+        <button id="unlockBtn" class="self-end rounded-xl bg-accent px-5 py-2.5 font-bold text-accent-foreground">잠금 해제</button>
+      </div>
+      <p id="lockStatus" class="mt-4 min-h-6 text-sm text-muted-foreground"></p>
+    </section>
 
+    <section id="adminConsole" class="mt-6 hidden">
+      <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         <div class="rounded-2xl border border-border bg-background p-4 shadow-sm">
+          <p class="text-muted-foreground text-sm font-semibold">현재 탭</p>
+          <p id="statMode" class="mt-2 text-2xl font-bold">발행글</p>
+        </div>
+        <div class="rounded-2xl border border-border bg-background p-4 shadow-sm">
+          <p class="text-muted-foreground text-sm font-semibold">항목 수</p>
+          <p id="statCount" class="mt-2 text-2xl font-bold">0</p>
+        </div>
+        <div class="rounded-2xl border border-border bg-background p-4 shadow-sm">
+          <p class="text-muted-foreground text-sm font-semibold">선택 글</p>
+          <p id="statFile" class="mt-2 truncate text-lg font-bold">없음</p>
+        </div>
+        <div class="rounded-2xl border border-border bg-background p-4 shadow-sm">
+          <p class="text-muted-foreground text-sm font-semibold">글자 수</p>
+          <p id="statChars" class="mt-2 text-2xl font-bold">0</p>
+        </div>
+      </div>
+
+      <div class="mt-5 flex flex-wrap gap-2">
+        <button data-tab="published" class="tabBtn rounded-xl bg-accent px-4 py-2 text-sm font-bold text-accent-foreground">발행글</button>
+        <button data-tab="drafts" class="tabBtn rounded-xl border border-border px-4 py-2 text-sm font-bold">초안</button>
+        <button data-tab="trash" class="tabBtn rounded-xl border border-border px-4 py-2 text-sm font-bold">복구함</button>
+        <button data-tab="site" class="tabBtn rounded-xl border border-border px-4 py-2 text-sm font-bold">사이트 설정</button>
+        <button id="refreshBtn" class="rounded-xl border border-border px-4 py-2 text-sm font-bold">새로고침</button>
+        <button id="lockAgainBtn" class="rounded-xl border border-red-400 px-4 py-2 text-sm font-bold text-red-500">잠금</button>
+      </div>
+
+      <p id="status" class="mt-4 min-h-6 rounded-xl border border-border bg-muted/35 px-4 py-3 text-sm text-muted-foreground">대기 중</p>
+
+      <div id="contentPanel" class="mt-5 grid gap-5 lg:grid-cols-[380px_1fr]">
+        <aside class="rounded-2xl border border-border bg-background p-4 shadow-sm">
           <div class="flex items-center justify-between gap-3">
-            <h2 class="text-lg font-bold">목록</h2>
-            <button id="newBtn" class="rounded-xl border border-border px-3 py-2 text-sm font-bold">새 글</button>
+            <h2 id="listTitle" class="text-lg font-bold">발행글</h2>
+            <button id="newBtn" class="rounded-xl border border-border px-3 py-2 text-sm font-bold">새 초안</button>
           </div>
           <div class="mt-3 flex gap-2">
-            <input id="searchInput" class="w-full rounded-xl border border-border bg-background px-3 py-2 text-sm" placeholder="제목 검색" />
+            <input id="searchInput" class="w-full rounded-xl border border-border bg-background px-3 py-2 text-sm" placeholder="제목, 파일명, 태그 검색" />
             <button id="searchBtn" class="rounded-xl border border-border px-3 py-2 text-sm font-bold">검색</button>
           </div>
-          <div id="articleList" class="mt-4 max-h-[620px] space-y-2 overflow-auto pr-1"></div>
-        </div>
-      </aside>
+          <div id="articleList" class="mt-4 max-h-[680px] space-y-2 overflow-auto pr-1"></div>
+        </aside>
 
-      <section class="rounded-2xl border border-border bg-background p-4 shadow-sm sm:p-5">
-        <div class="grid gap-3 sm:grid-cols-[1fr_1fr]">
+        <section class="rounded-2xl border border-border bg-background p-4 shadow-sm sm:p-5">
+          <div class="grid gap-3 sm:grid-cols-[1fr_1fr]">
+            <div>
+              <label class="block text-sm font-semibold text-muted-foreground" for="keyword">제목 / 키워드</label>
+              <input id="keyword" class="mt-2 w-full rounded-xl border border-border bg-background px-3 py-2" placeholder="글 제목 또는 키워드" />
+            </div>
+            <div>
+              <label class="block text-sm font-semibold text-muted-foreground" for="tags">태그</label>
+              <input id="tags" class="mt-2 w-full rounded-xl border border-border bg-background px-3 py-2" placeholder="쉼표로 구분" />
+            </div>
+          </div>
+          <label class="mt-4 block text-sm font-semibold text-muted-foreground" for="description">Description</label>
+          <input id="description" class="mt-2 w-full rounded-xl border border-border bg-background px-3 py-2" placeholder="검색 결과에 보일 설명" />
+          <label class="mt-4 block text-sm font-semibold text-muted-foreground" for="currentPath">파일 경로</label>
+          <input id="currentPath" class="mt-2 w-full rounded-xl border border-border bg-muted/40 px-3 py-2 text-sm text-muted-foreground" readonly />
+
+          <div class="mt-4 flex flex-wrap gap-2">
+            <button id="savePublishedBtn" class="actionPublished rounded-xl bg-accent px-3 py-2 text-sm font-bold text-accent-foreground">발행글 수정 저장</button>
+            <button id="hidePublishedBtn" class="actionPublished rounded-xl border border-amber-400 px-3 py-2 text-sm font-bold text-amber-600">공개 숨김</button>
+            <button id="showPublishedBtn" class="actionPublished rounded-xl border border-border px-3 py-2 text-sm font-bold">다시 공개</button>
+            <button id="deletePublishedBtn" class="actionPublished rounded-xl border border-red-400 px-3 py-2 text-sm font-bold text-red-500">파일 삭제</button>
+            <button id="saveDraftBtn" class="actionDraft rounded-xl bg-accent px-3 py-2 text-sm font-bold text-accent-foreground">초안 수정 저장</button>
+            <button id="createDraftBtn" class="actionDraft rounded-xl border border-border px-3 py-2 text-sm font-bold">새 초안 저장</button>
+            <button id="publishBtn" class="actionDraft rounded-xl border border-border px-3 py-2 text-sm font-bold">승인 발행</button>
+            <button id="deleteDraftBtn" class="actionDraft rounded-xl border border-red-400 px-3 py-2 text-sm font-bold text-red-500">초안 삭제</button>
+            <button id="restoreDraftBtn" class="actionTrash rounded-xl border border-amber-400 px-3 py-2 text-sm font-bold text-amber-600">복구</button>
+            <button id="previewBtn" class="rounded-xl border border-border px-3 py-2 text-sm font-bold">미리보기</button>
+          </div>
+
+          <textarea id="markdown" class="mt-4 min-h-[640px] w-full rounded-xl border border-border bg-background px-4 py-3 font-mono text-sm leading-7" spellcheck="false" placeholder="왼쪽 목록에서 글을 선택하거나 새 초안을 작성하세요."></textarea>
+        </section>
+      </div>
+
+      <section id="sitePanel" class="mt-5 hidden rounded-2xl border border-border bg-background p-5 shadow-sm">
+        <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <label class="block text-sm font-semibold text-muted-foreground" for="keyword">키워드 / 제목</label>
-            <input id="keyword" class="mt-2 w-full rounded-xl border border-border bg-background px-3 py-2" placeholder="글 제목 또는 키워드" />
+            <h2 class="text-xl font-bold">사이트 UI / UX 설정</h2>
+            <p class="text-muted-foreground mt-2 leading-7">저장하면 GitHub에 커밋되고 Vercel이 자동 재배포합니다.</p>
+          </div>
+          <div class="flex gap-2">
+            <button id="loadSiteBtn" class="rounded-xl border border-border px-4 py-2 text-sm font-bold">설정 불러오기</button>
+            <button id="saveSiteBtn" class="rounded-xl bg-accent px-4 py-2 text-sm font-bold text-accent-foreground">설정 저장</button>
+          </div>
+        </div>
+        <div class="mt-5 grid gap-4 lg:grid-cols-2">
+          <div>
+            <label class="text-sm font-semibold text-muted-foreground" for="siteTitle">사이트 이름</label>
+            <input id="siteTitle" class="mt-2 w-full rounded-xl border border-border bg-background px-3 py-2" />
           </div>
           <div>
-            <label class="block text-sm font-semibold text-muted-foreground" for="tags">태그</label>
-            <input id="tags" class="mt-2 w-full rounded-xl border border-border bg-background px-3 py-2" placeholder="쉼표로 구분" />
+            <label class="text-sm font-semibold text-muted-foreground" for="siteAuthor">작성자 / 브랜드</label>
+            <input id="siteAuthor" class="mt-2 w-full rounded-xl border border-border bg-background px-3 py-2" />
+          </div>
+          <div class="lg:col-span-2">
+            <label class="text-sm font-semibold text-muted-foreground" for="siteDescription">사이트 설명</label>
+            <input id="siteDescription" class="mt-2 w-full rounded-xl border border-border bg-background px-3 py-2" />
+          </div>
+          <div>
+            <label class="text-sm font-semibold text-muted-foreground" for="siteUrl">사이트 URL</label>
+            <input id="siteUrl" class="mt-2 w-full rounded-xl border border-border bg-background px-3 py-2" />
+          </div>
+          <div>
+            <label class="text-sm font-semibold text-muted-foreground" for="profileUrl">프로필 URL</label>
+            <input id="profileUrl" class="mt-2 w-full rounded-xl border border-border bg-background px-3 py-2" />
+          </div>
+          <div>
+            <label class="text-sm font-semibold text-muted-foreground" for="accentColor">포인트 색상</label>
+            <div class="mt-2 flex gap-2">
+              <input id="accentColor" type="color" class="h-11 w-16 rounded-xl border border-border bg-background p-1" />
+              <input id="accentColorText" class="w-full rounded-xl border border-border bg-background px-3 py-2" placeholder="#0f766e" />
+            </div>
+          </div>
+          <div>
+            <label class="text-sm font-semibold text-muted-foreground" for="postsPerPage">목록당 글 수</label>
+            <input id="postsPerPage" type="number" min="1" max="30" class="mt-2 w-full rounded-xl border border-border bg-background px-3 py-2" />
           </div>
         </div>
-        <label class="mt-4 block text-sm font-semibold text-muted-foreground" for="description">Description</label>
-        <input id="description" class="mt-2 w-full rounded-xl border border-border bg-background px-3 py-2" placeholder="검색 결과에 보일 설명" />
-
-        <div class="mt-4 flex flex-wrap gap-2">
-          <button id="saveBtn" class="rounded-xl bg-accent px-3 py-2 text-sm font-bold text-accent-foreground">수정 저장</button>
-          <button id="createBtn" class="rounded-xl border border-border px-3 py-2 text-sm font-bold">새 파일 저장</button>
-          <button id="previewBtn" class="rounded-xl border border-border px-3 py-2 text-sm font-bold">미리보기</button>
-          <button id="publishBtn" class="rounded-xl border border-border px-3 py-2 text-sm font-bold">승인 발행</button>
-          <button id="restoreBtn" class="rounded-xl border border-amber-400 px-3 py-2 text-sm font-bold text-amber-600">복구</button>
-          <button id="deleteBtn" class="rounded-xl border border-red-400 px-3 py-2 text-sm font-bold text-red-500">삭제</button>
-        </div>
-
-        <textarea id="markdown" class="mt-4 min-h-[640px] w-full rounded-xl border border-border bg-background px-4 py-3 font-mono text-sm leading-7" spellcheck="false" placeholder="저장글을 선택하거나 새 원고를 작성하세요."></textarea>
       </section>
     </section>
   </main>
@@ -112,53 +185,60 @@ import config from "@/config";
 <script>
   // @ts-nocheck
   const $ = id => document.getElementById(id);
-  const state = { filename: null, isTrash: false, articles: [] };
+  const state = {
+    mode: "published",
+    currentKind: null,
+    currentPath: null,
+    currentFilename: null,
+    isTrash: false,
+    items: [],
+  };
 
   const fields = {
+    lockPanel: $("lockPanel"),
+    adminConsole: $("adminConsole"),
     apiBase: $("apiBase"),
     apiKey: $("apiKey"),
+    lockStatus: $("lockStatus"),
+    status: $("status"),
+    list: $("articleList"),
+    listTitle: $("listTitle"),
+    search: $("searchInput"),
     keyword: $("keyword"),
     tags: $("tags"),
     description: $("description"),
+    currentPath: $("currentPath"),
     markdown: $("markdown"),
-    status: $("status"),
-    list: $("articleList"),
+    statMode: $("statMode"),
+    statCount: $("statCount"),
+    statFile: $("statFile"),
+    statChars: $("statChars"),
+    contentPanel: $("contentPanel"),
+    sitePanel: $("sitePanel"),
     modal: $("modal"),
     preview: $("preview"),
     previewTitle: $("previewTitle"),
-    search: $("searchInput"),
-    statMode: $("statMode"),
-    statFile: $("statFile"),
-    statChars: $("statChars"),
-    badge: $("connectionBadge"),
+    siteTitle: $("siteTitle"),
+    siteAuthor: $("siteAuthor"),
+    siteDescription: $("siteDescription"),
+    siteUrl: $("siteUrl"),
+    profileUrl: $("profileUrl"),
+    accentColor: $("accentColor"),
+    accentColorText: $("accentColorText"),
+    postsPerPage: $("postsPerPage"),
   };
 
   fields.apiBase.value = localStorage.getItem("admin_api_base") || "http://127.0.0.1:8080";
   fields.apiKey.value = localStorage.getItem("blog_api_key") || "";
-  updateConnectionBadge();
   updateStats();
-
-  function setStatus(message, type = "") {
-    fields.status.textContent = message;
-    fields.status.className = `mt-3 min-h-6 text-sm ${type === "bad" ? "text-red-500" : type === "ok" ? "text-accent" : "text-muted-foreground"}`;
-    fields.statMode.textContent = type === "bad" ? "확인 필요" : type === "ok" ? "완료" : "진행";
-  }
-
-  function updateConnectionBadge() {
-    const ready = fields.apiBase.value.trim() && fields.apiKey.value.trim();
-    fields.badge.textContent = ready ? "저장됨" : "미저장";
-    fields.badge.className = ready
-      ? "rounded-full bg-accent px-3 py-1 text-xs font-bold text-accent-foreground"
-      : "rounded-full bg-muted px-3 py-1 text-xs font-bold text-muted-foreground";
-  }
-
-  function updateStats() {
-    fields.statFile.textContent = state.filename || "없음";
-    fields.statChars.textContent = compactText(fields.markdown.value).length.toLocaleString("ko-KR");
-  }
+  setEditorMode("published");
 
   function baseUrl() {
     return fields.apiBase.value.replace(/\/+$/, "");
+  }
+
+  function encodePath(path) {
+    return String(path || "").split("/").map(encodeURIComponent).join("/");
   }
 
   async function api(path, options = {}) {
@@ -196,115 +276,229 @@ import config from "@/config";
     });
   }
 
-  function compactText(value) {
-    return String(value || "").replace(/\s+/g, "");
+  function setStatus(message, type = "") {
+    const target = fields.adminConsole.classList.contains("hidden") ? fields.lockStatus : fields.status;
+    target.textContent = message;
+    target.className = target.id === "status"
+      ? `mt-4 min-h-6 rounded-xl border border-border bg-muted/35 px-4 py-3 text-sm ${type === "bad" ? "text-red-500" : type === "ok" ? "text-accent" : "text-muted-foreground"}`
+      : `mt-4 min-h-6 text-sm ${type === "bad" ? "text-red-500" : type === "ok" ? "text-accent" : "text-muted-foreground"}`;
   }
 
-  function escapeHtml(value) {
-    return String(value || "").replace(/[&<>"']/g, char => ({
-      "&": "&amp;",
-      "<": "&lt;",
-      ">": "&gt;",
-      '"': "&quot;",
-      "'": "&#39;",
-    }[char]));
+  async function unlock() {
+    localStorage.setItem("admin_api_base", fields.apiBase.value.trim());
+    localStorage.setItem("blog_api_key", fields.apiKey.value.trim());
+    await api("/dashboard/status");
+    fields.lockPanel.classList.add("hidden");
+    fields.adminConsole.classList.remove("hidden");
+    setStatus("관리자 인증 완료", "ok");
+    await loadMode("published");
   }
 
-  function renderArticleList(articles = state.articles) {
+  function lockAgain() {
+    localStorage.removeItem("blog_api_key");
+    fields.apiKey.value = "";
+    fields.adminConsole.classList.add("hidden");
+    fields.lockPanel.classList.remove("hidden");
+    setStatus("잠금 상태입니다.");
+  }
+
+  async function loadMode(mode = state.mode) {
+    state.mode = mode;
+    clearCurrent(false);
+    setTabActive(mode);
+    setEditorMode(mode);
+    if (mode === "site") {
+      fields.contentPanel.classList.add("hidden");
+      fields.sitePanel.classList.remove("hidden");
+      await loadSiteSettings();
+      return;
+    }
+    fields.contentPanel.classList.remove("hidden");
+    fields.sitePanel.classList.add("hidden");
+    if (mode === "published") return loadPublishedPosts();
+    if (mode === "drafts") return loadDrafts(false);
+    if (mode === "trash") return loadDrafts(true);
+  }
+
+  function setTabActive(mode) {
+    document.querySelectorAll(".tabBtn").forEach(button => {
+      const active = button.dataset.tab === mode;
+      button.className = active
+        ? "tabBtn rounded-xl bg-accent px-4 py-2 text-sm font-bold text-accent-foreground"
+        : "tabBtn rounded-xl border border-border px-4 py-2 text-sm font-bold";
+    });
+    const labels = { published: "발행글", drafts: "초안", trash: "복구함", site: "사이트 설정" };
+    fields.statMode.textContent = labels[mode] || mode;
+    fields.listTitle.textContent = labels[mode] || mode;
+  }
+
+  function setEditorMode(mode) {
+    const published = mode === "published";
+    const drafts = mode === "drafts";
+    const trash = mode === "trash";
+    document.querySelectorAll(".actionPublished").forEach(el => el.classList.toggle("hidden", !published));
+    document.querySelectorAll(".actionDraft").forEach(el => el.classList.toggle("hidden", !drafts));
+    document.querySelectorAll(".actionTrash").forEach(el => el.classList.toggle("hidden", !trash));
+    $("newBtn").classList.toggle("hidden", mode !== "drafts");
+  }
+
+  async function loadPublishedPosts() {
+    const data = await api("/github/posts?limit=300");
+    state.items = data.posts || [];
+    renderList();
+  }
+
+  async function loadDrafts(isTrash) {
+    state.isTrash = isTrash;
+    const data = await api(isTrash ? "/articles/trash?limit=300" : "/articles?limit=300");
+    state.items = data.articles || [];
+    renderList();
+  }
+
+  function renderList() {
     const keyword = fields.search.value.trim().toLowerCase();
-    const visible = keyword
-      ? articles.filter(article => `${article.title} ${article.filename}`.toLowerCase().includes(keyword))
-      : articles;
+    const visible = keyword ? state.items.filter(item => searchableText(item).includes(keyword)) : state.items;
+    fields.statCount.textContent = String(visible.length);
     fields.list.replaceChildren();
     if (!visible.length) {
       const empty = document.createElement("p");
       empty.className = "rounded-xl border border-dashed border-border p-4 text-sm text-muted-foreground";
-      empty.textContent = state.isTrash ? "복구함이 비어 있습니다." : "저장된 글이 없습니다.";
+      empty.textContent = "표시할 항목이 없습니다.";
       fields.list.append(empty);
       return;
     }
-    visible.forEach(article => fields.list.append(articleButton(article, state.isTrash)));
+    visible.forEach(item => fields.list.append(listButton(item)));
   }
 
-  function articleButton(article, isTrash) {
+  function searchableText(item) {
+    return `${item.title || ""} ${item.filename || ""} ${item.path || ""} ${(item.tags || []).join(" ")}`.toLowerCase();
+  }
+
+  function listButton(item) {
     const button = document.createElement("button");
     button.type = "button";
     button.className = "w-full rounded-xl border border-border bg-muted/35 p-3 text-left transition hover:border-accent hover:bg-muted/60";
-    button.innerHTML = `<strong class="block truncate">${escapeHtml(article.title)}</strong><span class="mt-1 block truncate text-xs text-muted-foreground">${escapeHtml(article.filename)}</span><small class="mt-2 block text-muted-foreground">${escapeHtml(article.created_at)} · ${Number(article.compact_chars || 0).toLocaleString("ko-KR")}자</small>`;
-    button.addEventListener("click", () => loadDetail(article.filename, isTrash));
+    const filename = item.filename || item.path || "";
+    const metaDate = item.pub_datetime || item.created_at || "";
+    const badge = state.mode === "published" ? (item.draft ? "숨김" : "공개") : state.mode === "trash" ? "복구함" : "초안";
+    button.innerHTML = `<div class="flex items-start justify-between gap-2"><strong class="block min-w-0 truncate">${escapeHtml(item.title || filename)}</strong><span class="shrink-0 rounded-full bg-background px-2 py-1 text-[11px] font-bold text-muted-foreground">${badge}</span></div><span class="mt-1 block truncate text-xs text-muted-foreground">${escapeHtml(filename)}</span><small class="mt-2 block text-muted-foreground">${escapeHtml(metaDate)} · ${Number(item.compact_chars || 0).toLocaleString("ko-KR")}자</small>`;
+    button.addEventListener("click", () => state.mode === "published" ? loadPublishedDetail(item.path) : loadDraftDetail(item.filename, state.mode === "trash"));
     return button;
   }
 
-  async function loadList(isTrash = false) {
-    state.isTrash = isTrash;
-    fields.statMode.textContent = isTrash ? "복구함" : "초안";
-    const data = await api(isTrash ? "/articles/trash?limit=300" : "/articles?limit=300");
-    state.articles = data.articles || [];
-    renderArticleList();
+  async function loadPublishedDetail(path) {
+    const post = await api(`/github/posts/${encodePath(path)}`);
+    state.currentKind = "published";
+    state.currentPath = post.path;
+    state.currentFilename = null;
+    fillEditor({
+      title: post.title,
+      description: post.description,
+      tags: post.tags,
+      path: post.path,
+      markdown: post.markdown,
+    });
+    setStatus(`발행글 불러오기: ${post.title}`, "ok");
   }
 
-  async function loadDetail(filename, isTrash = state.isTrash) {
+  async function loadDraftDetail(filename, isTrash) {
     const article = await api(isTrash ? `/articles/trash/${encodeURIComponent(filename)}` : `/articles/${encodeURIComponent(filename)}`);
-    state.filename = article.filename;
-    state.isTrash = isTrash;
-    fields.keyword.value = article.title || "";
-    fields.description.value = extractFrontmatterValue(article.markdown, "description");
-    fields.tags.value = extractFrontmatterTags(article.markdown).join(", ");
-    fields.markdown.value = article.markdown || "";
-    setStatus(`${isTrash ? "복구함" : "저장글"} 불러오기: ${article.title}`, "ok");
+    state.currentKind = isTrash ? "trash" : "draft";
+    state.currentFilename = article.filename;
+    state.currentPath = null;
+    fillEditor({
+      title: article.title,
+      description: extractFrontmatterValue(article.markdown, "description"),
+      tags: extractFrontmatterTags(article.markdown),
+      path: article.filename,
+      markdown: article.markdown,
+    });
+    setStatus(`${isTrash ? "복구함" : "초안"} 불러오기: ${article.title}`, "ok");
+  }
+
+  function fillEditor({ title, description, tags, path, markdown }) {
+    fields.keyword.value = title || "";
+    fields.description.value = description || "";
+    fields.tags.value = (tags || []).join(", ");
+    fields.currentPath.value = path || "";
+    fields.markdown.value = markdown || "";
     updateStats();
   }
 
-  function extractFrontmatterValue(markdown, key) {
-    const match = String(markdown || "").match(new RegExp(`^---[\\s\\S]*?^${key}:\\s*[\"']?([^\\n\"']+)`, "m"));
-    return match ? match[1].trim() : "";
+  function clearCurrent(clearMarkdown = true) {
+    state.currentKind = null;
+    state.currentPath = null;
+    state.currentFilename = null;
+    fields.keyword.value = "";
+    fields.tags.value = "";
+    fields.description.value = "";
+    fields.currentPath.value = "";
+    if (clearMarkdown) fields.markdown.value = "";
+    updateStats();
   }
 
-  function extractFrontmatterTags(markdown) {
-    const match = String(markdown || "").match(/^---[\s\S]*?^tags:\s*\[([^\]]*)\]/m);
-    if (!match) return [];
-    return match[1].split(",").map(tag => tag.replace(/["']/g, "").trim()).filter(Boolean);
+  async function savePublished() {
+    if (!state.currentPath) throw new Error("수정할 발행글을 선택하세요.");
+    return api(`/github/posts/${encodePath(state.currentPath)}`, {
+      method: "PUT",
+      body: JSON.stringify({ markdown: fields.markdown.value }),
+    });
   }
 
-  async function saveCurrent(updateExisting) {
+  async function setPublishedDraft(draft) {
+    if (!state.currentPath) throw new Error("상태를 바꿀 발행글을 선택하세요.");
+    return api("/github/posts/draft", {
+      method: "POST",
+      body: JSON.stringify({ path: state.currentPath, draft }),
+    });
+  }
+
+  async function deletePublished() {
+    if (!state.currentPath) throw new Error("삭제할 발행글을 선택하세요.");
+    if (!confirm("GitHub에서 이 글 파일을 삭제합니다. 계속할까요?")) return;
+    const result = await api(`/github/posts/${encodePath(state.currentPath)}`, { method: "DELETE" });
+    clearCurrent();
+    await loadPublishedPosts();
+    return result;
+  }
+
+  async function saveDraft(updateExisting) {
     const markdown = fields.markdown.value.trim();
     const keyword = fields.keyword.value.trim() || "manual-article";
     if (!markdown) throw new Error("저장할 Markdown이 없습니다.");
-    if (updateExisting && state.filename && !state.isTrash) {
-      const data = await api(`/articles/${encodeURIComponent(state.filename)}`, {
+    if (updateExisting && state.currentFilename && state.currentKind === "draft") {
+      const data = await api(`/articles/${encodeURIComponent(state.currentFilename)}`, {
         method: "PUT",
         body: JSON.stringify({ markdown }),
       });
-      state.filename = data.filename;
-      await loadList(false);
+      state.currentFilename = data.filename;
+      await loadDrafts(false);
       return data;
     }
     const data = await api("/articles", {
       method: "POST",
       body: JSON.stringify({ keyword, markdown }),
     });
-    state.filename = data.filename;
-    state.isTrash = false;
-    await loadList(false);
+    state.currentKind = "draft";
+    state.currentFilename = data.filename;
+    await loadDrafts(false);
     return data;
   }
 
-  async function deleteCurrent() {
-    if (!state.filename || state.isTrash) throw new Error("삭제할 저장글을 선택하세요.");
-    if (!confirm("선택한 글을 복구함으로 이동할까요?")) return;
-    const data = await api(`/articles/${encodeURIComponent(state.filename)}`, { method: "DELETE" });
-    state.filename = null;
-    fields.markdown.value = "";
-    await loadList(false);
+  async function deleteDraft() {
+    if (!state.currentFilename || state.currentKind !== "draft") throw new Error("삭제할 초안을 선택하세요.");
+    if (!confirm("선택한 초안을 복구함으로 이동할까요?")) return;
+    const data = await api(`/articles/${encodeURIComponent(state.currentFilename)}`, { method: "DELETE" });
+    clearCurrent();
+    await loadDrafts(false);
     return data;
   }
 
-  async function restoreCurrent() {
-    if (!state.filename || !state.isTrash) throw new Error("복구함에서 복구할 글을 선택하세요.");
-    const data = await api(`/articles/trash/${encodeURIComponent(state.filename)}/restore`, { method: "POST" });
-    state.filename = data.filename;
-    state.isTrash = false;
-    await loadList(false);
+  async function restoreDraft() {
+    if (!state.currentFilename || state.currentKind !== "trash") throw new Error("복구함에서 글을 선택하세요.");
+    const data = await api(`/articles/trash/${encodeURIComponent(state.currentFilename)}/restore`, { method: "POST" });
+    clearCurrent();
+    await loadDrafts(true);
     return data;
   }
 
@@ -324,15 +518,75 @@ import config from "@/config";
     });
   }
 
+  async function loadSiteSettings() {
+    const data = await api("/github/site-ui");
+    const settings = data.settings || {};
+    fields.siteTitle.value = settings.site_title || "";
+    fields.siteAuthor.value = settings.site_author || "";
+    fields.siteDescription.value = settings.site_description || "";
+    fields.siteUrl.value = settings.site_url || "";
+    fields.profileUrl.value = settings.profile_url || "";
+    fields.accentColor.value = settings.accent_color || "#0f766e";
+    fields.accentColorText.value = settings.accent_color || "#0f766e";
+    fields.postsPerPage.value = settings.posts_per_page || 6;
+    setStatus("사이트 설정을 불러왔습니다.", "ok");
+  }
+
+  async function saveSiteSettings() {
+    const color = fields.accentColorText.value.trim() || fields.accentColor.value;
+    if (!/^#[0-9a-fA-F]{6}$/.test(color)) throw new Error("포인트 색상은 #0f766e 형식이어야 합니다.");
+    return api("/github/site-ui", {
+      method: "PUT",
+      body: JSON.stringify({
+        site_title: fields.siteTitle.value.trim() || null,
+        site_author: fields.siteAuthor.value.trim() || null,
+        site_description: fields.siteDescription.value.trim() || null,
+        site_url: fields.siteUrl.value.trim() || null,
+        profile_url: fields.profileUrl.value.trim() || null,
+        accent_color: color,
+        posts_per_page: Number(fields.postsPerPage.value || 6),
+      }),
+    });
+  }
+
   function newDraft() {
-    state.filename = null;
-    state.isTrash = false;
-    fields.keyword.value = "";
-    fields.tags.value = "";
-    fields.description.value = "";
-    fields.markdown.value = "";
-    setStatus("새 글을 작성할 수 있습니다.", "ok");
-    updateStats();
+    loadMode("drafts");
+    clearCurrent();
+    state.currentKind = "draft";
+    setStatus("새 초안을 작성할 수 있습니다.", "ok");
+  }
+
+  function updateStats() {
+    fields.statFile.textContent = state.currentPath || state.currentFilename || "없음";
+    fields.statChars.textContent = compactText(fields.markdown.value).length.toLocaleString("ko-KR");
+  }
+
+  function compactText(value) {
+    return String(value || "").replace(/\s+/g, "");
+  }
+
+  function escapeHtml(value) {
+    return String(value || "").replace(/[&<>"']/g, char => ({
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      '"': "&quot;",
+      "'": "&#39;",
+    }[char]));
+  }
+
+  function extractFrontmatterValue(markdown, key) {
+    const match = String(markdown || "").match(new RegExp(`^---[\\s\\S]*?^${key}:\\s*[\"']?([^\\n\"']+)`, "m"));
+    return match ? match[1].trim() : "";
+  }
+
+  function extractFrontmatterTags(markdown) {
+    const text = String(markdown || "");
+    const inline = text.match(/^---[\s\S]*?^tags:\s*\[([^\]]*)\]/m);
+    if (inline) return inline[1].split(",").map(tag => tag.replace(/["']/g, "").trim()).filter(Boolean);
+    const block = text.match(/^---[\s\S]*?^tags:\s*\n((?:\s+-\s+.*\n?)+)/m);
+    if (!block) return [];
+    return block[1].split("\n").map(line => line.replace(/^\s+-\s+/, "").replace(/["']/g, "").trim()).filter(Boolean);
   }
 
   function markdownToHtml(markdown) {
@@ -357,25 +611,31 @@ import config from "@/config";
     fields.modal.classList.remove("hidden");
   }
 
-  fields.markdown.addEventListener("input", updateStats);
-  fields.search.addEventListener("input", () => renderArticleList());
-  $("searchBtn").addEventListener("click", () => renderArticleList());
-  $("saveConnectionBtn").addEventListener("click", () => {
-    localStorage.setItem("admin_api_base", fields.apiBase.value.trim());
-    localStorage.setItem("blog_api_key", fields.apiKey.value.trim());
-    updateConnectionBadge();
-    setStatus("연결 정보를 저장했습니다.", "ok");
-  });
-  $("loadBtn").addEventListener("click", () => safe("초안 목록", () => loadList(false)));
-  $("trashBtn").addEventListener("click", () => safe("복구함", () => loadList(true)));
+  $("unlockBtn").addEventListener("click", () => safe("관리자 인증", unlock));
+  $("lockAgainBtn").addEventListener("click", lockAgain);
+  $("refreshBtn").addEventListener("click", () => safe("새로고침", () => loadMode(state.mode)));
+  document.querySelectorAll(".tabBtn").forEach(button => button.addEventListener("click", () => safe(button.textContent.trim(), () => loadMode(button.dataset.tab))));
+  fields.search.addEventListener("input", renderList);
+  $("searchBtn").addEventListener("click", renderList);
   $("newBtn").addEventListener("click", newDraft);
-  $("saveBtn").addEventListener("click", () => safe("수정 저장", () => saveCurrent(true)));
-  $("createBtn").addEventListener("click", () => safe("새 파일 저장", () => saveCurrent(false)));
-  $("deleteBtn").addEventListener("click", () => safe("삭제", deleteCurrent));
-  $("restoreBtn").addEventListener("click", () => safe("복구", restoreCurrent));
+  $("savePublishedBtn").addEventListener("click", () => safe("발행글 수정 저장", async () => { const result = await savePublished(); await loadPublishedPosts(); return result; }));
+  $("hidePublishedBtn").addEventListener("click", () => safe("공개 숨김", async () => { const result = await setPublishedDraft(true); await loadPublishedPosts(); return result; }));
+  $("showPublishedBtn").addEventListener("click", () => safe("다시 공개", async () => { const result = await setPublishedDraft(false); await loadPublishedPosts(); return result; }));
+  $("deletePublishedBtn").addEventListener("click", () => safe("발행글 삭제", deletePublished));
+  $("saveDraftBtn").addEventListener("click", () => safe("초안 수정 저장", () => saveDraft(true)));
+  $("createDraftBtn").addEventListener("click", () => safe("새 초안 저장", () => saveDraft(false)));
+  $("deleteDraftBtn").addEventListener("click", () => safe("초안 삭제", deleteDraft));
+  $("restoreDraftBtn").addEventListener("click", () => safe("복구", restoreDraft));
   $("publishBtn").addEventListener("click", () => safe("승인 발행", publishCurrent));
   $("previewBtn").addEventListener("click", openPreview);
   $("closeModalBtn").addEventListener("click", () => fields.modal.classList.add("hidden"));
+  $("loadSiteBtn").addEventListener("click", () => safe("사이트 설정 불러오기", loadSiteSettings));
+  $("saveSiteBtn").addEventListener("click", () => safe("사이트 설정 저장", saveSiteSettings));
+  fields.accentColor.addEventListener("input", () => fields.accentColorText.value = fields.accentColor.value);
+  fields.accentColorText.addEventListener("input", () => {
+    if (/^#[0-9a-fA-F]{6}$/.test(fields.accentColorText.value)) fields.accentColor.value = fields.accentColorText.value;
+  });
+  fields.markdown.addEventListener("input", updateStats);
 
-  if (fields.apiKey.value) safe("초안 목록", () => loadList(false));
+  if (fields.apiKey.value) safe("관리자 인증", unlock);
 </script>
