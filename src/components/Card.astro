@@ -9,23 +9,36 @@ type Props = {
 } & CollectionEntry<"posts">;
 
 const { variant: Heading = "h2", id, data, filePath } = Astro.props;
-
-const { title, description, ...props } = data;
+const { title, description, tags = [], ...props } = data;
+const previewTags = tags.slice(0, 3);
 ---
 
-<li class="my-6">
+<li class="group border-border bg-background hover:border-accent/60 rounded-lg border p-5 transition-colors">
   <a
     href={getPostUrl(id, filePath, Astro.currentLocale)}
-    class:list={[
-      "text-accent inline-block text-lg font-medium",
-      "decoration-dashed underline-offset-4 hover:underline",
-      "focus-visible:no-underline focus-visible:underline-offset-0",
-    ]}
+    class="block no-underline"
+    aria-label={title}
   >
-    <Heading transition:name={slugifyStr(title.replaceAll(".", "-"))}>
+    <Heading
+      transition:name={slugifyStr(title.replaceAll(".", "-"))}
+      class="group-hover:text-accent text-lg leading-7 font-semibold"
+    >
       {title}
     </Heading>
   </a>
-  <Datetime {...props} />
-  <p>{description}</p>
+  <div class="text-muted-foreground mt-3 text-sm">
+    <Datetime {...props} />
+  </div>
+  <p class="text-muted-foreground mt-3 line-clamp-3 leading-7">{description}</p>
+  {
+    previewTags.length > 0 && (
+      <div class="mt-4 flex flex-wrap gap-2">
+        {previewTags.map(tag => (
+          <span class="border-border bg-muted/50 rounded-lg border px-2 py-1 text-xs font-semibold">
+            {tag}
+          </span>
+        ))}
+      </div>
+    )
+  }
 </li>
