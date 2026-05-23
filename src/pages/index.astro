@@ -1,26 +1,17 @@
 ---
 import { getCollection } from "astro:content";
 import { getRelativeLocaleUrl } from "astro:i18n";
-import IconArrowRight from "@/assets/icons/IconArrowRight.svg";
 import Layout from "@/layouts/Layout.astro";
 import Header from "@/components/Header.astro";
 import Footer from "@/components/Footer.astro";
-import Card from "@/components/Card.astro";
-import LinkButton from "@/components/LinkButton.astro";
+import NewsItem from "@/components/NewsItem.astro";
 import { getSortedPosts } from "@/utils/getSortedPosts";
 import config from "@/config";
 
-const { posts: postsConfig } = config;
-
 const locale = Astro.currentLocale ?? config.site.lang;
-const posts = await getCollection("posts");
+const posts = await getCollection("posts", ({ data }) => !data.draft);
 const sortedPosts = getSortedPosts(posts);
-const featuredPosts = sortedPosts.filter(({ data }) => data.featured);
-const spotlightPosts = (featuredPosts.length > 0 ? featuredPosts : sortedPosts).slice(0, 3);
-const spotlightIds = new Set(spotlightPosts.map(({ id }) => id));
-const recentPosts = sortedPosts
-  .filter(({ id }) => !spotlightIds.has(id))
-  .slice(0, postsConfig.perIndex);
+const latestPosts = sortedPosts.slice(0, Math.max(config.posts.perIndex, 30));
 const latestPost = sortedPosts[0];
 const latestDate = latestPost?.data.pubDatetime
   ? latestPost.data.pubDatetime.toLocaleDateString("ko-KR", {
@@ -29,154 +20,92 @@ const latestDate = latestPost?.data.pubDatetime
       day: "numeric",
     })
   : "준비 중";
-const homePath = getRelativeLocaleUrl(locale, "");
 const postsPath = getRelativeLocaleUrl(locale, "posts");
-const stats = [
-  { label: "발행 글", value: `${sortedPosts.length}개` },
-  { label: "최근 업데이트", value: latestDate },
-  { label: "편집 기준", value: "근거 기반" },
-];
-const heroImage = "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1280&q=82";
+const listPath = getRelativeLocaleUrl(locale, "posts/list");
+const tagsPath = getRelativeLocaleUrl(locale, "tags");
+const searchPath = getRelativeLocaleUrl(locale, "search");
+const allTags = sortedPosts.flatMap(post => post.data.tags ?? []);
+const tagCount = allTags.reduce<Record<string, number>>((acc, tag) => {
+  acc[tag] = (acc[tag] ?? 0) + 1;
+  return acc;
+}, {});
+const topTags = Object.entries(tagCount)
+  .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0], "ko"))
+  .slice(0, 8);
 ---
 
 <Layout>
   <Header />
-  <main
-    id="main-content"
-    data-layout="index"
-    data-home-path={homePath}
-    class="mx-auto w-full max-w-6xl px-4"
-  >
-    <section id="hero" class="py-8 sm:py-12">
-      <div class="grid overflow-hidden rounded-[1.5rem] border border-border bg-muted/35 lg:grid-cols-[1.05fr_0.95fr]">
-        <div class="flex flex-col justify-between gap-10 p-6 sm:p-9 lg:p-12">
+  <main id="main-content" data-layout="index" class="app-layout py-4 sm:py-6">
+    <section class="news-board overflow-hidden border border-border bg-background">
+      <div class="border-b border-border bg-muted/55 px-3 py-3 sm:px-4">
+        <div class="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <p class="text-accent text-sm font-semibold tracking-[0.22em] uppercase">
-              Search, Content, Revenue
+            <p class="text-xs font-bold tracking-[0.18em] text-accent uppercase">SEO News Board</p>
+            <h1 class="mt-1 text-xl font-bold sm:text-2xl">AI SEO Lab 최신글</h1>
+            <p class="mt-1 max-w-3xl text-sm leading-6 text-muted-foreground">
+              트렌드, 검색 데이터, Fact Pack, 수익화 실험을 근거 중심으로 정리합니다. 카드보다 빠르게 읽히도록 최신 글을 뉴스 피드 형태로 보여줍니다.
             </p>
-            <h1 class="mt-5 max-w-3xl text-4xl leading-tight font-bold sm:text-6xl">
-              오늘의 검색 흐름을 내일의 콘텐츠 자산으로 바꿉니다.
-            </h1>
-            <p class="text-muted-foreground mt-5 max-w-2xl text-lg leading-8">
-              트렌드 키워드, 공식 출처, Search Console 신호를 바탕으로
-              읽을 만한 생활 정보와 SEO 실험 노트를 정리합니다.
-            </p>
-            <div class="mt-7 flex flex-wrap gap-3">
-              <LinkButton href={postsPath} class="bg-accent text-accent-foreground rounded-lg px-4 py-2 font-semibold no-underline">
-                최신 글 보기
-                <IconArrowRight class="ms-1 inline-block rtl:-rotate-180" />
-              </LinkButton>
-              <a
-                href="#featured"
-                class="border-border hover:border-accent inline-flex items-center rounded-lg border px-4 py-2 font-semibold no-underline"
-              >
-                추천 글부터 보기
-              </a>
-            </div>
           </div>
-
-          <dl class="grid gap-3 sm:grid-cols-3">
-            {stats.map(stat => (
-              <div class="rounded-lg border border-border bg-background/80 p-4">
-                <dt class="text-muted-foreground text-xs font-semibold tracking-wide uppercase">{stat.label}</dt>
-                <dd class="mt-1 text-xl font-bold">{stat.value}</dd>
-              </div>
-            ))}
+          <dl class="grid grid-cols-3 gap-2 text-center text-xs sm:min-w-[280px]">
+            <div class="border border-border bg-background px-2 py-2">
+              <dt class="text-muted-foreground">발행</dt>
+              <dd class="font-bold">{sortedPosts.length}</dd>
+            </div>
+            <div class="border border-border bg-background px-2 py-2">
+              <dt class="text-muted-foreground">업데이트</dt>
+              <dd class="font-bold">{latestDate}</dd>
+            </div>
+            <div class="border border-border bg-background px-2 py-2">
+              <dt class="text-muted-foreground">형식</dt>
+              <dd class="font-bold">뉴스보드</dd>
+            </div>
           </dl>
         </div>
 
-        <figure class="relative min-h-[320px] lg:min-h-[560px]">
-          <img
-            src={heroImage}
-            alt="데이터 분석 화면이 보이는 노트북 작업 공간"
-            class="absolute inset-0 size-full object-cover"
-            loading="eager"
-            decoding="async"
-          />
-          <figcaption class="absolute inset-x-4 bottom-4 rounded-lg border border-white/25 bg-black/55 p-4 text-sm leading-6 text-white backdrop-blur">
-            단순 자동 생성보다 중요한 것은 검수, 수정, 삭제, 재발행까지 이어지는 운영 흐름입니다.
-          </figcaption>
-        </figure>
+        <nav class="mt-3 flex flex-wrap gap-2 text-xs font-semibold" aria-label="홈 바로가기">
+          <a href={postsPath} class="border border-border bg-background px-2.5 py-1.5 no-underline hover:border-accent hover:text-accent">최신글</a>
+          <a href={listPath} class="border border-border bg-background px-2.5 py-1.5 no-underline hover:border-accent hover:text-accent">전체 리스트</a>
+          <a href={tagsPath} class="border border-border bg-background px-2.5 py-1.5 no-underline hover:border-accent hover:text-accent">태그</a>
+          <a href={searchPath} class="border border-border bg-background px-2.5 py-1.5 no-underline hover:border-accent hover:text-accent">검색</a>
+        </nav>
+      </div>
+
+      {topTags.length > 0 && (
+        <div class="flex flex-wrap gap-x-3 gap-y-1 border-b border-border bg-background px-3 py-2 text-xs text-muted-foreground sm:px-4">
+          <span class="font-semibold text-foreground">Hot tags</span>
+          {topTags.map(([tag, count]) => (
+            <a href={`/tags/${tag}/`} class="no-underline hover:text-accent">
+              #{tag} <span class="text-[10px]">{count}</span>
+            </a>
+          ))}
+        </div>
+      )}
+
+      {latestPosts.length > 0 ? (
+        <ol class="divide-y-0">
+          {latestPosts.map((post, index) => <NewsItem {...post} index={index} />)}
+        </ol>
+      ) : (
+        <p class="px-4 py-10 text-sm text-muted-foreground">아직 발행된 글이 없습니다.</p>
+      )}
+
+      <div class="border-t border-border bg-muted/45 px-4 py-3 text-sm">
+        <a href={postsPath} class="font-semibold no-underline hover:text-accent">더 많은 글 보기</a>
+        <span class="mx-2 text-muted-foreground">|</span>
+        <a href={searchPath} class="font-semibold no-underline hover:text-accent">검색으로 찾기</a>
       </div>
     </section>
-
-    <section class="grid gap-4 border-y border-border py-6 md:grid-cols-3">
-      <div>
-        <p class="text-accent text-sm font-semibold">01</p>
-        <h2 class="mt-1 text-lg font-bold">근거를 먼저 봅니다</h2>
-        <p class="text-muted-foreground mt-2 text-sm leading-6">공식 출처와 최신 뉴스 피드를 확인한 뒤 글의 방향을 정합니다.</p>
-      </div>
-      <div>
-        <p class="text-accent text-sm font-semibold">02</p>
-        <h2 class="mt-1 text-lg font-bold">얇은 글을 걸러냅니다</h2>
-        <p class="text-muted-foreground mt-2 text-sm leading-6">반복 문장, 과장 표현, 위험 주제는 품질 게이트에서 막습니다.</p>
-      </div>
-      <div>
-        <p class="text-accent text-sm font-semibold">03</p>
-        <h2 class="mt-1 text-lg font-bold">성과를 보고 고칩니다</h2>
-        <p class="text-muted-foreground mt-2 text-sm leading-6">GSC 기회로 제목, 설명, 내부링크를 지속적으로 개선합니다.</p>
-      </div>
-    </section>
-
-    {
-      spotlightPosts.length > 0 && (
-        <section id="featured" class:list={["py-10", { "border-border border-b": recentPosts.length > 0 }]}>
-          <div class="flex items-end justify-between gap-4">
-            <div>
-              <p class="text-accent text-sm font-semibold">Featured</p>
-              <h2 class="mt-1 text-2xl font-semibold tracking-wide">먼저 읽어볼 글</h2>
-            </div>
-            <LinkButton href={postsPath} class="text-sm underline decoration-dashed underline-offset-4">
-              전체 글
-            </LinkButton>
-          </div>
-          <ul class="mt-5 grid gap-5 lg:grid-cols-3">
-            {spotlightPosts.map(data => (
-              <Card variant="h3" {...data} />
-            ))}
-          </ul>
-        </section>
-      )
-    }
-
-    {
-      recentPosts.length > 0 && (
-        <section id="recent-posts" class="py-10">
-          <div class="flex items-end justify-between gap-4">
-            <div>
-              <p class="text-accent text-sm font-semibold">Latest</p>
-              <h2 class="mt-1 text-2xl font-semibold tracking-wide">최근 업데이트</h2>
-            </div>
-          </div>
-          <ul class="mt-5 grid gap-5 sm:grid-cols-2">
-            {recentPosts.map(data => (
-              <Card variant="h3" {...data} />
-            ))}
-          </ul>
-        </section>
-      )
-    }
-
-    <div class="my-8 rounded-[1.25rem] border border-border bg-muted/35 p-6 text-center">
-      <p class="text-muted-foreground mb-4">
-        관심 키워드는 태그와 검색 페이지에서 빠르게 다시 찾을 수 있습니다.
-      </p>
-      <LinkButton href={postsPath} class="text-accent font-semibold underline decoration-dashed underline-offset-4">
-        전체 글 보기
-        <IconArrowRight class="inline-block rtl:-rotate-180" />
-      </LinkButton>
-    </div>
   </main>
   <Footer />
 </Layout>
 
 <script>
   document.addEventListener("astro:page-load", () => {
-    const indexLayout = (document.querySelector("#main-content") as HTMLElement)
-      ?.dataset;
+    const indexLayout = (document.querySelector("#main-content") as HTMLElement)?.dataset;
     const baseRoot = import.meta.env.BASE_URL.replace(/\/?$/, "/");
     if (indexLayout?.layout) {
-      sessionStorage.setItem("backUrl", indexLayout.homePath ?? baseRoot);
+      sessionStorage.setItem("backUrl", baseRoot);
     }
   });
 </script>
