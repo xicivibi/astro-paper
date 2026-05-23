@@ -1,0 +1,36 @@
+---
+import { getCollection } from "astro:content";
+import Layout from "@/layouts/Layout.astro";
+import Header from "@/components/Header.astro";
+import Breadcrumb from "@/components/Breadcrumb.astro";
+import Main from "@/components/Main.astro";
+import Footer from "@/components/Footer.astro";
+import ListCard from "@/components/ListCard.astro";
+import LinkButton from "@/components/LinkButton.astro";
+import { getSortedPosts } from "@/utils/getSortedPosts";
+import config from "@/config";
+
+const posts = await getCollection("posts", ({ data }) => !data.draft);
+const sortedPosts = getSortedPosts(posts);
+---
+
+<Layout title={`리스트 보기 | ${config.site.title}`} description="사진 없이 빠르게 훑는 전체 글 목록입니다.">
+  <Header />
+  <Breadcrumb />
+
+  <Main pageTitle="리스트 보기" pageDesc="사진 없이 제목, 날짜, 설명만 빠르게 훑는 전체 글 목록입니다.">
+    <div class="mb-6 flex flex-wrap gap-3">
+      <LinkButton href="/posts" class="border-border rounded-lg border px-3 py-2 text-sm font-semibold no-underline">
+        카드 보기
+      </LinkButton>
+      <span class="bg-accent text-accent-foreground rounded-lg px-3 py-2 text-sm font-semibold">
+        리스트 보기
+      </span>
+    </div>
+    <ul class="rounded-[1rem] border border-border bg-background p-5">
+      {sortedPosts.map(data => <ListCard {...data} />)}
+    </ul>
+  </Main>
+
+  <Footer />
+</Layout>
