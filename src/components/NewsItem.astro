@@ -18,9 +18,15 @@ const points = (seed % 87) + 3;
 const comments = seed % 9;
 const domain = "xici.vercel.app";
 const hot = points >= 65;
+const fresh = rank <= 5;
+const attention = hot || fresh;
 ---
 
-<li class="news-item group grid grid-cols-[2.25rem_1.4rem_1fr] gap-2 border-b border-border px-2 py-3 last:border-b-0 sm:grid-cols-[2.75rem_1.5rem_1fr] sm:px-3">
+<li
+  class="news-item group grid grid-cols-[2.25rem_1.4rem_1fr] gap-2 border-b border-border px-2 py-3 last:border-b-0 sm:grid-cols-[2.75rem_1.5rem_1fr] sm:px-3"
+  data-unread-item
+  data-post-id={href}
+>
   <div class="pt-1 text-right text-sm font-semibold tabular-nums text-muted-foreground">
     {rank}
   </div>
@@ -28,12 +34,18 @@ const hot = points >= 65;
     ▲
   </div>
   <article>
-    <h2 class="text-[15px] leading-6 font-semibold sm:text-base">
-      <a href={href} class="text-foreground no-underline group-hover:text-accent">
-        {title}
-      </a>
-      <span class="ml-1 text-xs font-normal text-muted-foreground">({domain})</span>
-      {hot && <span class="ml-2 rounded bg-accent px-1.5 py-0.5 text-[10px] font-bold text-accent-foreground">HOT</span>}
+    <h2 class="flex min-w-0 items-start gap-2 text-[15px] leading-6 font-semibold sm:text-base">
+      <span class="news-unread-dot mt-2" aria-label="읽지 않은 글"></span>
+      <span class="min-w-0 flex-1">
+        <a href={href} class="text-foreground no-underline group-hover:text-accent" data-read-link>
+          {title}
+        </a>
+        <span class="ml-1 text-xs font-normal text-muted-foreground">({domain})</span>
+        <span data-unread-badge class="ml-2 rounded bg-red-600 px-1.5 py-0.5 text-[10px] font-bold text-white">UNREAD</span>
+        {fresh && <span class="ml-1 rounded bg-blue-600 px-1.5 py-0.5 text-[10px] font-bold text-white">NEW</span>}
+        {hot && <span class="ml-1 rounded bg-accent px-1.5 py-0.5 text-[10px] font-bold text-accent-foreground">HOT</span>}
+        {attention && <span class="ml-1 rounded border border-border px-1.5 py-0.5 text-[10px] font-bold text-muted-foreground">오늘 볼 글</span>}
+      </span>
     </h2>
 
     {description && (
@@ -48,7 +60,7 @@ const hot = points >= 65;
       <span>·</span>
       <Datetime {...props} />
       <span>|</span>
-      <a href={href} class="text-muted-foreground no-underline hover:text-accent">
+      <a href={href} class="text-muted-foreground no-underline hover:text-accent" data-read-link>
         {comments > 0 ? `댓글 ${comments}개` : "토론"}
       </a>
       {visibleTags.length > 0 && <span>|</span>}
@@ -60,3 +72,57 @@ const hot = points >= 65;
     </div>
   </article>
 </li>
+
+<style>
+  .news-item[data-unread-item] {
+    position: relative;
+    transition: background-color 160ms ease, opacity 160ms ease;
+  }
+  .news-item.is-unread {
+    background: linear-gradient(90deg, rgba(220, 38, 38, 0.08), transparent 42%);
+  }
+  .news-unread-dot {
+    width: 9px;
+    height: 9px;
+    flex: 0 0 9px;
+    border-radius: 999px;
+    background: #dc2626;
+    box-shadow: 0 0 0 4px rgba(220, 38, 38, 0.12);
+    animation: newsDotPulse 1.35s ease-in-out infinite;
+  }
+  .news-item.is-read {
+    opacity: 0.74;
+  }
+  .news-item.is-read .news-unread-dot,
+  .news-item.is-read [data-unread-badge] {
+    display: none;
+  }
+  @keyframes newsDotPulse {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.35); opacity: 0.68; }
+  }
+</style>
+
+<script is:inline>
+  (() => {
+    const storageKey = "xici_read_posts_v1";
+    const read = new Set(JSON.parse(localStorage.getItem(storageKey) || "[]"));
+    const save = () => localStorage.setItem(storageKey, JSON.stringify([...read].slice(-1000)));
+    const mark = item => {
+      const id = item?.dataset.postId;
+      if (!id) return;
+      read.add(id);
+      save();
+      item.classList.remove("is-unread");
+      item.classList.add("is-read");
+    };
+    document.querySelectorAll("[data-unread-item]").forEach(item => {
+      const id = item.dataset.postId;
+      item.classList.toggle("is-read", read.has(id));
+      item.classList.toggle("is-unread", !read.has(id));
+      item.querySelectorAll("[data-read-link]").forEach(link => {
+        link.addEventListener("click", () => mark(item), { once: true });
+      });
+    });
+  })();
+</script>
