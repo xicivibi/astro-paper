@@ -1,0 +1,287 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import Header from "@/components/Header.astro";
+import Footer from "@/components/Footer.astro";
+import config from "@/config";
+---
+
+<Layout title={`관리 | ${config.site.title}`} description="저장된 원고를 수정, 삭제, 복구하고 발행하는 관리자 페이지입니다.">
+  <Header />
+  <main id="main-content" class="mx-auto w-full max-w-6xl px-4 py-8">
+    <section class="rounded-[1.25rem] border border-border bg-muted/35 p-5 sm:p-7">
+      <p class="text-accent text-sm font-semibold tracking-[0.18em] uppercase">Admin</p>
+      <h1 class="mt-3 text-3xl font-bold sm:text-5xl">글 관리</h1>
+      <p class="text-muted-foreground mt-4 max-w-3xl leading-8">
+        이 페이지는 공개 방문자용 글 화면이 아니라 운영자용 콘솔입니다. FastAPI 서버 주소와 BLOG_API_KEY를 입력하면
+        저장글을 불러와 수정, 삭제, 복구, 발행할 수 있습니다.
+      </p>
+    </section>
+
+    <section class="mt-6 grid gap-4 lg:grid-cols-[360px_1fr]">
+      <aside class="space-y-4">
+        <div class="rounded-[1rem] border border-border bg-background p-4">
+          <h2 class="font-bold">연결</h2>
+          <label class="mt-4 block text-sm font-semibold text-muted-foreground" for="apiBase">Backend URL</label>
+          <input id="apiBase" class="mt-2 w-full rounded-lg border border-border bg-background px-3 py-2" value="http://127.0.0.1:8080" />
+          <label class="mt-4 block text-sm font-semibold text-muted-foreground" for="apiKey">BLOG_API_KEY</label>
+          <input id="apiKey" type="password" class="mt-2 w-full rounded-lg border border-border bg-background px-3 py-2" placeholder="API Key" />
+          <div class="mt-4 flex flex-wrap gap-2">
+            <button id="saveConnectionBtn" class="rounded-lg bg-accent px-3 py-2 text-sm font-bold text-accent-foreground">저장</button>
+            <button id="loadBtn" class="rounded-lg border border-border px-3 py-2 text-sm font-bold">글 목록</button>
+            <button id="trashBtn" class="rounded-lg border border-border px-3 py-2 text-sm font-bold">복구함</button>
+          </div>
+          <p id="status" class="mt-3 min-h-6 text-sm text-muted-foreground"></p>
+        </div>
+
+        <div class="rounded-[1rem] border border-border bg-background p-4">
+          <div class="flex items-center justify-between gap-3">
+            <h2 class="font-bold">글 목록</h2>
+            <button id="newBtn" class="rounded-lg border border-border px-3 py-2 text-sm font-bold">새 글</button>
+          </div>
+          <div id="articleList" class="mt-4 max-h-[560px] space-y-2 overflow-auto"></div>
+        </div>
+      </aside>
+
+      <section class="rounded-[1rem] border border-border bg-background p-4 sm:p-5">
+        <div class="grid gap-3 sm:grid-cols-[1fr_1fr]">
+          <div>
+            <label class="block text-sm font-semibold text-muted-foreground" for="keyword">키워드 / 제목</label>
+            <input id="keyword" class="mt-2 w-full rounded-lg border border-border bg-background px-3 py-2" placeholder="글 제목 또는 키워드" />
+          </div>
+          <div>
+            <label class="block text-sm font-semibold text-muted-foreground" for="tags">태그</label>
+            <input id="tags" class="mt-2 w-full rounded-lg border border-border bg-background px-3 py-2" placeholder="쉼표로 구분" />
+          </div>
+        </div>
+        <label class="mt-4 block text-sm font-semibold text-muted-foreground" for="description">Description</label>
+        <input id="description" class="mt-2 w-full rounded-lg border border-border bg-background px-3 py-2" placeholder="검색 결과에 보일 설명" />
+
+        <div class="mt-4 flex flex-wrap gap-2">
+          <button id="saveBtn" class="rounded-lg bg-accent px-3 py-2 text-sm font-bold text-accent-foreground">수정 저장</button>
+          <button id="createBtn" class="rounded-lg border border-border px-3 py-2 text-sm font-bold">새 파일로 저장</button>
+          <button id="deleteBtn" class="rounded-lg border border-red-400 px-3 py-2 text-sm font-bold text-red-500">삭제</button>
+          <button id="restoreBtn" class="rounded-lg border border-amber-400 px-3 py-2 text-sm font-bold text-amber-600">복구</button>
+          <button id="previewBtn" class="rounded-lg border border-border px-3 py-2 text-sm font-bold">미리보기</button>
+          <button id="publishBtn" class="rounded-lg border border-border px-3 py-2 text-sm font-bold">승인 발행</button>
+        </div>
+
+        <textarea id="markdown" class="mt-4 min-h-[560px] w-full rounded-lg border border-border bg-background px-4 py-3 font-mono text-sm leading-7" spellcheck="false" placeholder="저장글을 선택하거나 새 원고를 작성하세요."></textarea>
+      </section>
+    </section>
+  </main>
+
+  <div id="modal" class="fixed inset-0 z-50 hidden bg-black/60 p-4">
+    <article class="mx-auto flex h-full max-w-4xl flex-col overflow-hidden rounded-[1rem] border border-border bg-background">
+      <div class="flex items-center justify-between border-b border-border p-4">
+        <h2 id="previewTitle" class="font-bold">미리보기</h2>
+        <button id="closeModalBtn" class="rounded-lg border border-border px-3 py-2 text-sm font-bold">닫기</button>
+      </div>
+      <div id="preview" class="overflow-auto p-6 leading-8"></div>
+    </article>
+  </div>
+
+  <Footer />
+</Layout>
+
+<script>
+  const $ = id => document.getElementById(id);
+  const state = { filename: null, isTrash: false };
+
+  const fields = {
+    apiBase: $("apiBase"),
+    apiKey: $("apiKey"),
+    keyword: $("keyword"),
+    tags: $("tags"),
+    description: $("description"),
+    markdown: $("markdown"),
+    status: $("status"),
+    list: $("articleList"),
+    modal: $("modal"),
+    preview: $("preview"),
+    previewTitle: $("previewTitle"),
+  };
+
+  fields.apiBase.value = localStorage.getItem("admin_api_base") || "http://127.0.0.1:8080";
+  fields.apiKey.value = localStorage.getItem("blog_api_key") || "";
+
+  function setStatus(message, type = "") {
+    fields.status.textContent = message;
+    fields.status.className = `mt-3 min-h-6 text-sm ${type === "bad" ? "text-red-500" : type === "ok" ? "text-accent" : "text-muted-foreground"}`;
+  }
+
+  function baseUrl() {
+    return fields.apiBase.value.replace(/\/+$/, "");
+  }
+
+  async function api(path, options = {}) {
+    const response = await fetch(`${baseUrl()}${path}`, {
+      ...options,
+      headers: {
+        "Content-Type": "application/json; charset=utf-8",
+        "X-API-Key": fields.apiKey.value.trim(),
+        ...(options.headers || {}),
+      },
+    });
+    const text = await response.text();
+    if (!response.ok) throw new Error(text || `${response.status} ${response.statusText}`);
+    return text ? JSON.parse(text) : null;
+  }
+
+  async function safe(label, fn) {
+    try {
+      setStatus(`${label} 중...`);
+      const result = await fn();
+      setStatus(`${label} 완료`, "ok");
+      return result;
+    } catch (error) {
+      setStatus(error.message, "bad");
+    }
+  }
+
+  function articleButton(article, isTrash) {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "w-full rounded-lg border border-border bg-muted/35 p-3 text-left hover:border-accent";
+    button.innerHTML = `<strong class="block truncate">${escapeHtml(article.title)}</strong><small class="mt-1 block text-muted-foreground">${escapeHtml(article.created_at)} · ${article.compact_chars}자</small>`;
+    button.addEventListener("click", () => loadDetail(article.filename, isTrash));
+    return button;
+  }
+
+  async function loadList(isTrash = false) {
+    state.isTrash = isTrash;
+    const data = await api(isTrash ? "/articles/trash?limit=200" : "/articles?limit=200");
+    fields.list.replaceChildren();
+    if (!data.articles?.length) {
+      const empty = document.createElement("p");
+      empty.className = "text-sm text-muted-foreground";
+      empty.textContent = isTrash ? "복구함이 비어 있습니다." : "저장된 글이 없습니다.";
+      fields.list.append(empty);
+      return;
+    }
+    data.articles.forEach(article => fields.list.append(articleButton(article, isTrash)));
+  }
+
+  async function loadDetail(filename, isTrash = state.isTrash) {
+    const article = await api(isTrash ? `/articles/trash/${encodeURIComponent(filename)}` : `/articles/${encodeURIComponent(filename)}`);
+    state.filename = article.filename;
+    state.isTrash = isTrash;
+    fields.keyword.value = article.title || "";
+    fields.description.value = "";
+    fields.tags.value = "";
+    fields.markdown.value = article.markdown || "";
+    setStatus(`${isTrash ? "복구함" : "저장글"} 불러오기: ${article.title}`, "ok");
+  }
+
+  async function saveCurrent(updateExisting) {
+    const markdown = fields.markdown.value.trim();
+    const keyword = fields.keyword.value.trim() || "manual-article";
+    if (!markdown) throw new Error("저장할 Markdown이 없습니다.");
+    if (updateExisting && state.filename && !state.isTrash) {
+      const data = await api(`/articles/${encodeURIComponent(state.filename)}`, {
+        method: "PUT",
+        body: JSON.stringify({ markdown }),
+      });
+      state.filename = data.filename;
+      await loadList(false);
+      return data;
+    }
+    const data = await api("/articles", {
+      method: "POST",
+      body: JSON.stringify({ keyword, markdown }),
+    });
+    state.filename = data.filename;
+    state.isTrash = false;
+    await loadList(false);
+    return data;
+  }
+
+  async function deleteCurrent() {
+    if (!state.filename || state.isTrash) throw new Error("삭제할 저장글을 선택하세요.");
+    if (!confirm("선택한 글을 복구함으로 이동할까요?")) return;
+    const data = await api(`/articles/${encodeURIComponent(state.filename)}`, { method: "DELETE" });
+    state.filename = null;
+    fields.markdown.value = "";
+    await loadList(false);
+    return data;
+  }
+
+  async function restoreCurrent() {
+    if (!state.filename || !state.isTrash) throw new Error("복구함에서 복구할 글을 선택하세요.");
+    const data = await api(`/articles/trash/${encodeURIComponent(state.filename)}/restore`, { method: "POST" });
+    state.filename = data.filename;
+    state.isTrash = false;
+    await loadList(false);
+    return data;
+  }
+
+  async function publishCurrent() {
+    const markdown = fields.markdown.value.trim();
+    const keyword = fields.keyword.value.trim() || "manual-article";
+    if (!markdown) throw new Error("발행할 Markdown이 없습니다.");
+    const tags = fields.tags.value.split(",").map(x => x.trim()).filter(Boolean);
+    return api("/publish/github", {
+      method: "POST",
+      body: JSON.stringify({
+        keyword,
+        markdown,
+        github_tags: tags,
+        github_description: fields.description.value.trim() || null,
+      }),
+    });
+  }
+
+  function newDraft() {
+    state.filename = null;
+    state.isTrash = false;
+    fields.keyword.value = "";
+    fields.tags.value = "";
+    fields.description.value = "";
+    fields.markdown.value = "";
+    setStatus("새 글을 작성할 수 있습니다.", "ok");
+  }
+
+  function escapeHtml(value) {
+    return String(value || "").replace(/[&<>"']/g, char => ({
+      "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+    }[char]));
+  }
+
+  function markdownToHtml(markdown) {
+    return String(markdown || "")
+      .replace(/^---[\s\S]*?---\s*/, "")
+      .split(/\n{2,}/)
+      .map(block => {
+        const text = block.trim();
+        if (!text) return "";
+        if (text.startsWith("## ")) return `<h2 class="mt-8 text-2xl font-bold">${escapeHtml(text.slice(3))}</h2>`;
+        if (text.startsWith("# ")) return `<h1 class="text-3xl font-bold">${escapeHtml(text.slice(2))}</h1>`;
+        if (text.startsWith("- ")) return `<ul class="list-disc pl-6">${text.split("\n").map(line => `<li>${escapeHtml(line.replace(/^-\s*/, ""))}</li>`).join("")}</ul>`;
+        return `<p>${escapeHtml(text)}</p>`;
+      })
+      .join("\n");
+  }
+
+  function openPreview() {
+    fields.previewTitle.textContent = fields.keyword.value || "미리보기";
+    fields.preview.innerHTML = markdownToHtml(fields.markdown.value);
+    fields.modal.classList.remove("hidden");
+  }
+
+  $("saveConnectionBtn").addEventListener("click", () => {
+    localStorage.setItem("admin_api_base", fields.apiBase.value.trim());
+    localStorage.setItem("blog_api_key", fields.apiKey.value.trim());
+    setStatus("연결 정보를 저장했습니다.", "ok");
+  });
+  $("loadBtn").addEventListener("click", () => safe("글 목록", () => loadList(false)));
+  $("trashBtn").addEventListener("click", () => safe("복구함", () => loadList(true)));
+  $("newBtn").addEventListener("click", newDraft);
+  $("saveBtn").addEventListener("click", () => safe("수정 저장", () => saveCurrent(true)));
+  $("createBtn").addEventListener("click", () => safe("새 파일 저장", () => saveCurrent(false)));
+  $("deleteBtn").addEventListener("click", () => safe("삭제", deleteCurrent));
+  $("restoreBtn").addEventListener("click", () => safe("복구", restoreCurrent));
+  $("publishBtn").addEventListener("click", () => safe("승인 발행", publishCurrent));
+  $("previewBtn").addEventListener("click", openPreview);
+  $("closeModalBtn").addEventListener("click", () => fields.modal.classList.add("hidden"));
+
+  if (fields.apiKey.value) safe("글 목록", () => loadList(false));
+</script>
