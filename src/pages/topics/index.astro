@@ -1,10 +1,16 @@
 ---
+import { getCollection } from "astro:content";
 import Layout from "@/layouts/Layout.astro";
 import Header from "@/components/Header.astro";
 import Main from "@/components/Main.astro";
 import Footer from "@/components/Footer.astro";
 import { topics } from "@/config/topics";
+import { getSortedPosts } from "@/utils/getSortedPosts";
+import { getActiveTopicSummaries } from "@/utils/topicPosts";
 import config from "@/config";
+
+const posts = await getCollection("posts", ({ data }) => !data.draft);
+const activeTopics = getActiveTopicSummaries(getSortedPosts(posts), topics);
 ---
 
 <Layout
@@ -14,11 +20,11 @@ import config from "@/config";
   <Header />
   <Main
     pageTitle="주제 허브"
-    pageDesc="명시적으로 분류된 글만 각 허브에 모읍니다. 분류할 글이 없으면 빈 상태를 그대로 표시합니다."
+    pageDesc="현재 공개된 실무 가이드를 문제 영역별로 모았습니다."
   >
     <ul class="grid gap-4 sm:grid-cols-3">
       {
-        topics.map(topic => (
+        activeTopics.map(({ topic, count }) => (
           <li class="border-border rounded border p-4">
             <h2 class="text-lg font-bold">
               <a
@@ -31,6 +37,7 @@ import config from "@/config";
             <p class="text-muted-foreground mt-2 text-sm leading-6">
               {topic.intro}
             </p>
+            <p class="text-muted-foreground mt-3 text-xs">공개 글 {count}개</p>
             <a
               href={`/topics/${topic.slug}/`}
               class="text-accent mt-4 inline-block text-sm font-semibold"

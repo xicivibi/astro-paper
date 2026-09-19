@@ -24,7 +24,7 @@ export default defineConfig({
     mdx(),
     sitemap({
       filter: page =>
-        !/\/(admin|search)\/?$/.test(new URL(page).pathname) &&
+        !/\/(admin|search|briefs)\/?$/.test(new URL(page).pathname) &&
         !isLegacyHoldPostPath(new URL(page).pathname) &&
         (config.features?.showArchives !== false ||
           !page.endsWith("/archives/")),

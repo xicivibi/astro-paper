@@ -1,5 +1,5 @@
 ---
-author: "AI SEO Lab"
+author: "직장인 자동화 실험실"
 pubDatetime: 2026-09-20T02:45:00+09:00
 title: "Excel에서 00123과 17자리 ID를 지키는 Power Query 가져오기"
 featured: false

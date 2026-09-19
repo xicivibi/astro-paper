@@ -1,5 +1,5 @@
 ---
-author: "AI SEO Lab"
+author: "직장인 자동화 실험실"
 pubDatetime: 2026-09-20T03:08:00+09:00
 title: "Power Query 중복 제거: 비교 키와 공백·대소문자 규칙부터 정하기"
 featured: false

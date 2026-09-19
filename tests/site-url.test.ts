@@ -31,8 +31,35 @@ test("PUBLIC_SITE_URL selects and normalizes the deployment origin", () => {
   );
   assert.match(
     html,
-    /<link rel="alternate" type="application\/rss\+xml" title="AI SEO Lab RSS" href="\/rss\.xml"/,
+    /<link rel="alternate" type="application\/rss\+xml" title="직장인 자동화 실험실 RSS" href="\/rss\.xml"/,
   );
+  assert.match(
+    html,
+    /<h1[^>]*>\s*Excel·CSV 실무 문제 해결\s*<\/h1>/
+  );
+  assert.match(html, /href="\/tools\/"[^>]*>\s*도구\s*<\/a>/);
+  assert.match(html, /href="\/topics\/excel-csv\/"[\s\S]*?공개 글 6개/);
+  assert.doesNotMatch(
+    html,
+    /SEO News Board|Fact Pack|수익화 실험|href="\/briefs\/"|Google Sheets·Apps Script|문서·웹 업무/
+  );
+
+  const topicsHtml = readFileSync(
+    new URL("../dist/topics/index.html", import.meta.url),
+    "utf8"
+  );
+  assert.match(topicsHtml, /Excel·CSV[\s\S]*?공개 글 6개/);
+  assert.doesNotMatch(
+    topicsHtml,
+    /Google Sheets·Apps Script|문서·웹 업무/
+  );
+
+  const toolsHtml = readFileSync(
+    new URL("../dist/tools/index.html", import.meta.url),
+    "utf8"
+  );
+  assert.match(toolsHtml, /업무 도구/);
+  assert.match(toolsHtml, /href="\/tools\/csv-preview\/"/);
   assert.match(
     readFileSync(new URL("../dist/rss.xml", import.meta.url), "utf8"),
     /<rss version="2\.0">.*<link>https:\/\/xici-example\.pages\.dev\//s,

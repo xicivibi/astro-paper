@@ -1,5 +1,5 @@
 ---
-author: "AI SEO Lab"
+author: "직장인 자동화 실험실"
 pubDatetime: 2026-09-20T03:05:00+09:00
 title: "Power Query 폴더 결합: 헤더 중복과 열 순서 오류를 막는 방법"
 featured: false

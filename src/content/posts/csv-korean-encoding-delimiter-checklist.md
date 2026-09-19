@@ -1,5 +1,5 @@
 ---
-author: "AI SEO Lab"
+author: "직장인 자동화 실험실"
 pubDatetime: 2026-09-20T00:20:00+09:00
 title: "CSV 한글 깨짐·열 밀림 진단: 인코딩과 구분자 확인 순서"
 featured: true

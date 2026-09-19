@@ -1,5 +1,5 @@
 ---
-author: "AI SEO Lab"
+author: "직장인 자동화 실험실"
 pubDatetime: 2026-09-20T03:23:00+09:00
 title: "Power Query CSV 날짜를 Using Locale로 고정하는 방법"
 featured: false

@@ -12,6 +12,7 @@ const briefs: { title: string; href: string; date: string }[] = [];
 <Layout
   title={`주간 브리프 | ${config.site.title}`}
   description="주제별 새 글과 확인 범위를 정리하는 정적 브리프 아카이브입니다."
+  noindex={briefs.length === 0}
 >
   <Header />
   <Main

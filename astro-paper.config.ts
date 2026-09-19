@@ -22,9 +22,10 @@ const siteUrl = configuredSiteUrl.origin.concat("/");
 export default defineAstroPaperConfig({
   site: {
     url: siteUrl,
-    title: "AI SEO Lab",
-    description: "트렌드, 검색 데이터, 수익화 실험을 근거 기반으로 정리하는 한국어 SEO 인사이트 뉴스보드.",
-    author: "AI SEO Lab",
+    title: "직장인 자동화 실험실",
+    description:
+      "Excel·CSV와 업무 자동화 문제를 재현 가능한 예제와 공식 근거로 해결하는 한국어 실무 가이드.",
+    author: "직장인 자동화 실험실",
     profile: siteUrl,
     ogImage: "default-og.jpg",
     lang: "ko",

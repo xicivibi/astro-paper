@@ -1,9 +1,16 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { topics } from "../src/config/topics.ts";
-import { getTopicPosts, postMatchesTopic } from "../src/utils/topicPosts.ts";
+import * as topicPosts from "../src/utils/topicPosts.ts";
 
-const fakePost = (id: string, tags: string[], draft = false) =>
+const { getTopicPosts, postMatchesTopic } = topicPosts;
+
+const fakePost = (
+  id: string,
+  tags: string[],
+  draft = false,
+  editorialStatus: "published" | "legacy_hold" = "published"
+) =>
   ({
     id,
     collection: "posts",
@@ -14,6 +21,7 @@ const fakePost = (id: string, tags: string[], draft = false) =>
       tags,
       pubDatetime: new Date("2026-01-01"),
       draft,
+      editorialStatus,
       aiAssisted: false,
       sources: [],
       testingStatus: "not_tested",
@@ -45,4 +53,32 @@ test("the three hub definitions have honest empty-state copy", () => {
     assert.ok(topic.intro.length > 0);
     assert.match(topic.emptyState, /아직/);
   }
+});
+
+test("topic discovery exposes only hubs with public posts and their counts", () => {
+  assert.equal(
+    typeof (topicPosts as Record<string, unknown>).getActiveTopicSummaries,
+    "function"
+  );
+
+  const posts = [
+    fakePost("csv-a", ["csv"]),
+    fakePost("csv-b", ["EXCEL"]),
+    fakePost("held", ["csv"], false, "legacy_hold"),
+    fakePost("unmapped", ["seo"]),
+  ];
+
+  const summaries = (
+    topicPosts as {
+      getActiveTopicSummaries: (
+        posts: never[],
+        topics: typeof import("../src/config/topics.ts").topics
+      ) => { topic: { slug: string }; count: number }[];
+    }
+  ).getActiveTopicSummaries(posts as never[], topics);
+
+  assert.deepEqual(
+    summaries.map(({ topic, count }) => [topic.slug, count]),
+    [["excel-csv", 2]]
+  );
 });

@@ -20,3 +20,13 @@ export function getTopicPosts(posts: Post[], topic: TopicDefinition) {
       postMatchesTopic(post, topic)
   );
 }
+
+export function getActiveTopicSummaries(
+  posts: Post[],
+  topics: TopicDefinition[]
+) {
+  return topics.flatMap(topic => {
+    const count = getTopicPosts(posts, topic).length;
+    return count > 0 ? [{ topic, count }] : [];
+  });
+}

@@ -1,5 +1,5 @@
 ---
-author: "AI SEO Lab"
+author: "직장인 자동화 실험실"
 pubDatetime: 2026-09-20T03:20:00+09:00
 title: "Power Query Left Anti로 두 명단의 누락 항목 찾기"
 featured: false

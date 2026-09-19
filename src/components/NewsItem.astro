@@ -10,7 +10,13 @@ type Props = {
 } & CollectionEntry<"posts">;
 
 const { id, data, filePath, index = 0 } = Astro.props;
-const { title, description, tags = [], author = "AI SEO Lab", ...props } = data;
+const {
+  title,
+  description,
+  tags = [],
+  author = "직장인 자동화 실험실",
+  ...props
+} = data;
 const href = getPostUrl(id, filePath, Astro.currentLocale);
 const rank = index + 1;
 const visibleTags = tags.slice(0, 4);
