@@ -45,11 +45,12 @@ function run(executable, args, options = {}) {
     env: options.env ?? process.env,
   });
   if (result.status !== 0) {
+    const launchError = result.error?.message ? `: ${result.error.message}` : "";
     const detail = options.capture
       ? `${result.stdout || ""}\n${result.stderr || ""}`.trim()
       : "";
     throw new Error(
-      `${executable} ${args.join(" ")} failed${detail ? `: ${detail}` : ""}`
+      `${executable} ${args.join(" ")} failed${launchError}${detail ? `: ${detail}` : ""}`
     );
   }
   return result.stdout || "";
