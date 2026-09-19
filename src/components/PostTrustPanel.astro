@@ -1,4 +1,6 @@
 ---
+import config from "@/config";
+
 type TestingStatus = "not_tested" | "reproduced" | "official_source_only";
 
 type Props = {
@@ -18,7 +20,12 @@ const testingStatusLabel: Record<TestingStatus, string> = {
   official_source_only: "공식 출처만 제공",
 };
 const reviewedLabel = lastReviewed
-  ? lastReviewed.toISOString().slice(0, 10)
+  ? new Intl.DateTimeFormat("en-CA", {
+      timeZone: config.site.timezone,
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+    }).format(lastReviewed)
   : "검토일 미제공";
 ---
 

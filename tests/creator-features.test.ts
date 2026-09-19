@@ -96,6 +96,8 @@ test("public creator surfaces expose RSS and avoid fabricated engagement data", 
   assert.match(trustPanel, /data-trust-metadata/);
   assert.match(trustPanel, /sources/);
   assert.match(trustPanel, /testingStatus/);
+  assert.match(trustPanel, /timeZone: config\.site\.timezone/);
+  assert.doesNotMatch(trustPanel, /toISOString\(\)\.slice/);
 });
 
 test("commercial surfaces keep image and operator metadata deterministic", () => {
