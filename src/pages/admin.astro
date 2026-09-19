@@ -16,7 +16,7 @@ import config from "@/config";
         <div>
           <h1 class="text-3xl font-bold tracking-tight sm:text-5xl">운영 관리자</h1>
           <p class="text-muted-foreground mt-4 max-w-3xl leading-8">
-            발행글, 초안, 복구함, 사이트 UI 설정을 한곳에서 제어합니다. 체크박스로 여러 글을 선택해 숨김, 공개, 삭제, 복구, 초안 일괄 발행을 처리할 수 있습니다.
+            이 PC의 초안과 복구함을 관리하고 공개 저장소 상태를 조회합니다. 공개 글과 사이트 설정 변경은 근거 검토와 승인 기록을 거치는 관리형 발행 절차에서만 처리합니다.
           </p>
         </div>
         <div class="rounded-xl border border-border bg-muted/40 px-4 py-3 text-sm text-muted-foreground">
@@ -50,6 +50,12 @@ import config from "@/config";
         <div class="rounded-2xl border border-border bg-background p-4 shadow-sm"><p class="text-muted-foreground text-sm font-semibold">현재 글자 수</p><p id="statChars" class="mt-2 text-2xl font-bold">0</p></div>
       </div>
 
+      <div class="mt-5 rounded-2xl border border-amber-400/70 bg-amber-50 p-4 text-sm leading-7 text-amber-950 dark:bg-amber-950/30 dark:text-amber-100" role="status" data-managed-publication-notice>
+        <strong>공개 변경 보호가 켜져 있습니다.</strong>
+        이 화면에서는 발행글과 사이트 설정을 조회할 수 있고 로컬 초안을 저장·복구할 수 있습니다.
+        공개·수정·숨김·삭제는 출처 근거와 독립 검토가 결합된 관리형 발행 기록으로만 실행됩니다.
+      </div>
+
       <div class="mt-5 flex flex-wrap gap-2">
         <button data-tab="published" class="tabBtn rounded-xl bg-accent px-4 py-2 text-sm font-bold text-accent-foreground">발행글</button>
         <button data-tab="drafts" class="tabBtn rounded-xl border border-border px-4 py-2 text-sm font-bold">초안</button>
@@ -77,10 +83,10 @@ import config from "@/config";
               현재 목록 전체 선택
             </label>
             <div class="mt-3 flex flex-wrap gap-2">
-              <button id="bulkHideBtn" class="bulkPublished rounded-lg border border-amber-400 px-3 py-2 text-xs font-bold text-amber-600">선택 숨김</button>
-              <button id="bulkShowBtn" class="bulkPublished rounded-lg border border-border px-3 py-2 text-xs font-bold">선택 공개</button>
-              <button id="bulkDeletePublishedBtn" class="bulkPublished rounded-lg border border-red-400 px-3 py-2 text-xs font-bold text-red-500">선택 삭제</button>
-              <button id="bulkPublishDraftBtn" class="bulkDraft rounded-lg bg-accent px-3 py-2 text-xs font-bold text-accent-foreground">선택 발행</button>
+              <button id="bulkHideBtn" data-managed-write="true" disabled title="관리형 발행 절차에서 처리합니다." class="bulkPublished rounded-lg border border-amber-400 px-3 py-2 text-xs font-bold text-amber-600 disabled:cursor-not-allowed disabled:opacity-50">선택 숨김</button>
+              <button id="bulkShowBtn" data-managed-write="true" disabled title="관리형 발행 절차에서 처리합니다." class="bulkPublished rounded-lg border border-border px-3 py-2 text-xs font-bold disabled:cursor-not-allowed disabled:opacity-50">선택 공개</button>
+              <button id="bulkDeletePublishedBtn" data-managed-write="true" disabled title="관리형 발행 절차에서 처리합니다." class="bulkPublished rounded-lg border border-red-400 px-3 py-2 text-xs font-bold text-red-500 disabled:cursor-not-allowed disabled:opacity-50">선택 삭제</button>
+              <button id="bulkPublishDraftBtn" data-managed-write="true" disabled title="근거 검토를 통과한 관리형 발행만 허용됩니다." class="bulkDraft rounded-lg bg-accent px-3 py-2 text-xs font-bold text-accent-foreground disabled:cursor-not-allowed disabled:opacity-50">관리형 발행 필요</button>
               <button id="bulkDeleteDraftBtn" class="bulkDraft rounded-lg border border-red-400 px-3 py-2 text-xs font-bold text-red-500">선택 삭제</button>
               <button id="bulkRestoreBtn" class="bulkTrash rounded-lg border border-amber-400 px-3 py-2 text-xs font-bold text-amber-600">선택 복구</button>
             </div>
@@ -99,13 +105,13 @@ import config from "@/config";
           <input id="currentPath" class="mt-2 w-full rounded-xl border border-border bg-muted/40 px-3 py-2 text-sm text-muted-foreground" readonly />
 
           <div class="mt-4 flex flex-wrap gap-2">
-            <button id="savePublishedBtn" class="actionPublished rounded-xl bg-accent px-3 py-2 text-sm font-bold text-accent-foreground">발행글 수정 저장</button>
-            <button id="hidePublishedBtn" class="actionPublished rounded-xl border border-amber-400 px-3 py-2 text-sm font-bold text-amber-600">공개 숨김</button>
-            <button id="showPublishedBtn" class="actionPublished rounded-xl border border-border px-3 py-2 text-sm font-bold">다시 공개</button>
-            <button id="deletePublishedBtn" class="actionPublished rounded-xl border border-red-400 px-3 py-2 text-sm font-bold text-red-500">파일 삭제</button>
+            <button id="savePublishedBtn" data-managed-write="true" disabled title="관리형 개정 절차에서 처리합니다." class="actionPublished rounded-xl bg-accent px-3 py-2 text-sm font-bold text-accent-foreground disabled:cursor-not-allowed disabled:opacity-50">관리형 개정 필요</button>
+            <button id="hidePublishedBtn" data-managed-write="true" disabled title="관리형 발행 절차에서 처리합니다." class="actionPublished rounded-xl border border-amber-400 px-3 py-2 text-sm font-bold text-amber-600 disabled:cursor-not-allowed disabled:opacity-50">공개 숨김</button>
+            <button id="showPublishedBtn" data-managed-write="true" disabled title="관리형 발행 절차에서 처리합니다." class="actionPublished rounded-xl border border-border px-3 py-2 text-sm font-bold disabled:cursor-not-allowed disabled:opacity-50">다시 공개</button>
+            <button id="deletePublishedBtn" data-managed-write="true" disabled title="관리형 발행 절차에서 처리합니다." class="actionPublished rounded-xl border border-red-400 px-3 py-2 text-sm font-bold text-red-500 disabled:cursor-not-allowed disabled:opacity-50">파일 삭제</button>
             <button id="saveDraftBtn" class="actionDraft rounded-xl bg-accent px-3 py-2 text-sm font-bold text-accent-foreground">초안 수정 저장</button>
             <button id="createDraftBtn" class="actionDraft rounded-xl border border-border px-3 py-2 text-sm font-bold">새 초안 저장</button>
-            <button id="publishBtn" class="actionDraft rounded-xl border border-border px-3 py-2 text-sm font-bold">승인 발행</button>
+            <button id="publishBtn" data-managed-write="true" disabled title="근거 검토를 통과한 관리형 발행만 허용됩니다." class="actionDraft rounded-xl border border-border px-3 py-2 text-sm font-bold disabled:cursor-not-allowed disabled:opacity-50">관리형 발행 필요</button>
             <button id="deleteDraftBtn" class="actionDraft rounded-xl border border-red-400 px-3 py-2 text-sm font-bold text-red-500">초안 삭제</button>
             <button id="restoreDraftBtn" class="actionTrash rounded-xl border border-amber-400 px-3 py-2 text-sm font-bold text-amber-600">복구</button>
             <button id="previewBtn" class="rounded-xl border border-border px-3 py-2 text-sm font-bold">미리보기</button>
@@ -116,8 +122,8 @@ import config from "@/config";
 
       <section id="sitePanel" class="mt-5 hidden rounded-2xl border border-border bg-background p-5 shadow-sm">
         <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-          <div><h2 class="text-xl font-bold">사이트 UI / UX 설정</h2><p class="text-muted-foreground mt-2 leading-7">저장하면 GitHub에 커밋되고 Vercel이 자동 재배포합니다.</p></div>
-          <div class="flex gap-2"><button id="loadSiteBtn" class="rounded-xl border border-border px-4 py-2 text-sm font-bold">설정 불러오기</button><button id="saveSiteBtn" class="rounded-xl bg-accent px-4 py-2 text-sm font-bold text-accent-foreground">설정 저장</button></div>
+          <div><h2 class="text-xl font-bold">사이트 UI / UX 설정</h2><p class="text-muted-foreground mt-2 leading-7">현재 배포 설정을 조회합니다. 변경은 검토 가능한 저장소 변경으로 처리합니다.</p></div>
+          <div class="flex gap-2"><button id="loadSiteBtn" class="rounded-xl border border-border px-4 py-2 text-sm font-bold">설정 불러오기</button><button id="saveSiteBtn" data-managed-write="true" disabled title="검토 가능한 저장소 변경으로 처리합니다." class="rounded-xl bg-accent px-4 py-2 text-sm font-bold text-accent-foreground disabled:cursor-not-allowed disabled:opacity-50">관리형 변경 필요</button></div>
         </div>
         <div class="mt-5 grid gap-4 lg:grid-cols-2">
           <div><label class="text-sm font-semibold text-muted-foreground" for="siteTitle">사이트 이름</label><input id="siteTitle" class="mt-2 w-full rounded-xl border border-border bg-background px-3 py-2" /></div>
@@ -155,6 +161,8 @@ import config from "@/config";
 
   fields.apiBase.value = "http://127.0.0.1:8081";
   fields.apiKey.value = "";
+  [fields.siteTitle, fields.siteAuthor, fields.siteDescription, fields.siteUrl, fields.profileUrl, fields.accentColorText, fields.postsPerPage].forEach(input => { input.readOnly = true; });
+  fields.accentColor.disabled = true;
   // Retire previously persisted credentials; new credentials stay in this page.
   try { localStorage.removeItem("blog_api_key"); } catch { /* storage may be disabled */ }
   window.addEventListener("pagehide", () => { fields.apiKey.value = ""; });
@@ -186,7 +194,13 @@ import config from "@/config";
     catch (error) { setStatus(error?.message || String(error), "bad"); }
     finally { toggleButtons(false); }
   }
-  function toggleButtons(disabled) { document.querySelectorAll("button").forEach(button => { if (button.id !== "closeModalBtn") button.disabled = disabled; }); }
+  function toggleButtons(disabled) {
+    document.querySelectorAll("button").forEach(button => {
+      if (button.id !== "closeModalBtn") {
+        button.disabled = disabled || button.dataset.managedWrite === "true";
+      }
+    });
+  }
   function setStatus(message, type = "") {
     const target = fields.adminConsole.classList.contains("hidden") ? fields.lockStatus : fields.status;
     target.textContent = message;
@@ -215,6 +229,8 @@ import config from "@/config";
     fields.statMode.textContent = labels[mode] || mode; fields.listTitle.textContent = labels[mode] || mode;
   }
   function setEditorMode(mode) {
+    const editableDraft = mode === "drafts";
+    [fields.keyword, fields.tags, fields.description, fields.markdown].forEach(input => { input.readOnly = !editableDraft; });
     document.querySelectorAll(".actionPublished").forEach(el => el.classList.toggle("hidden", mode !== "published"));
     document.querySelectorAll(".actionDraft").forEach(el => el.classList.toggle("hidden", mode !== "drafts"));
     document.querySelectorAll(".actionTrash").forEach(el => el.classList.toggle("hidden", mode !== "trash"));

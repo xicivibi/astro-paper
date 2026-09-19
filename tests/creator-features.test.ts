@@ -129,6 +129,33 @@ test("commercial surfaces keep image and operator metadata deterministic", () =>
   assert.match(readiness, /공개 이름 미제공/);
 });
 
+test("admin console keeps public mutations behind the managed publication workflow", () => {
+  const root = fileURLToPath(new URL("..", import.meta.url));
+  const admin = readFileSync(`${root}/src/pages/admin.astro`, "utf8");
+
+  assert.match(admin, /data-managed-publication-notice/);
+  assert.match(admin, /공개 변경 보호가 켜져 있습니다/);
+  for (const id of [
+    "bulkHideBtn",
+    "bulkShowBtn",
+    "bulkDeletePublishedBtn",
+    "bulkPublishDraftBtn",
+    "savePublishedBtn",
+    "hidePublishedBtn",
+    "showPublishedBtn",
+    "deletePublishedBtn",
+    "publishBtn",
+    "saveSiteBtn",
+  ]) {
+    assert.match(
+      admin,
+      new RegExp(`id="${id}"[^>]*data-managed-write="true"[^>]*disabled`)
+    );
+  }
+  assert.match(admin, /button\.dataset\.managedWrite === "true"/);
+  assert.match(admin, /input\.readOnly = !editableDraft/);
+});
+
 test("operator configuration uses safe empty defaults", () => {
   assert.deepEqual(resolveOperator({}), { creatorName: "", email: "", label: "", hasCreatorName: false, hasEmail: false });
   const configured = resolveOperator({ PUBLIC_CREATOR_NAME: "  Xici  ", PUBLIC_CONTACT_EMAIL: "owner@example.com", PUBLIC_CONTACT_LABEL: "문의하기" });
