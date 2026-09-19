@@ -29,16 +29,25 @@ function printError(value) {
   process.stderr.write(`${value}\n`);
 }
 
-function command(name) {
-  if (process.platform === "win32") {
-    if (name === "npm") return "npm.cmd";
-    if (name === "npx") return "npx.cmd";
+function invocation(name, args) {
+  if (process.platform === "win32" && (name === "npm" || name === "npx")) {
+    const npmCli = process.env.npm_execpath;
+    if (!npmCli) {
+      throw new Error("npm_execpath is required for a Windows release");
+    }
+    const cli =
+      name === "npm" ? npmCli : join(dirname(npmCli), "npx-cli.js");
+    if (!existsSync(cli)) {
+      throw new Error(`cannot locate ${name} CLI at ${cli}`);
+    }
+    return { executable: process.execPath, args: [cli, ...args] };
   }
-  return name;
+  return { executable: name, args };
 }
 
 function run(executable, args, options = {}) {
-  const result = spawnSync(command(executable), args, {
+  const processInvocation = invocation(executable, args);
+  const result = spawnSync(processInvocation.executable, processInvocation.args, {
     cwd: root,
     encoding: "utf8",
     stdio: options.capture ? "pipe" : "inherit",
