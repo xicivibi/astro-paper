@@ -1,6 +1,6 @@
 ---
 author: "AI SEO Lab"
-pubDatetime: 2026-09-20T03:00:00+09:00
+pubDatetime: 2026-09-20T02:45:00+09:00
 title: "Excel에서 00123과 17자리 ID를 지키는 Power Query 가져오기"
 featured: false
 draft: false
@@ -10,7 +10,7 @@ tags:
   - "power query"
 description: "상품 코드의 앞자리 0과 16자리 이상 식별자가 바뀌기 전에, Power Query에서 열을 텍스트로 지정해 가져오고 결과를 검증하는 절차입니다."
 aiAssisted: true
-lastReviewed: 2026-09-20T03:00:00+09:00
+lastReviewed: 2026-09-20T02:45:00+09:00
 sources:
   - "https://support.microsoft.com/en-us/excel/keeping-leading-zeros-and-large-numbers"
   - "https://support.microsoft.com/en-us/excel/get-started/import-or-export-text-txt-or-csv-files"
