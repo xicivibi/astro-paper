@@ -1,6 +1,6 @@
 # Free static hosting migration preparation
 
-Checked 2026-09-13. This is a reviewable migration procedure, not a deployed site or a new account.
+Checked 2026-09-20. This is a reviewable migration procedure, not a deployed site or a new account.
 
 Xici is currently on Vercel Hobby, verified through the connected project's team and domain records. [Hobby](https://vercel.com/docs/plans/hobby) limits use to non-commercial personal projects. Ads cannot launch under that plan. Additional spending remains zero.
 
@@ -41,9 +41,28 @@ Completion evidence must include the real hostname, selected free plan, exact de
 Local origin preflight:
 
 ```powershell
-$env:PUBLIC_SITE_URL = "https://ACTUAL_PROJECT.pages.dev"
-corepack pnpm build
+npm run release:cloudflare -- --origin https://ACTUAL_PROJECT.pages.dev --project ACTUAL_PROJECT
 ```
+
+The command builds with Cloudflare hosting disclosure, advertising off,
+Analytics off and commercial-host confirmation off. It then verifies the
+canonical URL, robots sitemap, sitemap index, RSS origin, `ads.txt`, required
+pages, file count and largest asset. It also rejects a dirty tracked worktree,
+the existing Vercel hostname, localhost and malformed project names.
+
+After the operator has authenticated Wrangler and created the real
+Git-integrated Pages project, the same command can deploy and verify the exact
+commit:
+
+```powershell
+npm run release:cloudflare -- --origin https://ACTUAL_PROJECT.pages.dev --project ACTUAL_PROJECT --deploy
+```
+
+The release tool intentionally requires an existing project. It never creates
+an account or project, changes billing, enables ads, or chooses Direct Upload
+on the operator's behalf. After deployment it fetches the homepage,
+`robots.txt`, RSS, `ads.txt` and the CSV tool from the production origin and
+fails if any response or origin binding is wrong.
 
 Cloudflare Pages build settings:
 
