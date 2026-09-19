@@ -27,6 +27,9 @@ const posts = defineCollection({
         title: z.string(),
         featured: z.boolean().optional(),
         draft: z.boolean().optional(),
+        editorialStatus: z
+          .enum(["published", "legacy_hold"])
+          .default("published"),
         tags: z.array(z.string()).default(["others"]),
         ogImage: image().or(z.string()).optional(),
         description: z.string(),

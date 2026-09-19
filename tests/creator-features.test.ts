@@ -16,6 +16,7 @@ type FakePost = {
     pubDatetime: Date;
     modDatetime?: Date | null;
     draft?: boolean;
+    editorialStatus: "published" | "legacy_hold";
     aiAssisted: boolean;
     sources: string[];
     testingStatus: "not_tested" | "reproduced" | "official_source_only";
@@ -26,7 +27,8 @@ const post = (
   id: string,
   tags: string[],
   date: string,
-  draft = false
+  draft = false,
+  editorialStatus: "published" | "legacy_hold" = "published"
 ) =>
   ({
     id,
@@ -38,6 +40,7 @@ const post = (
       tags,
       pubDatetime: new Date(date),
       draft,
+      editorialStatus,
       aiAssisted: false,
       sources: [],
       testingStatus: "not_tested",
@@ -50,9 +53,19 @@ test("related posts rank shared tags, then update date, and exclude drafts/curre
   const twoTagsOld = post("two-tags-old", ["seo", "ai"], "2025-01-01");
   const unrelated = post("unrelated", ["food"], "2026-06-01");
   const draft = post("draft", ["seo", "ai"], "2026-07-01", true);
+  const held = post(
+    "held",
+    ["seo", "ai"],
+    "2026-08-01",
+    false,
+    "legacy_hold"
+  );
 
   assert.deepEqual(
-    getRelatedPosts([current, oneTagNew, twoTagsOld, unrelated, draft], current)
+    getRelatedPosts(
+      [current, oneTagNew, twoTagsOld, unrelated, draft, held],
+      current
+    )
       .map(item => item.id),
     ["two-tags-old", "one-tag-new"]
   );

@@ -14,6 +14,9 @@ export function postMatchesTopic(post: Post, topic: TopicDefinition) {
 
 export function getTopicPosts(posts: Post[], topic: TopicDefinition) {
   return posts.filter(
-    post => !post.data.draft && postMatchesTopic(post, topic)
+    post =>
+      !post.data.draft &&
+      post.data.editorialStatus !== "legacy_hold" &&
+      postMatchesTopic(post, topic)
   );
 }

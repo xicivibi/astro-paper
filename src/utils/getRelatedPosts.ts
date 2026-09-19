@@ -11,7 +11,12 @@ export function getRelatedPosts(
   const currentTags = new Set(currentPost.data.tags ?? []);
 
   return posts
-    .filter(post => post.id !== currentPost.id && !post.data.draft)
+    .filter(
+      post =>
+        post.id !== currentPost.id &&
+        !post.data.draft &&
+        post.data.editorialStatus !== "legacy_hold"
+    )
     .map(post => ({
       post,
       sharedTags: (post.data.tags ?? []).filter(tag => currentTags.has(tag))

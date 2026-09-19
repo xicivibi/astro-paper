@@ -16,6 +16,7 @@ import {
 } from "@shikijs/transformers";
 import { transformerFileName } from "./src/utils/transformers/fileName";
 import config from "./astro-paper.config";
+import { isLegacyHoldPostPath } from "./src/config/editorial";
 
 export default defineConfig({
   site: config.site.url,
@@ -24,6 +25,7 @@ export default defineConfig({
     sitemap({
       filter: page =>
         !/\/(admin|search)\/?$/.test(new URL(page).pathname) &&
+        !isLegacyHoldPostPath(new URL(page).pathname) &&
         (config.features?.showArchives !== false ||
           !page.endsWith("/archives/")),
     }),

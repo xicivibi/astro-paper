@@ -12,11 +12,12 @@ type Props = {
   author?: string;
   lastReviewed?: Date | null;
   sources?: string[];
+  noindex?: boolean;
 };
 
 const { site } = config;
 
-const { title, description, ogImage, canonicalURL, pubDatetime, modDatetime, author, lastReviewed, sources = [] } =
+const { title, description, ogImage, canonicalURL, pubDatetime, modDatetime, author, lastReviewed, sources = [], noindex = false } =
   Astro.props;
 const resolvedAuthor = author || site.author;
 const authorType =
@@ -45,7 +46,7 @@ const structuredData = {
 };
 ---
 
-<Layout {title} {description} {ogImage} {canonicalURL} pageType="article">
+<Layout {title} {description} {ogImage} {canonicalURL} pageType="article" {noindex}>
   <Fragment slot="head">
     {
       pubDatetime && (
@@ -64,11 +65,15 @@ const structuredData = {
       )
     }
 
-    <script
-      type="application/ld+json"
-      is:inline
-      set:html={JSON.stringify(structuredData).replaceAll("<", "\\u003c")}
-    />
+    {
+      !noindex && (
+        <script
+          type="application/ld+json"
+          is:inline
+          set:html={JSON.stringify(structuredData).replaceAll("<", "\\u003c")}
+        />
+      )
+    }
   </Fragment>
 
   <slot />

@@ -5,6 +5,7 @@ import Header from "@/components/Header.astro";
 import Footer from "@/components/Footer.astro";
 import Datetime from "@/components/Datetime.astro";
 import PostTrustPanel from "@/components/PostTrustPanel.astro";
+import PostReviewHoldNotice from "@/components/PostReviewHoldNotice.astro";
 import Tag from "@/components/Tag.astro";
 import { getPostSlug, getPostUrl } from "@/utils/getPostPaths";
 import { getSortedPosts } from "@/utils/getSortedPosts";
@@ -17,33 +18,43 @@ import AdjacentPostNav from "./_components/AdjacentPostNav.astro";
 import RelatedPosts from "./_components/RelatedPosts.astro";
 import config from "@/config";
 import { getRelatedPosts } from "@/utils/getRelatedPosts";
+import { routablePostFilter } from "@/utils/postFilter";
 
 export async function getStaticPaths() {
   const posts = await getCollection("posts");
-  const sortedPosts = getSortedPosts(posts);
+  const routablePosts = posts.filter(routablePostFilter).sort(
+    (a, b) =>
+      new Date(b.data.modDatetime ?? b.data.pubDatetime).getTime() -
+      new Date(a.data.modDatetime ?? a.data.pubDatetime).getTime()
+  );
+  const publicPosts = getSortedPosts(posts);
 
-  return sortedPosts.map((post, index) => ({
-    params: { slug: getPostSlug(post.id, post.filePath) },
-    props: {
-      post,
-      prevPost:
-        index > 0
-          ? {
-              id: sortedPosts[index - 1].id,
-              title: sortedPosts[index - 1].data.title,
-              filePath: sortedPosts[index - 1].filePath,
-            }
-          : null,
-      nextPost:
-        index < sortedPosts.length - 1
-          ? {
-              id: sortedPosts[index + 1].id,
-              title: sortedPosts[index + 1].data.title,
-              filePath: sortedPosts[index + 1].filePath,
-            }
-          : null,
-    },
-  }));
+  return routablePosts.map(post => {
+    const publicIndex = publicPosts.findIndex(item => item.id === post.id);
+    const isHeld = post.data.editorialStatus === "legacy_hold";
+    return {
+      params: { slug: getPostSlug(post.id, post.filePath) },
+      props: {
+        post,
+        prevPost:
+          !isHeld && publicIndex > 0
+            ? {
+                id: publicPosts[publicIndex - 1].id,
+                title: publicPosts[publicIndex - 1].data.title,
+                filePath: publicPosts[publicIndex - 1].filePath,
+              }
+            : null,
+        nextPost:
+          !isHeld && publicIndex < publicPosts.length - 1
+            ? {
+                id: publicPosts[publicIndex + 1].id,
+                title: publicPosts[publicIndex + 1].data.title,
+                filePath: publicPosts[publicIndex + 1].filePath,
+              }
+            : null,
+      },
+    };
+  });
 }
 
 type AdjacentPost = {
@@ -78,7 +89,9 @@ const {
   sources,
   testingStatus,
   correctionNote,
+  editorialStatus,
 } = post.data;
+const isHeld = editorialStatus === "legacy_hold";
 
 const { Content } = await render(post);
 
@@ -113,6 +126,7 @@ const ogImage = ogImageUrl
   author={post.data.author}
   {lastReviewed}
   {sources}
+  noindex={isHeld}
 >
   <Header />
 
@@ -121,7 +135,8 @@ const ogImage = ogImageUrl
   <main
     id="main-content"
     class:list={["app-layout", { "mt-8": !config.features.showBackButton }]}
-    data-pagefind-body
+    data-pagefind-body={!isHeld ? "" : undefined}
+    data-pagefind-ignore={isHeld ? "all" : undefined}
   >
     <h1
       style={{ viewTransitionName: slugifyStr(title.replaceAll(".", "-")) }}
@@ -143,6 +158,8 @@ const ogImage = ogImageUrl
       </span>
       <EditPost {hideEditPost} {post} class="max-sm:hidden" />
     </div>
+
+    {isHeld && <PostReviewHoldNotice />}
 
     <article
       id="article"
@@ -169,16 +186,24 @@ const ogImage = ogImageUrl
 
     <BackToTopButton />
 
-    <ul class="mt-4 mb-8 flex flex-wrap gap-4 sm:my-8">
-      {tags.map(tag => <Tag tag={slugifyStr(tag)} tagName={tag} size="sm" />)}
-    </ul>
+    {
+      !isHeld && (
+        <>
+          <ul class="mt-4 mb-8 flex flex-wrap gap-4 sm:my-8">
+            {tags.map(tag => (
+              <Tag tag={slugifyStr(tag)} tagName={tag} size="sm" />
+            ))}
+          </ul>
 
-    <ShareLinks />
+          <ShareLinks />
 
-    <hr class="my-8 border-dashed" />
+          <hr class="my-8 border-dashed" />
 
-    <AdjacentPostNav {prevPost} {nextPost} />
-    <RelatedPosts posts={relatedPosts} />
+          <AdjacentPostNav {prevPost} {nextPost} />
+          <RelatedPosts posts={relatedPosts} />
+        </>
+      )
+    }
   </main>
   <Footer />
 </PostLayout>

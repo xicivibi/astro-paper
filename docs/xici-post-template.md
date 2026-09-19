@@ -8,6 +8,7 @@ author: "작성자 이름"
 pubDatetime: 2026-09-19T09:00:00+09:00
 title: "독자가 바로 이해할 수 있는 제목"
 draft: true
+editorialStatus: published
 tags:
   - "주제"
 description: "검색 결과와 공유 화면에 사용할 한두 문장 요약"

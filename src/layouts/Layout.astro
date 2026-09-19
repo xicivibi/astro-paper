@@ -13,6 +13,7 @@ type Props = {
   ogImage?: string;
   canonicalURL?: string;
   pageType?: "website" | "article";
+  noindex?: boolean;
 };
 
 const { site } = config;
@@ -23,6 +24,7 @@ const {
   ogImage = resolveDefaultOgImagePath(config),
   canonicalURL = new URL(Astro.url.pathname, Astro.site).href,
   pageType = "website",
+  noindex = false,
 } = Astro.props;
 
 const socialImageURL = new URL(ogImage, Astro.site ?? Astro.url);
@@ -60,7 +62,7 @@ const socialImageURL = new URL(ogImage, Astro.site ?? Astro.url);
     <meta name="title" content={title} />
     <meta name="description" content={description} />
     {
-      /^\/(admin|search)(\/|$)/.test(Astro.url.pathname) && (
+      (noindex || /^\/(admin|search)(\/|$)/.test(Astro.url.pathname)) && (
         <meta name="robots" content="noindex, nofollow" />
       )
     }
