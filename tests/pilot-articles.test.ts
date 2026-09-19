@@ -55,3 +55,22 @@ test("duplicate-removal pilot avoids promising a survivor", () => {
   assert.match(post, /어떤 중복 행이 유지될지 보장되지/);
   assert.match(post, /특정 생존 행의 순서나 정체성/);
 });
+
+test("left-anti pilot binds normalization to the verified comparison", () => {
+  const post = readPost("power-query-left-anti-compare-lists");
+  assertTrustMetadata(post);
+  assert.match(
+    post,
+    /https:\/\/support\.microsoft\.com\/en-us\/excel\/merge-queries-power-query/
+  );
+  assert.match(
+    post,
+    /5c4efffdf5a4dd8442485f2dc08578fac70a09ad285c3e0a69f43480ba3c7bc1/
+  );
+  assert.match(
+    post,
+    /ea426ee995e1e21240dea9909d4d620ce29b8c936d95870da5b84d71711fe6d6/
+  );
+  assert.match(post, /원본 비교와 정규화 비교를 나눠/);
+  assert.match(post, /XLOOKUP·MATCH 동작은 이 재현으로 보장하지/);
+});
