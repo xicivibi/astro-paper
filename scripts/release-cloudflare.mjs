@@ -225,7 +225,7 @@ async function main() {
     PUBLIC_ANALYTICS_ENABLED: "false",
     PUBLIC_COMMERCIAL_HOSTING_CONFIRMED: "false",
   };
-  run("npm", ["run", "build"], { env: releaseEnv });
+  run("npm", ["run", "build"], { env: releaseEnv, capture: true });
   const inspection = inspectDist(join(root, "dist"), origin);
 
   if (!args.deploy) {
