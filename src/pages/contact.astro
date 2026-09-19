@@ -1,0 +1,33 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import Header from "@/components/Header.astro";
+import Breadcrumb from "@/components/Breadcrumb.astro";
+import Main from "@/components/Main.astro";
+import Footer from "@/components/Footer.astro";
+import config from "@/config";
+import OperatorReadiness from "@/components/OperatorReadiness.astro";
+
+const title = "문의";
+const description = "콘텐츠에 대한 의견과 출처 정정 요청을 안내합니다.";
+---
+
+<Layout title={`${title} | ${config.site.title}`} description={description}>
+  <Header /><Breadcrumb />
+  <Main pageTitle={title} pageDesc={description} class="app-prose">
+    <p>
+      콘텐츠의 오류, 출처 정정 요청, 작업 제안은 아래 공개 문의 채널을 통해
+      보내 주세요.
+    </p>
+    <OperatorReadiness heading="문의 채널과 운영자" />
+    <h2>정정 요청</h2>
+    <p>
+      사실관계나 출처에 오류가 있다면 해당 글의 제목과 문제 지점을 함께 알려
+      주세요. 원문 자료를 다시 확인한 뒤 필요한 내용을 수정하겠습니다.
+    </p>
+    <p>
+      현재 이 사이트는 문의 내용을 수집하거나 자동으로 추적하는 폼을 제공하지
+      않습니다.
+    </p>
+  </Main>
+  <Footer />
+</Layout>

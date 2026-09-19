@@ -9,35 +9,39 @@ type Props = {
   canonicalURL?: string;
   pubDatetime?: Date;
   modDatetime?: Date | null;
+  author?: string;
+  lastReviewed?: Date | null;
+  sources?: string[];
 };
 
 const { site } = config;
 
-const { title, description, ogImage, canonicalURL, pubDatetime, modDatetime } =
+const { title, description, ogImage, canonicalURL, pubDatetime, modDatetime, author, lastReviewed, sources = [] } =
   Astro.props;
 
 const structuredData = {
   "@context": "https://schema.org",
   "@type": "BlogPosting",
   headline: title ?? site.title,
+  ...(description && { description }),
   image: ogImage,
+  ...(canonicalURL && { mainEntityOfPage: canonicalURL }),
   ...(pubDatetime && { datePublished: pubDatetime.toISOString() }),
   ...(modDatetime && { dateModified: modDatetime.toISOString() }),
   author: [
     {
       "@type": "Person",
-      name: site.author,
+      name: author || site.author,
       ...(site.profile && { url: site.profile }),
     },
   ],
+  ...(lastReviewed && { dateReviewed: lastReviewed.toISOString() }),
+  ...(sources.length > 0 && { citation: sources }),
 };
 ---
 
-<Layout {title} {description} {ogImage} {canonicalURL}>
+<Layout {title} {description} {ogImage} {canonicalURL} pageType="article">
   <Fragment slot="head">
-    <!-- Override og:type for article pages -->
-    <meta property="og:type" content="article" />
-
     {
       pubDatetime && (
         <meta
@@ -58,7 +62,7 @@ const structuredData = {
     <script
       type="application/ld+json"
       is:inline
-      set:html={JSON.stringify(structuredData)}
+      set:html={JSON.stringify(structuredData).replaceAll("<", "\\u003c")}
     />
   </Fragment>
 

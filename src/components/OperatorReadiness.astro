@@ -1,0 +1,11 @@
+---
+import { operator } from "@/config/operator";
+type Props = { heading?: string };
+const { heading = "운영자와 문의" } = Astro.props;
+---
+<section class="border-border my-8 rounded-xl border p-5" data-operator-readiness>
+  <h2 class="mt-0 text-xl">{heading}</h2>
+  <p data-operator-name>운영자: {operator.hasCreatorName ? operator.creatorName : "공개 이름 미제공"}</p>
+  {operator.hasEmail ? <p><a href={`mailto:${operator.email}`}>{operator.label || operator.email}</a></p> : <p role="status">공개 문의 채널 준비 중</p>}
+  <p class="text-muted-foreground text-sm">공개 이름과 연락처는 배포 환경이 제공할 때만 표시합니다. 개인정보를 추측해 채우지 않습니다.</p>
+</section>

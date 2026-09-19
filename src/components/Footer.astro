@@ -2,6 +2,7 @@
 import type { HTMLAttributes } from "astro/types";
 import Socials from "./Socials.astro";
 import { useTranslations } from "@/i18n";
+import { monetization } from "@/config/monetization";
 
 type Props = {
   noMarginTop?: boolean;
@@ -27,4 +28,17 @@ const currentYear = new Date().getFullYear();
       <span>{t.footer.allRightsReserved}</span>
     </div>
   </div>
+  <nav class="flex justify-center gap-4 pb-4 text-sm" aria-label="운영 안내">
+    <a href="/about/">소개</a>
+    <a href="/editorial-policy/">편집 정책</a>
+    <a href="/privacy/">개인정보 안내</a>
+    <a href="/contact/">문의</a>
+    {
+      monetization.analyticsEnabled && (
+        <button type="button" data-analytics-settings>
+          방문 통계 설정
+        </button>
+      )
+    }
+  </nav>
 </footer>

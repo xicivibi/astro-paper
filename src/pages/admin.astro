@@ -153,12 +153,21 @@ import config from "@/config";
     siteTitle: $("siteTitle"), siteAuthor: $("siteAuthor"), siteDescription: $("siteDescription"), siteUrl: $("siteUrl"), profileUrl: $("profileUrl"), accentColor: $("accentColor"), accentColorText: $("accentColorText"), postsPerPage: $("postsPerPage"),
   };
 
-  fields.apiBase.value = localStorage.getItem("admin_api_base") || "http://127.0.0.1:8080";
-  fields.apiKey.value = localStorage.getItem("blog_api_key") || "";
+  fields.apiBase.value = "http://127.0.0.1:8081";
+  fields.apiKey.value = "";
+  // Retire previously persisted credentials; new credentials stay in this page.
+  try { localStorage.removeItem("blog_api_key"); } catch { /* storage may be disabled */ }
+  window.addEventListener("pagehide", () => { fields.apiKey.value = ""; });
   updateStats();
   setEditorMode("published");
 
-  function baseUrl() { return fields.apiBase.value.replace(/\/+$/, ""); }
+  function baseUrl() {
+    const url = new URL(fields.apiBase.value);
+    if (!["http://127.0.0.1:8081", "http://localhost:8081"].includes(url.origin) || url.username || url.password || url.search || url.hash || url.pathname !== "/") {
+      throw new Error("현재 운영 API는 이 PC의 8081 포트에서만 연결할 수 있습니다.");
+    }
+    return url.origin;
+  }
   function encodePath(path) { return String(path || "").split("/").map(encodeURIComponent).join("/"); }
   function itemKey(item) { return state.mode === "published" ? item.path : item.filename; }
   function selectedItems() { return state.items.filter(item => state.selected.has(itemKey(item))); }
@@ -167,7 +176,7 @@ import config from "@/config";
   function escapeHtml(value) { return String(value || "").replace(/[&<>"']/g, char => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[char])); }
 
   async function api(path, options = {}) {
-    const response = await fetch(`${baseUrl()}${path}`, { ...options, headers: { "Content-Type": "application/json; charset=utf-8", "X-API-Key": fields.apiKey.value.trim(), ...(options.headers || {}) } });
+    const response = await fetch(`${baseUrl()}${path}`, { ...options, redirect: "error", headers: { "Content-Type": "application/json; charset=utf-8", "X-API-Key": fields.apiKey.value.trim(), ...(options.headers || {}) } });
     const text = await response.text();
     if (!response.ok) throw new Error(text || `${response.status} ${response.statusText}`);
     return text ? JSON.parse(text) : null;
@@ -187,12 +196,11 @@ import config from "@/config";
   }
 
   async function unlock() {
-    localStorage.setItem("admin_api_base", fields.apiBase.value.trim()); localStorage.setItem("blog_api_key", fields.apiKey.value.trim());
     await api("/dashboard/status");
     fields.lockPanel.classList.add("hidden"); fields.adminConsole.classList.remove("hidden");
     setStatus("관리자 인증 완료", "ok"); await loadMode("published");
   }
-  function lockAgain() { localStorage.removeItem("blog_api_key"); fields.apiKey.value = ""; fields.adminConsole.classList.add("hidden"); fields.lockPanel.classList.remove("hidden"); setStatus("잠금 상태입니다."); }
+  function lockAgain() { fields.apiKey.value = ""; fields.adminConsole.classList.add("hidden"); fields.lockPanel.classList.remove("hidden"); setStatus("잠금 상태입니다."); }
   async function loadMode(mode = state.mode) {
     state.mode = mode; state.selected.clear(); clearCurrent(false); setTabActive(mode); setEditorMode(mode);
     if (mode === "site") { fields.contentPanel.classList.add("hidden"); fields.sitePanel.classList.remove("hidden"); await loadSiteSettings(); updateBulkUi(); return; }

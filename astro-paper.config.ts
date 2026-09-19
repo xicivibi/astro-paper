@@ -1,12 +1,31 @@
 import { defineAstroPaperConfig } from "./src/types/config";
 
+const configuredSiteValue = process.env.PUBLIC_SITE_URL;
+if (configuredSiteValue !== undefined && !configuredSiteValue.trim()) {
+  throw new Error("PUBLIC_SITE_URL must not be empty when configured");
+}
+const configuredSiteUrl = new URL(
+  configuredSiteValue?.trim() ?? "https://xici.vercel.app/"
+);
+if (configuredSiteUrl.protocol !== "https:") {
+  throw new Error("PUBLIC_SITE_URL must be an HTTPS origin");
+}
+if (
+  configuredSiteUrl.pathname !== "/" ||
+  configuredSiteUrl.search ||
+  configuredSiteUrl.hash
+) {
+  throw new Error("PUBLIC_SITE_URL must be an origin without a path");
+}
+const siteUrl = configuredSiteUrl.origin.concat("/");
+
 export default defineAstroPaperConfig({
   site: {
-    url: "https://xici.vercel.app/",
+    url: siteUrl,
     title: "AI SEO Lab",
     description: "트렌드, 검색 데이터, 수익화 실험을 근거 기반으로 정리하는 한국어 SEO 인사이트 뉴스보드.",
     author: "AI SEO Lab",
-    profile: "https://xici.vercel.app/",
+    profile: siteUrl,
     ogImage: "default-og.jpg",
     lang: "ko",
     timezone: "Asia/Seoul",

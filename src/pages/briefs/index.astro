@@ -1,0 +1,53 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import Header from "@/components/Header.astro";
+import Main from "@/components/Main.astro";
+import Footer from "@/components/Footer.astro";
+import config from "@/config";
+
+// Keep this list explicit. An empty list means no weekly brief has been published.
+const briefs: { title: string; href: string; date: string }[] = [];
+---
+
+<Layout
+  title={`주간 브리프 | ${config.site.title}`}
+  description="주제별 새 글과 확인 범위를 정리하는 정적 브리프 아카이브입니다."
+>
+  <Header />
+  <Main
+    pageTitle="주간 브리프"
+    pageDesc="발행된 브리프만 이 아카이브에 표시합니다. 이메일 발송이나 구독 기능은 연결되어 있지 않습니다."
+  >
+    {
+      briefs.length > 0 ? (
+        <ul class="divide-border divide-y">
+          {briefs.map(brief => (
+            <li class="py-4 first:pt-0">
+              <time class="text-muted-foreground text-sm">{brief.date}</time>
+              <h2 class="mt-1 text-lg font-bold">
+                <a href={brief.href} class="hover:text-accent no-underline">
+                  {brief.title}
+                </a>
+              </h2>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <div class="border-border bg-muted/35 rounded border p-5">
+          <h2 class="font-bold">아직 발행된 브리프가 없습니다</h2>
+          <p class="text-muted-foreground mt-2 text-sm leading-6">
+            첫 브리프는 실제로 발행할 내용과 출처를 준비한 뒤 이 목록에
+            추가합니다. 현재는 구독자에게 자동으로 전달되는 채널이 없습니다.
+          </p>
+          <a
+            href="/topics/"
+            class="text-accent mt-4 inline-block font-semibold"
+          >
+            주제 허브 둘러보기 →
+          </a>
+        </div>
+      )
+    }
+  </Main>
+  <Footer />
+</Layout>

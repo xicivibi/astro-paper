@@ -3,6 +3,7 @@ import type { CollectionEntry } from "astro:content";
 import { getPostUrl } from "@/utils/getPostPaths";
 import { slugifyStr } from "@/utils/slugify";
 import Datetime from "./Datetime.astro";
+import config from "@/config";
 
 type Props = {
   index?: number;
@@ -13,62 +14,74 @@ const { title, description, tags = [], author = "AI SEO Lab", ...props } = data;
 const href = getPostUrl(id, filePath, Astro.currentLocale);
 const rank = index + 1;
 const visibleTags = tags.slice(0, 4);
-const seed = Array.from(`${id}:${title}`).reduce((sum, char) => sum + char.charCodeAt(0), 0);
-const points = (seed % 87) + 3;
-const comments = seed % 9;
-const domain = "xici.vercel.app";
-const hot = points >= 65;
-const fresh = rank <= 5;
-const attention = hot || fresh;
+const domain = new URL(config.site.url).host;
 ---
 
 <li
-  class="news-item group grid grid-cols-[2.25rem_1.4rem_1fr] gap-2 border-b border-border px-2 py-3 last:border-b-0 sm:grid-cols-[2.75rem_1.5rem_1fr] sm:px-3"
+  class="news-item group border-border grid grid-cols-[2.25rem_1.4rem_1fr] gap-2 border-b px-2 py-3 last:border-b-0 sm:grid-cols-[2.75rem_1.5rem_1fr] sm:px-3"
   data-unread-item
   data-post-id={href}
 >
-  <div class="pt-1 text-right text-sm font-semibold tabular-nums text-muted-foreground">
+  <div
+    class="text-muted-foreground pt-1 text-right text-sm font-semibold tabular-nums"
+  >
     {rank}
   </div>
-  <div class="pt-1 text-center text-[11px] leading-none text-accent" aria-hidden="true">
+  <div
+    class="text-accent pt-1 text-center text-[11px] leading-none"
+    aria-hidden="true"
+  >
     ▲
   </div>
   <article>
-    <h2 class="flex min-w-0 items-start gap-2 text-[15px] leading-6 font-semibold sm:text-base">
+    <h2
+      class="flex min-w-0 items-start gap-2 text-[15px] leading-6 font-semibold sm:text-base"
+    >
       <span class="news-unread-dot mt-2" aria-label="읽지 않은 글"></span>
       <span class="min-w-0 flex-1">
-        <a href={href} class="text-foreground no-underline group-hover:text-accent" data-read-link>
+        <a
+          href={href}
+          class="text-foreground group-hover:text-accent no-underline"
+          data-read-link
+        >
           {title}
         </a>
-        <span class="ml-1 text-xs font-normal text-muted-foreground">({domain})</span>
-        <span data-unread-badge class="ml-2 rounded bg-red-600 px-1.5 py-0.5 text-[10px] font-bold text-white">UNREAD</span>
-        {fresh && <span class="ml-1 rounded bg-blue-600 px-1.5 py-0.5 text-[10px] font-bold text-white">NEW</span>}
-        {hot && <span class="ml-1 rounded bg-accent px-1.5 py-0.5 text-[10px] font-bold text-accent-foreground">HOT</span>}
-        {attention && <span class="ml-1 rounded border border-border px-1.5 py-0.5 text-[10px] font-bold text-muted-foreground">오늘 볼 글</span>}
+        <span class="text-muted-foreground ml-1 text-xs font-normal"
+          >({domain})</span
+        >
+        <span
+          data-unread-badge
+          class="ml-2 rounded bg-red-600 px-1.5 py-0.5 text-[10px] font-bold text-white"
+          >안 읽음</span
+        >
       </span>
     </h2>
 
-    {description && (
-      <p class="mt-1 max-w-3xl text-[13px] leading-6 text-muted-foreground sm:text-sm">
-        {description}
-      </p>
-    )}
+    {
+      description && (
+        <p class="text-muted-foreground mt-1 max-w-3xl text-[13px] leading-6 sm:text-sm">
+          {description}
+        </p>
+      )
+    }
 
-    <div class="mt-1.5 flex flex-wrap items-center gap-x-1.5 gap-y-1 text-[11px] leading-5 text-muted-foreground sm:text-xs">
-      <span>{points} points</span>
+    <div
+      class="text-muted-foreground mt-1.5 flex flex-wrap items-center gap-x-1.5 gap-y-1 text-[11px] leading-5 sm:text-xs"
+    >
       <span>by {author}</span>
       <span>·</span>
       <Datetime {...props} />
-      <span>|</span>
-      <a href={href} class="text-muted-foreground no-underline hover:text-accent" data-read-link>
-        {comments > 0 ? `댓글 ${comments}개` : "토론"}
-      </a>
       {visibleTags.length > 0 && <span>|</span>}
-      {visibleTags.map(tag => (
-        <a href={`/tags/${slugifyStr(tag)}/`} class="text-muted-foreground no-underline hover:text-accent">
-          #{tag}
-        </a>
-      ))}
+      {
+        visibleTags.map(tag => (
+          <a
+            href={`/tags/${slugifyStr(tag)}/`}
+            class="text-muted-foreground hover:text-accent no-underline"
+          >
+            #{tag}
+          </a>
+        ))
+      }
     </div>
   </article>
 </li>
@@ -76,10 +89,16 @@ const attention = hot || fresh;
 <style>
   .news-item[data-unread-item] {
     position: relative;
-    transition: background-color 160ms ease, opacity 160ms ease;
+    transition:
+      background-color 160ms ease,
+      opacity 160ms ease;
   }
   .news-item.is-unread {
-    background: linear-gradient(90deg, rgba(220, 38, 38, 0.08), transparent 42%);
+    background: linear-gradient(
+      90deg,
+      rgba(220, 38, 38, 0.08),
+      transparent 42%
+    );
   }
   .news-unread-dot {
     width: 9px;
@@ -90,6 +109,13 @@ const attention = hot || fresh;
     box-shadow: 0 0 0 4px rgba(220, 38, 38, 0.12);
     animation: newsDotPulse 1.35s ease-in-out infinite;
   }
+  @media (prefers-reduced-motion: reduce) {
+    .news-item[data-unread-item],
+    .news-unread-dot {
+      transition: none;
+      animation: none;
+    }
+  }
   .news-item.is-read {
     opacity: 0.74;
   }
@@ -98,8 +124,15 @@ const attention = hot || fresh;
     display: none;
   }
   @keyframes newsDotPulse {
-    0%, 100% { transform: scale(1); opacity: 1; }
-    50% { transform: scale(1.35); opacity: 0.68; }
+    0%,
+    100% {
+      transform: scale(1);
+      opacity: 1;
+    }
+    50% {
+      transform: scale(1.35);
+      opacity: 0.68;
+    }
   }
 </style>
 
@@ -107,7 +140,8 @@ const attention = hot || fresh;
   (() => {
     const storageKey = "xici_read_posts_v1";
     const read = new Set(JSON.parse(localStorage.getItem(storageKey) || "[]"));
-    const save = () => localStorage.setItem(storageKey, JSON.stringify([...read].slice(-1000)));
+    const save = () =>
+      localStorage.setItem(storageKey, JSON.stringify([...read].slice(-1000)));
     const mark = item => {
       const id = item?.dataset.postId;
       if (!id) return;

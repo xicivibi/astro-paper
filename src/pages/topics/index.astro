@@ -1,0 +1,46 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import Header from "@/components/Header.astro";
+import Main from "@/components/Main.astro";
+import Footer from "@/components/Footer.astro";
+import { topics } from "@/config/topics";
+import config from "@/config";
+---
+
+<Layout
+  title={`주제 허브 | ${config.site.title}`}
+  description="실무 주제별 공개 글 모음입니다."
+>
+  <Header />
+  <Main
+    pageTitle="주제 허브"
+    pageDesc="명시적으로 분류된 글만 각 허브에 모읍니다. 분류할 글이 없으면 빈 상태를 그대로 표시합니다."
+  >
+    <ul class="grid gap-4 sm:grid-cols-3">
+      {
+        topics.map(topic => (
+          <li class="border-border rounded border p-4">
+            <h2 class="text-lg font-bold">
+              <a
+                href={`/topics/${topic.slug}/`}
+                class="hover:text-accent no-underline"
+              >
+                {topic.title}
+              </a>
+            </h2>
+            <p class="text-muted-foreground mt-2 text-sm leading-6">
+              {topic.intro}
+            </p>
+            <a
+              href={`/topics/${topic.slug}/`}
+              class="text-accent mt-4 inline-block text-sm font-semibold"
+            >
+              허브 열기 →
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </Main>
+  <Footer />
+</Layout>

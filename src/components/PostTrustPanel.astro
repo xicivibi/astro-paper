@@ -1,0 +1,75 @@
+---
+type TestingStatus = "not_tested" | "reproduced" | "official_source_only";
+
+type Props = {
+  aiAssisted: boolean;
+  lastReviewed?: Date | null;
+  sources: string[];
+  testingStatus: TestingStatus;
+  correctionNote?: string;
+};
+
+const { aiAssisted, lastReviewed, sources, testingStatus, correctionNote } =
+  Astro.props;
+
+const testingStatusLabel: Record<TestingStatus, string> = {
+  not_tested: "테스트 미실시",
+  reproduced: "재현 기록 제공",
+  official_source_only: "공식 출처만 제공",
+};
+const reviewedLabel = lastReviewed
+  ? lastReviewed.toISOString().slice(0, 10)
+  : "검토일 미제공";
+---
+
+<aside
+  data-trust-metadata
+  aria-labelledby="trust-metadata-title"
+  class="border-border bg-muted/35 mt-8 rounded border p-4 text-sm"
+>
+  <h2 id="trust-metadata-title" class="font-bold">작성·검증 정보</h2>
+  <p class="text-muted-foreground mt-2 leading-6">
+    아래 내용은 글에 입력된 메타데이터를 표시합니다. 이 패널 자체가 독립적인
+    사실 검증이나 품질 보증을 뜻하지는 않습니다.
+  </p>
+
+  <dl class="mt-4 grid gap-3 sm:grid-cols-2">
+    <div>
+      <dt class="text-muted-foreground">작성 방식</dt>
+      <dd class="font-medium">
+        {aiAssisted ? "AI 보조 작성" : "AI 보조 여부 미제공"}
+      </dd>
+    </div>
+    <div>
+      <dt class="text-muted-foreground">마지막 검토일</dt>
+      <dd class="font-medium">{reviewedLabel}</dd>
+    </div>
+    <div>
+      <dt class="text-muted-foreground">테스트 상태</dt>
+      <dd class="font-medium">{testingStatusLabel[testingStatus]}</dd>
+    </div>
+    <div>
+      <dt class="text-muted-foreground">정정 메모</dt>
+      <dd class="font-medium">{correctionNote || "정정 메모 미제공"}</dd>
+    </div>
+  </dl>
+
+  <div class="mt-4">
+    <h3 class="text-muted-foreground">출처</h3>
+    {
+      sources.length > 0 ? (
+        <ul class="mt-1 list-inside list-disc space-y-1">
+          {sources.map(source => (
+            <li>
+              <a href={source} target="_blank" rel="noopener noreferrer">
+                {source}
+              </a>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p class="mt-1 font-medium">출처 미제공</p>
+      )
+    }
+  </div>
+</aside>

@@ -3,6 +3,8 @@ import { ClientRouter } from "astro:transitions";
 import { resolveDefaultOgImagePath } from "@/utils/resolveDefaultOgImagePath";
 import { getAssetPath } from "@/utils/withBase";
 import config from "@/config";
+import { monetization } from "@/config/monetization";
+import AnalyticsConsent from "@/components/AnalyticsConsent.astro";
 import "@/styles/global.css";
 
 type Props = {
@@ -10,6 +12,7 @@ type Props = {
   description?: string;
   ogImage?: string;
   canonicalURL?: string;
+  pageType?: "website" | "article";
 };
 
 const { site } = config;
@@ -19,6 +22,7 @@ const {
   description = site.description,
   ogImage = resolveDefaultOgImagePath(config),
   canonicalURL = new URL(Astro.url.pathname, Astro.site).href,
+  pageType = "website",
 } = Astro.props;
 
 const socialImageURL = new URL(ogImage, Astro.site ?? Astro.url);
@@ -37,18 +41,40 @@ const socialImageURL = new URL(ogImage, Astro.site ?? Astro.url);
     <link rel="icon" href={getAssetPath("favicon.ico")} />
     <link rel="canonical" href={canonicalURL} />
     <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/variable/pretendardvariable.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/variable/pretendardvariable.css"
+    />
     <meta name="generator" content={Astro.generator} />
+    {
+      monetization.adsenseMode === "verify" && (
+        <meta
+          name="google-adsense-account"
+          content={`ca-${monetization.publisherId}`}
+        />
+      )
+    }
 
     <!-- Primary meta -->
     <title>{title}</title>
     <meta name="title" content={title} />
     <meta name="description" content={description} />
+    {
+      /^\/(admin|search)(\/|$)/.test(Astro.url.pathname) && (
+        <meta name="robots" content="noindex, nofollow" />
+      )
+    }
     <meta name="author" content={site.author} />
     <link rel="sitemap" href={getAssetPath("sitemap-index.xml")} />
+    <link
+      rel="alternate"
+      type="application/rss+xml"
+      title={`${site.title} RSS`}
+      href={getAssetPath("rss.xml")}
+    />
 
     <!-- Open Graph -->
-    <meta property="og:type" content="website" />
+    <meta property="og:type" content={pageType} />
     <meta property="og:site_name" content={site.title} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
@@ -100,6 +126,7 @@ const socialImageURL = new URL(ogImage, Astro.site ?? Astro.url);
     class="bg-background font-app text-foreground selection:bg-accent/75 selection:text-accent-foreground flex min-h-svh flex-col"
   >
     <slot />
+    <AnalyticsConsent />
     <script>
       import "@/scripts/theme";
     </script>

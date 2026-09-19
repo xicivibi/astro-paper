@@ -1,0 +1,92 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import Header from "@/components/Header.astro";
+import Breadcrumb from "@/components/Breadcrumb.astro";
+import Main from "@/components/Main.astro";
+import Footer from "@/components/Footer.astro";
+import config from "@/config";
+import { operator } from "@/config/operator";
+import { monetization } from "@/config/monetization";
+const title = "개인정보 안내";
+const description = "AI SEO Lab의 현재 개인정보 처리 범위를 안내합니다.";
+---
+
+<Layout title={`${title} | ${config.site.title}`} description={description}>
+  <Header /><Breadcrumb />
+  <Main pageTitle={title} pageDesc={description} class="app-prose">
+    <p>
+      현재 AI SEO Lab은 회원가입, 문의 폼, 댓글, 뉴스레터를 제공하지 않습니다.
+      방문자 계정을 만들거나 문의 내용을 서버에 저장하는 기능은 없습니다.
+    </p>
+    <h2>호스팅과 검색</h2>
+    <p>
+      현재 공개 사이트는 Vercel에서 제공됩니다. 페이지를 요청할 때 IP 주소,
+      브라우저 정보와 요청 기록이 호스팅 제공자의 서비스 제공·보안 처리에 이용될
+      수 있습니다. 자세한 내용은
+      <a href="https://vercel.com/legal/privacy-policy">Vercel 개인정보 안내</a
+      >에서 확인할 수 있습니다. 사이트 내 검색은 브라우저에서 Pagefind 검색
+      색인을 사용하며 별도의 검색 계정이 필요하지 않습니다.
+    </p>
+    <p>
+      글꼴 표시를 위해 jsDelivr에서 Pretendard 스타일시트를 불러옵니다. 이 요청
+      과정에서 IP 주소와 브라우저 요청 정보가 해당 제공자에게 전달될 수
+      있습니다. 자세한 내용은
+      <a href="https://www.jsdelivr.com/terms/privacy-policy"
+        >jsDelivr 개인정보 안내</a
+      >에서 확인할 수 있습니다.
+    </p>
+    <h2>광고와 방문 통계</h2>
+    <p>이 버전에는 광고를 표시하지 않습니다.</p>
+    {
+      monetization.analyticsEnabled ? (
+        <>
+          <p>
+            방문 통계에 동의한 경우에만 Google Analytics를 불러옵니다. 페이지
+            주소와 제목, 기기·브라우저 정보 등의 방문 통계를 사이트 개선에
+            사용합니다. 이 사이트가 보내는 페이지 주소에서는 검색어와 URL 부가
+            정보를 제외하며, Google 광고 개인화와 Google Signals는 사용하지
+            않습니다.
+          </p>
+          <p>
+            선택은 브라우저에 최대 180일간 저장합니다. 브라우저가 저장을
+            차단하면 현재 문서에서만 선택이 유지될 수 있습니다. Google Analytics
+            쿠키의 유효기간도 최대 180일로 설정합니다. 이는 Google 서버에
+            저장되는 통계의 보관기간과 다릅니다.{" "}
+            <a href="https://policies.google.com/privacy">
+              Google 개인정보처리방침
+            </a>
+            을 확인할 수 있습니다. 거절해도 글을 읽을 수 있습니다.
+          </p>
+          <p>
+            아래 버튼이나 페이지 하단에서 선택을 바꿀 수 있습니다. 동의를
+            철회하면 통계 전송을 중단하고 페이지를 새로 불러옵니다. 이미 전송된
+            정보나 기존 쿠키를 삭제하는 기능은 아니며, 쿠키는 브라우저 설정에서
+            삭제할 수 있습니다.
+          </p>
+          <button
+            type="button"
+            data-analytics-settings
+            class="rounded border px-3 py-2"
+          >
+            방문 통계 설정 열기
+          </button>
+        </>
+      ) : (
+        <p>
+          이 버전에는 방문 통계 스크립트를 활성화하지 않았습니다. 추후 연결할 때
+          실제 처리 설정과 동의 방법을 이 페이지에 반영합니다.
+        </p>
+      )
+    }
+    <h2>문의와 변경</h2>
+    <p>
+      {
+        operator.hasEmail
+          ? "문의 이메일을 보내면 보낸 사람의 이메일 주소와 메시지 내용이 운영자의 메일 서비스로 전달됩니다. 민감한 정보는 보내지 마세요. 정정 및 개인정보 관련 요청은 문의 페이지의 이메일을 이용할 수 있습니다."
+          : "공개 문의 채널은 준비 중입니다. 문의 채널을 개설할 때 관련 개인정보 처리 안내를 함께 제공합니다."
+      }
+      사이트의 기능이나 외부 서비스 구성이 바뀌면 이 안내도 함께 수정합니다.
+    </p>
+  </Main>
+  <Footer />
+</Layout>
