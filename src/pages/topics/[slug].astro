@@ -39,6 +39,9 @@ const unverifiedPosts = posts.filter(post => !verifiedPosts.includes(post));
       <a href="/topics/" class="text-accent">모든 주제</a>
       <a href="/posts/" class="text-accent">전체 글</a>
       <a href="/briefs/" class="text-accent">주간 브리프</a>
+      {topic.slug === "excel-csv" && (
+        <a href="/tools/csv-preview/" class="text-accent">CSV 파일 점검 도구</a>
+      )}
     </nav>
 
     {

@@ -28,6 +28,7 @@ const tagsPath = getRelativeLocaleUrl(locale, "tags");
 const searchPath = getRelativeLocaleUrl(locale, "search");
 const topicsPath = getRelativeLocaleUrl(locale, "topics");
 const briefsPath = getRelativeLocaleUrl(locale, "briefs");
+const csvToolPath = getRelativeLocaleUrl(locale, "tools/csv-preview");
 const allTags = sortedPosts.flatMap(post => post.data.tags ?? []);
 const tagCount = allTags.reduce<Record<string, number>>((acc, tag) => {
   acc[tag] = (acc[tag] ?? 0) + 1;
@@ -184,6 +185,12 @@ const topTags = Object.entries(tagCount)
         class="text-accent mt-3 inline-block text-sm font-semibold"
       >
         주간 브리프 아카이브 →
+      </a>
+      <a
+        href={csvToolPath}
+        class="text-accent mt-3 ms-4 inline-block text-sm font-semibold"
+      >
+        CSV 파일 점검 도구 →
       </a>
     </section>
   </main>
