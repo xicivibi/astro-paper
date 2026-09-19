@@ -41,7 +41,7 @@ test("PUBLIC_SITE_URL selects and normalizes the deployment origin", () => {
   assert.match(html, /href="\/topics\/excel-csv\/"[\s\S]*?공개 글 6개/);
   assert.doesNotMatch(
     html,
-    /SEO News Board|Fact Pack|수익화 실험|href="\/briefs\/"|Google Sheets·Apps Script|문서·웹 업무/
+    /SEO News Board|Fact Pack|수익화 실험|Google Sheets·Apps Script|문서·웹 업무/
   );
 
   const topicsHtml = readFileSync(

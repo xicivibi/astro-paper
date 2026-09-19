@@ -1,0 +1,3 @@
+amount
+customer_id
+currency

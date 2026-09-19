@@ -1,0 +1,98 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import Header from "@/components/Header.astro";
+import Main from "@/components/Main.astro";
+import Footer from "@/components/Footer.astro";
+import config from "@/config";
+---
+
+<Layout
+  title={`파일 열 이름 비교 | ${config.site.title}`}
+  description="두 파일의 열 이름 목록을 브라우저에서 비교해 누락과 순서 차이를 확인합니다."
+>
+  <Header />
+  <Main
+    pageTitle="파일 열 이름 비교"
+    pageDesc="폴더 결합 전에 두 파일의 열 이름을 한 줄에 하나씩 붙여 넣어 누락 열과 순서 차이를 찾습니다."
+  >
+    <section class="grid gap-4 sm:grid-cols-2">
+      <div>
+        <label for="left-headers" class="font-semibold">기준 파일 열</label
+        ><textarea
+          id="left-headers"
+          class="border-border bg-background mt-2 min-h-52 w-full rounded border p-3 font-mono text-sm"
+        ></textarea>
+      </div>
+      <div>
+        <label for="right-headers" class="font-semibold">비교 파일 열</label
+        ><textarea
+          id="right-headers"
+          class="border-border bg-background mt-2 min-h-52 w-full rounded border p-3 font-mono text-sm"
+        ></textarea>
+      </div>
+    </section>
+    <button
+      id="compare-headers"
+      class="bg-accent mt-3 px-4 py-2 font-semibold text-white"
+      >열 비교하기</button
+    >
+    <div class="mt-3 flex flex-wrap gap-3 text-sm">
+      <a href="/samples/headers-a.txt" download>기준 합성 샘플</a>
+      <a href="/samples/headers-b.txt" download>비교 합성 샘플</a>
+    </div>
+    <p
+      id="header-status"
+      class="text-muted-foreground mt-4 text-sm"
+      role="status"
+    >
+      입력은 외부로 전송하지 않습니다.
+    </p>
+    <section class="mt-5 grid gap-4 sm:grid-cols-2">
+      <div class="border-border rounded border p-4">
+        <h2 class="font-bold">기준 파일에만 있음</h2><pre
+          id="headers-left-only"
+          class="mt-2 min-h-24 text-sm whitespace-pre-wrap">
+        </pre>
+      </div>
+      <div class="border-border rounded border p-4">
+        <h2 class="font-bold">비교 파일에만 있음</h2><pre
+          id="headers-right-only"
+          class="mt-2 min-h-24 text-sm whitespace-pre-wrap">
+        </pre>
+      </div>
+    </section>
+    <p class="mt-6 text-sm">
+      <a
+        href="/posts/power-query-folder-combine-header-column-order/"
+        class="text-accent font-semibold"
+        >Power Query 폴더 결합 전 점검 절차 →</a>
+    </p>
+  </Main>
+  <Footer />
+</Layout>
+
+<script>
+  import { compareHeaders } from "@/utils/headerComparator";
+  const value = (selector: string) =>
+    document.querySelector<HTMLTextAreaElement>(selector)?.value ?? "";
+  const set = (selector: string, values: string[]) => {
+    const element = document.querySelector<HTMLElement>(selector);
+    if (element)
+      element.textContent = values.length ? values.join("\n") : "없음";
+  };
+  document.querySelector("#compare-headers")?.addEventListener("click", () => {
+    const result = compareHeaders(
+      value("#left-headers"),
+      value("#right-headers")
+    );
+    set("#headers-left-only", result.onlyLeft);
+    set("#headers-right-only", result.onlyRight);
+    const status = document.querySelector<HTMLElement>("#header-status");
+    if (status)
+      status.textContent = result.sameOrder
+        ? "열 이름과 순서가 같습니다."
+        : result.sameSet
+          ? "열 이름은 같지만 순서가 다릅니다."
+          : "누락되거나 추가된 열이 있습니다.";
+  });
+</script>

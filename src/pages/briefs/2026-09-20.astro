@@ -1,0 +1,65 @@
+---
+import { getCollection } from "astro:content";
+import Layout from "@/layouts/Layout.astro";
+import Header from "@/components/Header.astro";
+import Main from "@/components/Main.astro";
+import Footer from "@/components/Footer.astro";
+import { getSortedPosts } from "@/utils/getSortedPosts";
+import { getPostUrl } from "@/utils/getPostPaths";
+import config from "@/config";
+
+const cutoff = new Date("2026-09-20T23:59:59+09:00");
+const posts = getSortedPosts(
+  await getCollection(
+    "posts",
+    ({ data }) => !data.draft && data.pubDatetime <= cutoff
+  )
+);
+---
+
+<Layout
+  title={`Excel·CSV 문제 해결 시작하기 | ${config.site.title}`}
+  description="검증된 Excel·CSV 실무 글 6편을 문제 해결 순서로 묶은 첫 주간 브리프입니다."
+>
+  <Header />
+  <Main
+    pageTitle="Excel·CSV 문제 해결 시작하기"
+    pageDesc="2026-09-20 주간 브리프 · 새 사실을 덧붙이지 않고 공개된 검증 글을 작업 순서로 묶었습니다."
+  >
+    <div class="border-border bg-muted/30 rounded border p-4 text-sm leading-6">
+      <strong>검증 글 6편</strong>을 가져오기, 값 보존, 결합, 정리, 비교 순서로
+      확인할 수 있습니다. 각 글의 출처·재현 범위·검토 날짜는 본문 상단 신뢰
+      정보에서 확인하세요.
+    </div>
+    <ol class="mt-6 space-y-4">
+      {
+        posts.map((post, index) => (
+          <li class="border-border border-b pb-4">
+            <p class="text-accent text-xs font-bold">GUIDE {index + 1}</p>
+            <h2 class="mt-1 text-lg font-bold">
+              <a
+                href={getPostUrl(post.id, post.filePath)}
+                class="hover:text-accent no-underline"
+              >
+                {post.data.title}
+              </a>
+            </h2>
+            <p class="text-muted-foreground mt-2 text-sm leading-6">
+              {post.data.description}
+            </p>
+          </li>
+        ))
+      }
+    </ol>
+    <div class="mt-6 flex flex-wrap gap-3 text-sm">
+      <a href="/topics/excel-csv/" class="text-accent font-semibold"
+        >문제 해결 순서 보기 →</a
+      >
+      <a href="/tools/" class="text-accent font-semibold"
+        >브라우저 도구 보기 →</a
+      >
+      <a href="/rss.xml" class="text-accent font-semibold">RSS 구독 →</a>
+    </div>
+  </Main>
+  <Footer />
+</Layout>

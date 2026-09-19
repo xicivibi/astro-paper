@@ -17,11 +17,22 @@ type Props = {
 
 const { site } = config;
 
-const { title, description, ogImage, canonicalURL, pubDatetime, modDatetime, author, lastReviewed, sources = [], noindex = false } =
-  Astro.props;
+const {
+  title,
+  description,
+  ogImage,
+  canonicalURL,
+  pubDatetime,
+  modDatetime,
+  author,
+  lastReviewed,
+  sources = [],
+  noindex = false,
+} = Astro.props;
 const resolvedAuthor = author || site.author;
 const authorType =
-  resolvedAuthor === site.author || /^AI(?:[- ]?Bot)?$/i.test(resolvedAuthor.trim())
+  resolvedAuthor === site.author ||
+  /^AI(?:[- ]?Bot)?$/i.test(resolvedAuthor.trim())
     ? "Organization"
     : "Person";
 const resolvedCanonicalURL = canonicalURL
@@ -47,6 +58,17 @@ const structuredData = {
       ...(site.profile && { url: site.profile }),
     },
   ],
+  publisher: {
+    "@type": "Organization",
+    name: site.title,
+    url: site.url,
+  },
+  inLanguage: site.lang,
+  isPartOf: {
+    "@type": "Blog",
+    name: site.title,
+    url: site.url,
+  },
   ...(lastReviewed && { dateReviewed: lastReviewed.toISOString() }),
   ...(sources.length > 0 && { citation: sources }),
 };

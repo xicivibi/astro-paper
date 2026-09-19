@@ -1,0 +1,109 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import Header from "@/components/Header.astro";
+import Main from "@/components/Main.astro";
+import Footer from "@/components/Footer.astro";
+import config from "@/config";
+---
+
+<Layout
+  title={`두 목록 차이 비교 | ${config.site.title}`}
+  description="두 목록을 브라우저에서 비교해 왼쪽에만, 오른쪽에만, 양쪽에 있는 값을 확인합니다."
+>
+  <Header />
+  <Main
+    pageTitle="두 목록 차이 비교"
+    pageDesc="각 목록을 한 줄에 하나씩 붙여 넣어 Left Anti 비교 전에 공백·대소문자와 중복을 확인합니다."
+  >
+    <section class="grid gap-4 sm:grid-cols-2">
+      <div>
+        <label for="left-list" class="font-semibold">왼쪽 목록</label><textarea
+          id="left-list"
+          class="border-border bg-background mt-2 min-h-52 w-full rounded border p-3 font-mono text-sm"
+        ></textarea>
+      </div>
+      <div>
+        <label for="right-list" class="font-semibold">오른쪽 목록</label
+        ><textarea
+          id="right-list"
+          class="border-border bg-background mt-2 min-h-52 w-full rounded border p-3 font-mono text-sm"
+        ></textarea>
+      </div>
+    </section>
+    <div class="mt-3 flex flex-wrap items-center gap-4 text-sm">
+      <label
+        ><input id="trim-list" type="checkbox" checked /> 앞뒤 공백 무시</label
+      >
+      <label><input id="case-sensitive" type="checkbox" /> 대소문자 구분</label>
+      <button
+        id="compare-lists"
+        class="bg-accent px-4 py-2 font-semibold text-white">비교하기</button
+      >
+    </div>
+    <div class="mt-3 flex flex-wrap gap-3 text-sm">
+      <a href="/samples/list-a.txt" download>왼쪽 합성 샘플</a>
+      <a href="/samples/list-b.txt" download>오른쪽 합성 샘플</a>
+    </div>
+    <p
+      id="list-status"
+      class="text-muted-foreground mt-4 text-sm"
+      role="status"
+    >
+      입력은 외부로 전송하지 않습니다.
+    </p>
+    <section class="mt-5 grid gap-4 lg:grid-cols-3">
+      {
+        [
+          ["left-only", "왼쪽에만 있음"],
+          ["right-only", "오른쪽에만 있음"],
+          ["common", "양쪽에 있음"],
+        ].map(([id, title]) => (
+          <div class="border-border rounded border p-4">
+            <>
+              <h2 class="font-bold">{title}</h2>
+              <pre
+                id={id}
+                class="mt-2 min-h-24 overflow-auto text-sm whitespace-pre-wrap"
+              />
+            </>
+          </div>
+        ))
+      }
+    </section>
+    <p id="duplicate-status" class="text-muted-foreground mt-4 text-sm"></p>
+    <p class="mt-6 text-sm">
+      <a
+        href="/posts/power-query-left-anti-compare-lists/"
+        class="text-accent font-semibold">Power Query Left Anti 비교 절차 →</a>
+    </p>
+  </Main>
+  <Footer />
+</Layout>
+
+<script>
+  import { compareLists } from "@/utils/listComparator";
+  const value = (selector: string) =>
+    document.querySelector<HTMLTextAreaElement>(selector)?.value ?? "";
+  const checked = (selector: string) =>
+    document.querySelector<HTMLInputElement>(selector)?.checked ?? false;
+  const set = (selector: string, values: string[]) => {
+    const element = document.querySelector<HTMLElement>(selector);
+    if (element)
+      element.textContent = values.length ? values.join("\n") : "없음";
+  };
+  document.querySelector("#compare-lists")?.addEventListener("click", () => {
+    const result = compareLists(value("#left-list"), value("#right-list"), {
+      trim: checked("#trim-list"),
+      caseSensitive: checked("#case-sensitive"),
+    });
+    set("#left-only", result.leftOnly);
+    set("#right-only", result.rightOnly);
+    set("#common", result.common);
+    const status = document.querySelector<HTMLElement>("#list-status");
+    if (status)
+      status.textContent = `왼쪽 전용 ${result.leftOnly.length}개 · 오른쪽 전용 ${result.rightOnly.length}개 · 공통 ${result.common.length}개`;
+    const duplicates = document.querySelector<HTMLElement>("#duplicate-status");
+    if (duplicates)
+      duplicates.textContent = `중복 확인: 왼쪽 ${result.duplicateLeft.length}개 · 오른쪽 ${result.duplicateRight.length}개`;
+  });
+</script>

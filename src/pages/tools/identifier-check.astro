@@ -1,0 +1,115 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import Header from "@/components/Header.astro";
+import Main from "@/components/Main.astro";
+import Footer from "@/components/Footer.astro";
+import config from "@/config";
+---
+
+<Layout
+  title={`식별자 길이·선행 0 점검 | ${config.site.title}`}
+  description="식별자를 외부로 보내지 않고 선행 0과 15자리 초과 숫자를 브라우저에서 확인합니다."
+>
+  <Header />
+  <Main
+    pageTitle="식별자 길이·선행 0 점검"
+    pageDesc="상품 코드·사번·주문번호를 한 줄에 하나씩 붙여 넣어 텍스트 형식이 필요한 값을 찾습니다."
+  >
+    <section class="border-border bg-muted/30 rounded border p-4 sm:p-6">
+      <label for="identifiers" class="font-semibold">식별자 목록</label>
+      <textarea
+        id="identifiers"
+        class="border-border bg-background mt-2 min-h-48 w-full rounded border p-3 font-mono text-sm"
+        placeholder={`00123\n12345678901234567\nABC-007`}></textarea>
+      <div class="mt-3 flex flex-wrap gap-3">
+        <button
+          id="inspect-identifiers"
+          class="bg-accent px-4 py-2 font-semibold text-white"
+        >
+          점검하기
+        </button>
+        <a
+          href="/samples/identifier-sample.csv"
+          download
+          class="border-border border px-4 py-2 font-semibold no-underline"
+        >
+          합성 샘플 받기
+        </a>
+      </div>
+      <p class="text-muted-foreground mt-3 text-xs leading-5">
+        입력은 이 브라우저에서만 처리합니다. 숫자처럼 보여도 업무 식별자는
+        Excel·Power Query에서 텍스트 형식을 먼저 지정하는 편이 안전합니다.
+      </p>
+    </section>
+    <section class="mt-6" aria-labelledby="identifier-results-title">
+      <h2 id="identifier-results-title" class="text-lg font-bold">점검 결과</h2>
+      <p
+        id="identifier-status"
+        class="text-muted-foreground mt-2 text-sm"
+        role="status"
+      >
+        최대 200개를 점검합니다.
+      </p>
+      <div class="mt-3 overflow-x-auto">
+        <table
+          class="border-border w-full border-collapse border text-left text-sm"
+        >
+          <thead
+            ><tr
+              ><th class="border-border border p-2">원본</th><th
+                class="border-border border p-2">길이</th
+              ><th class="border-border border p-2">확인</th></tr
+            ></thead
+          >
+          <tbody id="identifier-results"></tbody>
+        </table>
+      </div>
+    </section>
+    <p class="mt-6 text-sm">
+      <a
+        href="/posts/excel-leading-zeros-large-identifiers-power-query/"
+        class="text-accent font-semibold"
+        >Power Query에서 선행 0·긴 숫자를 보존하는 절차 →</a
+      >
+    </p>
+  </Main>
+  <Footer />
+</Layout>
+
+<script>
+  import { inspectIdentifiers } from "@/utils/identifierInspector";
+  const input = document.querySelector<HTMLTextAreaElement>("#identifiers");
+  const body = document.querySelector<HTMLTableSectionElement>(
+    "#identifier-results"
+  );
+  const status = document.querySelector<HTMLElement>("#identifier-status");
+  document
+    .querySelector("#inspect-identifiers")
+    ?.addEventListener("click", () => {
+      const rows = inspectIdentifiers(input?.value ?? "");
+      body?.replaceChildren(
+        ...rows.map(row => {
+          const tr = document.createElement("tr");
+          const messages = [
+            row.leadingZeroRisk ? "선행 0" : "",
+            row.precisionRisk ? "15자리 초과" : "",
+          ].filter(Boolean);
+          for (const value of [
+            row.value,
+            String(row.length),
+            messages.join(" · ") || "특이사항 없음",
+          ]) {
+            const td = document.createElement("td");
+            td.className = "border-border border p-2";
+            td.textContent = value;
+            tr.append(td);
+          }
+          return tr;
+        })
+      );
+      if (status)
+        status.textContent = rows.length
+          ? `${rows.length}개 식별자를 점검했습니다.`
+          : "점검할 값을 입력하세요.";
+    });
+</script>
