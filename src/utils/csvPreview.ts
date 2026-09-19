@@ -89,6 +89,18 @@ export function detectDelimiter(text: string): CsvDelimiter | null {
   return winner?.score ? winner.delimiter : null;
 }
 
+function appendFormulaPrefixWarning(rows: string[][], warnings: string[]): void {
+  if (
+    rows
+      .slice(0, CSV_PREVIEW_MAX_ROWS)
+      .some(row => row.some(cell => /^[=+\-@]/.test(cell)))
+  ) {
+    warnings.push(
+      "일부 셀이 =, +, -, @로 시작합니다. 스프레드시트에서 숫자나 수식으로 해석될 수 있으므로 파일 출처와 값을 확인하세요."
+    );
+  }
+}
+
 export function inspectCsv(text: string, hasUtf8Bom = false): CsvPreview {
   const delimiter = detectDelimiter(text);
   const warnings = [
@@ -99,6 +111,7 @@ export function inspectCsv(text: string, hasUtf8Bom = false): CsvPreview {
   if (!delimiter) {
     warnings.push("구분자를 확정하지 못했습니다. 한 열짜리 파일이거나 지원하지 않는 형식일 수 있습니다.");
     const rows = parseCsv(text, ",");
+    appendFormulaPrefixWarning(rows, warnings);
     return {
       hasUtf8Bom,
       rowCount: rows.length,
@@ -110,6 +123,7 @@ export function inspectCsv(text: string, hasUtf8Bom = false): CsvPreview {
     };
   }
   const rows = parseCsv(text, delimiter);
+  appendFormulaPrefixWarning(rows, warnings);
   return {
     hasUtf8Bom,
     rowCount: rows.length,

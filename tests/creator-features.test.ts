@@ -108,6 +108,8 @@ test("commercial surfaces keep image and operator metadata deterministic", () =>
   assert.match(card, /role="img"/);
   assert.match(postLayout, /dateReviewed/);
   assert.match(postLayout, /citation/);
+  assert.match(postLayout, /"Organization"/);
+  assert.match(postLayout, /resolvedAuthor === site\.author/);
   assert.match(postPage, /author=\{post\.data\.author\}/);
   assert.match(readiness, /공개 이름 미제공/);
 });

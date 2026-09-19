@@ -18,6 +18,11 @@ const { site } = config;
 
 const { title, description, ogImage, canonicalURL, pubDatetime, modDatetime, author, lastReviewed, sources = [] } =
   Astro.props;
+const resolvedAuthor = author || site.author;
+const authorType =
+  resolvedAuthor === site.author || /^AI(?:[- ]?Bot)?$/i.test(resolvedAuthor.trim())
+    ? "Organization"
+    : "Person";
 
 const structuredData = {
   "@context": "https://schema.org",
@@ -30,8 +35,8 @@ const structuredData = {
   ...(modDatetime && { dateModified: modDatetime.toISOString() }),
   author: [
     {
-      "@type": "Person",
-      name: author || site.author,
+      "@type": authorType,
+      name: resolvedAuthor,
       ...(site.profile && { url: site.profile }),
     },
   ],

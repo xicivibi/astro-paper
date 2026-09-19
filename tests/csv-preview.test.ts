@@ -46,3 +46,9 @@ test("warns when a quoted field is not closed", () => {
   const result = inspectCsv('name,note\nalpha,"unfinished');
   assert.match(result.warnings.join(" "), /닫히지 않은 큰따옴표/);
 });
+
+test("flags formula-like cell prefixes without declaring them malicious", () => {
+  const result = inspectCsv("name,value\nalpha,=1+2\nbeta,-3");
+  assert.match(result.warnings.join(" "), /숫자나 수식/);
+  assert.doesNotMatch(result.warnings.join(" "), /악성/);
+});
