@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { mkdirSync, rmSync, writeFileSync } from "node:fs";
+import { mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import test from "node:test";
@@ -81,8 +81,12 @@ test("release inspection binds all discovery files and keeps ads off", () => {
       join(directory, "tools/csv-preview/index.html"),
       "<h1>CSV</h1>"
     );
+    writeFileSync(
+      join(directory, "_headers"),
+      "/*\n  Content-Security-Policy: default-src 'self'\n"
+    );
     const result = inspectDist(directory, origin);
-    assert.equal(result.files, 6);
+    assert.equal(result.files, 7);
 
     writeFileSync(join(directory, "rss.xml"), "https://xici.vercel.app/rss.xml");
     assert.throws(
@@ -92,4 +96,32 @@ test("release inspection binds all discovery files and keeps ads off", () => {
   } finally {
     rmSync(directory, { recursive: true, force: true });
   }
+});
+
+test("both hosts ship the same restrictive security policy", () => {
+  const root = new URL("..", import.meta.url);
+  const cloudflare = readFileSync(
+    new URL("deploy/cloudflare-headers", root),
+    "utf8"
+  );
+  const vercel = JSON.parse(
+    readFileSync(new URL("vercel.json", root), "utf8")
+  );
+  const headers = Object.fromEntries(
+    vercel.headers[0].headers.map(
+      (item: { key: string; value: string }) => [item.key, item.value]
+    )
+  );
+
+  for (const directive of [
+    "default-src 'self'",
+    "object-src 'none'",
+    "frame-ancestors 'none'",
+    "form-action 'self'",
+  ]) {
+    assert.match(cloudflare, new RegExp(directive.replaceAll("'", "\\'")));
+    assert.match(headers["Content-Security-Policy"], new RegExp(directive.replaceAll("'", "\\'")));
+  }
+  assert.equal(headers["X-Content-Type-Options"], "nosniff");
+  assert.equal(headers["X-Frame-Options"], "DENY");
 });

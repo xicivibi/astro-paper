@@ -45,6 +45,18 @@ test("PUBLIC_SITE_URL selects and normalizes the deployment origin", () => {
     readFileSync(new URL("../dist/sitemap-index.xml", import.meta.url), "utf8"),
     /https:\/\/xici-example\.pages\.dev\/sitemap-0\.xml/
   );
+  const article = readFileSync(
+    new URL(
+      "../dist/posts/excel-leading-zeros-large-identifiers-power-query/index.html",
+      import.meta.url
+    ),
+    "utf8"
+  );
+  assert.match(
+    article,
+    /"mainEntityOfPage":\{"@type":"WebPage","@id":"https:\/\/xici-example\.pages\.dev\/posts\/excel-leading-zeros-large-identifiers-power-query\/"\}/
+  );
+  assert.doesNotMatch(html + article, /cdn\.jsdelivr\.net/);
 });
 
 test("PUBLIC_SITE_URL rejects a URL containing a path", () => {

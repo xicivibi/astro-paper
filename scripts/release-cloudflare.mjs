@@ -15,6 +15,7 @@ const requiredFiles = [
   "rss.xml",
   "sitemap-index.xml",
   "ads.txt",
+  "_headers",
   "tools/csv-preview/index.html",
 ];
 const textExtensions = /\.(?:html|xml|txt)$/i;

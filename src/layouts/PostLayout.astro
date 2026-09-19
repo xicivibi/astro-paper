@@ -24,6 +24,9 @@ const authorType =
   resolvedAuthor === site.author || /^AI(?:[- ]?Bot)?$/i.test(resolvedAuthor.trim())
     ? "Organization"
     : "Person";
+const resolvedCanonicalURL = canonicalURL
+  ? new URL(canonicalURL, Astro.site ?? site.url).href
+  : new URL(Astro.url.pathname, Astro.site ?? site.url).href;
 
 const structuredData = {
   "@context": "https://schema.org",
@@ -31,7 +34,10 @@ const structuredData = {
   headline: title ?? site.title,
   ...(description && { description }),
   image: ogImage,
-  ...(canonicalURL && { mainEntityOfPage: canonicalURL }),
+  mainEntityOfPage: {
+    "@type": "WebPage",
+    "@id": resolvedCanonicalURL,
+  },
   ...(pubDatetime && { datePublished: pubDatetime.toISOString() }),
   ...(modDatetime && { dateModified: modDatetime.toISOString() }),
   author: [
@@ -46,7 +52,14 @@ const structuredData = {
 };
 ---
 
-<Layout {title} {description} {ogImage} {canonicalURL} pageType="article" {noindex}>
+<Layout
+  {title}
+  {description}
+  {ogImage}
+  canonicalURL={resolvedCanonicalURL}
+  pageType="article"
+  {noindex}
+>
   <Fragment slot="head">
     {
       pubDatetime && (
