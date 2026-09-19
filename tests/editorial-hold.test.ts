@@ -65,7 +65,10 @@ test("production artifacts preserve held URLs but remove discovery signals", () 
 
   assert.match(html, /name="robots" content="noindex, nofollow"/);
   assert.match(html, /data-editorial-hold/);
+  assert.match(html, /검토 보류된 이전 게시물/);
   assert.doesNotMatch(html, /application\/ld\+json/);
+  assert.doesNotMatch(html, /id="article"/);
+  assert.doesNotMatch(html, /data-trust-metadata/);
   assert.equal(isLegacyHoldPostPath(`/posts/${sampleId}/`), true);
 
   for (const id of legacyHoldPostIds) {

@@ -92,6 +92,11 @@ const {
   editorialStatus,
 } = post.data;
 const isHeld = editorialStatus === "legacy_hold";
+const heldTitle = "검토 보류된 이전 게시물";
+const heldDescription =
+  "출처·재현 기록·편집 검토가 확인되지 않아 본문 공개를 중단한 이전 게시물입니다.";
+const publicTitle = isHeld ? heldTitle : title;
+const publicDescription = isHeld ? heldDescription : description;
 
 const { Content } = await render(post);
 
@@ -117,9 +122,9 @@ const ogImage = ogImageUrl
 ---
 
 <PostLayout
-  title={`${title} | ${config.site.title}`}
-  description={description}
-  ogImage={ogImage}
+  title={`${publicTitle} | ${config.site.title}`}
+  description={publicDescription}
+  ogImage={isHeld ? undefined : ogImage}
   canonicalURL={canonicalURL}
   pubDatetime={pubDatetime}
   modDatetime={modDatetime}
@@ -139,52 +144,58 @@ const ogImage = ogImageUrl
     data-pagefind-ignore={isHeld ? "all" : undefined}
   >
     <h1
-      style={{ viewTransitionName: slugifyStr(title.replaceAll(".", "-")) }}
+      style={{ viewTransitionName: slugifyStr(publicTitle.replaceAll(".", "-")) }}
       class="text-accent inline-block text-2xl font-bold sm:text-3xl"
     >
-      {title}
+      {publicTitle}
     </h1>
 
-    <div class="my-2 flex items-center gap-2">
-      <Datetime {pubDatetime} {modDatetime} {timezone} size="lg" />
-      <span
-        aria-hidden="true"
-        class:list={[
-          "text-muted-foreground max-sm:hidden",
-          { hidden: !config.features.editPost?.enabled || hideEditPost },
-        ]}
-      >
-        |
-      </span>
-      <EditPost {hideEditPost} {post} class="max-sm:hidden" />
-    </div>
+    {
+      isHeld ? (
+        <PostReviewHoldNotice />
+      ) : (
+        <>
+          <div class="my-2 flex items-center gap-2">
+            <Datetime {pubDatetime} {modDatetime} {timezone} size="lg" />
+            <span
+              aria-hidden="true"
+              class:list={[
+                "text-muted-foreground max-sm:hidden",
+                { hidden: !config.features.editPost?.enabled || hideEditPost },
+              ]}
+            >
+              |
+            </span>
+            <EditPost {hideEditPost} {post} class="max-sm:hidden" />
+          </div>
 
-    {isHeld && <PostReviewHoldNotice />}
+          <article
+            id="article"
+            class:list={[
+              "mt-8 w-full",
+              "app-prose max-w-app",
+              "prose-pre:bg-(--shiki-light-bg) dark:prose-pre:bg-(--shiki-dark-bg)",
+            ]}
+          >
+            <Content />
+          </article>
 
-    <article
-      id="article"
-      class:list={[
-        "mt-8 w-full",
-        "app-prose max-w-app",
-        "prose-pre:bg-(--shiki-light-bg) dark:prose-pre:bg-(--shiki-dark-bg)",
-      ]}
-    >
-      <Content />
-    </article>
+          <hr class="my-8 border-dashed" />
 
-    <hr class="my-8 border-dashed" />
+          <EditPost class="sm:hidden" {hideEditPost} {post} />
 
-    <EditPost class="sm:hidden" {hideEditPost} {post} />
+          <PostTrustPanel
+            {aiAssisted}
+            {lastReviewed}
+            {sources}
+            {testingStatus}
+            {correctionNote}
+          />
 
-    <PostTrustPanel
-      {aiAssisted}
-      {lastReviewed}
-      {sources}
-      {testingStatus}
-      {correctionNote}
-    />
-
-    <BackToTopButton />
+          <BackToTopButton />
+        </>
+      )
+    }
 
     {
       !isHeld && (
