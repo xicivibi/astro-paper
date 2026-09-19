@@ -74,3 +74,17 @@ test("left-anti pilot binds normalization to the verified comparison", () => {
   assert.match(post, /원본 비교와 정규화 비교를 나눠/);
   assert.match(post, /XLOOKUP·MATCH 동작은 이 재현으로 보장하지/);
 });
+
+test("date-locale guide stays within official UI documentation", () => {
+  const post = readPost("power-query-csv-date-using-locale");
+  assert.match(post, /^aiAssisted: true$/m);
+  assert.match(post, /^lastReviewed: 2026-09-20T\d{2}:\d{2}:00\+09:00$/m);
+  assert.match(post, /^testingStatus: official_source_only$/m);
+  assert.match(
+    post,
+    /https:\/\/support\.microsoft\.com\/en-us\/excel\/set-a-locale-or-region-for-data-power-query/
+  );
+  assert.match(post, /^## 이 글의 확인 범위$/m);
+  assert.match(post, /특정 로캘 조합의 정확한 변환 결과를 직접 실행한 것으로 주장하지/);
+  assert.match(post, /Date\.FromText.*이 글의 확인 범위에 포함하지 않았/);
+});
