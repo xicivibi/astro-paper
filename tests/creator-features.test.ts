@@ -84,6 +84,7 @@ test("public creator surfaces expose RSS and avoid fabricated engagement data", 
     `${root}/src/components/PostTrustPanel.astro`,
     "utf8"
   );
+  const home = readFileSync(`${root}/src/pages/index.astro`, "utf8");
   const rssRoute = readFileSync(`${root}/src/pages/rss.xml.ts`, "utf8");
   const newsItem = readFileSync(`${root}/src/components/NewsItem.astro`, "utf8");
   const template = readFileSync(`${root}/docs/xici-post-template.md`, "utf8");
@@ -111,6 +112,7 @@ test("public creator surfaces expose RSS and avoid fabricated engagement data", 
   assert.match(trustPanel, /testingStatus/);
   assert.match(trustPanel, /timeZone: config\.site\.timezone/);
   assert.doesNotMatch(trustPanel, /toISOString\(\)\.slice/);
+  assert.match(home, /timeZone: config\.site\.timezone/);
 });
 
 test("commercial surfaces keep image and operator metadata deterministic", () => {

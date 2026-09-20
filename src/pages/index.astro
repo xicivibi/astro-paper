@@ -18,6 +18,7 @@ const latestPosts = sortedPosts.slice(0, Math.max(config.posts.perIndex, 30));
 const latestPost = sortedPosts[0];
 const latestDate = latestPost?.data.pubDatetime
   ? latestPost.data.pubDatetime.toLocaleDateString("ko-KR", {
+      timeZone: config.site.timezone,
       year: "numeric",
       month: "short",
       day: "numeric",
