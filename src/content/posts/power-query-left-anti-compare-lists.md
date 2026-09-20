@@ -18,6 +18,10 @@ sources:
   - "https://learn.microsoft.com/en-us/powerquery-m/text-upper"
   - "https://learn.microsoft.com/en-us/powerquery-m/table-selectrows"
 testingStatus: reproduced
+reproductionKit:
+  manifestPath: "/reproduction/power-query-left-anti-compare-lists/534eb92c10fd974fe6dc2d4a3bf03e7e7fc69033511cc3ca6a3356ae827fc199/manifest.json"
+  sha256: "534eb92c10fd974fe6dc2d4a3bf03e7e7fc69033511cc3ca6a3356ae827fc199"
+  toolPath: "/tools/list-compare/"
 ---
 
 > Power Query를 열기 전에 [두 목록 차이 비교 도구](/tools/list-compare/)로 공백·대소문자·중복 규칙에 따른 차이를 확인할 수 있습니다.

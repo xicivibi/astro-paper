@@ -1,0 +1,98 @@
+---
+import {
+  loadReproductionKit,
+  type ReproductionKitReference,
+} from "@/utils/reproductionKit";
+
+type Props = {
+  articleId: string;
+  reference: ReproductionKitReference;
+};
+
+const { articleId, reference } = Astro.props;
+const manifest = loadReproductionKit(reference, articleId);
+const manifestLabel = `${manifest.case_id} 재현 키트 manifest`;
+---
+
+<aside
+  data-reproduction-kit
+  aria-labelledby="reproduction-kit-title"
+  class="border-border bg-muted/35 mt-8 rounded border p-4 text-sm"
+>
+  <h2 id="reproduction-kit-title" class="font-bold">직접 확인하는 재현 키트</h2>
+  <p class="text-muted-foreground mt-2 leading-6">
+    이 글의 합성 입력과 검증 당시 기대 결과를 공개합니다. 파일은 브라우저에서
+    바로 내려받으며 서버로 업로드되지 않습니다.
+  </p>
+
+  <dl class="mt-4 grid gap-3 sm:grid-cols-2">
+    <div>
+      <dt class="text-muted-foreground">확인 환경</dt>
+      <dd class="font-medium">
+        {manifest.scope.product} {manifest.scope.product_version} · {
+          manifest.scope.os_family
+        } · {manifest.scope.locale}
+      </dd>
+    </div>
+    <div>
+      <dt class="text-muted-foreground">검증 결과</dt>
+      <dd class="font-medium">합성 입력 재현 통과</dd>
+    </div>
+  </dl>
+
+  <h3 class="mt-5 font-semibold">재현 순서</h3>
+  <ol class="mt-2 list-decimal space-y-1 ps-5">
+    {manifest.procedure.map(step => <li>{step.instruction}</li>)}
+  </ol>
+
+  <h3 class="mt-5 font-semibold">다운로드</h3>
+  <ul class="mt-2 space-y-2">
+    {
+      manifest.resources.map(resource => (
+        <li>
+          <a
+            href={resource.href}
+            download
+            class="text-accent font-semibold underline decoration-dashed underline-offset-4"
+          >
+            {resource.role === "input" ? "합성 입력" : "기대 결과"} ·{" "}
+            {resource.name}
+          </a>
+          <span class="text-muted-foreground ms-2">
+            {resource.bytes.toLocaleString("ko-KR")} bytes
+          </span>
+        </li>
+      ))
+    }
+  </ul>
+
+  {
+    reference.toolPath && (
+      <p class="mt-4">
+        <a
+          href={reference.toolPath}
+          class="text-accent font-semibold underline decoration-dashed underline-offset-4"
+        >
+          브라우저 도구에서 먼저 확인하기
+        </a>
+      </p>
+    )
+  }
+
+  <details class="mt-5">
+    <summary class="cursor-pointer font-semibold">해시와 적용 범위</summary>
+    <div class="text-muted-foreground mt-2 space-y-2 break-all">
+      <p>키트 SHA-256: <code>{reference.sha256}</code></p>
+      <p>내부 증거 SHA-256: <code>{manifest.evidence.artifact_sha256}</code></p>
+      <p>
+        <a href={reference.manifestPath} download>
+          {manifestLabel}
+        </a>
+      </p>
+      <ul class="list-disc space-y-1 ps-5">
+        {manifest.limitations.map(limitation => <li>{limitation}</li>)}
+      </ul>
+    </div>
+  </details>
+</aside>
+

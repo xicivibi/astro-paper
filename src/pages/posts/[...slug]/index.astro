@@ -5,6 +5,7 @@ import Header from "@/components/Header.astro";
 import Footer from "@/components/Footer.astro";
 import Datetime from "@/components/Datetime.astro";
 import PostTrustPanel from "@/components/PostTrustPanel.astro";
+import ReproductionKit from "@/components/ReproductionKit.astro";
 import PostReviewHoldNotice from "@/components/PostReviewHoldNotice.astro";
 import Tag from "@/components/Tag.astro";
 import { getPostSlug, getPostUrl } from "@/utils/getPostPaths";
@@ -89,6 +90,7 @@ const {
   sources,
   testingStatus,
   correctionNote,
+  reproductionKit,
   editorialStatus,
 } = post.data;
 const isHeld = editorialStatus === "legacy_hold";
@@ -191,6 +193,15 @@ const ogImage = ogImageUrl
             {testingStatus}
             {correctionNote}
           />
+
+          {
+            reproductionKit && (
+              <ReproductionKit
+                articleId={getPostSlug(post.id, post.filePath).replace(/^\/+/, "")}
+                reference={reproductionKit}
+              />
+            )
+          }
 
           <BackToTopButton />
         </>

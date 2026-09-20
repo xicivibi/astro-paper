@@ -18,6 +18,10 @@ sources:
   - "https://developer.mozilla.org/en-US/docs/Web/API/TextDecoder/fatal"
   - "https://wstg.owasp.org/latest/4-Web_Application_Security_Testing/07-Injection/21-CSV_Injection/"
 testingStatus: reproduced
+reproductionKit:
+  manifestPath: "/reproduction/csv-korean-encoding-delimiter-checklist/fd4547c45a482f90a5d0ade30dd2edc37b2bff0fb2021959ae8dfd46fe55aa04/manifest.json"
+  sha256: "fd4547c45a482f90a5d0ade30dd2edc37b2bff0fb2021959ae8dfd46fe55aa04"
+  toolPath: "/tools/csv-preview/"
 ---
 
 > 파일을 열기 전에 [CSV 파일 점검 도구](/tools/csv-preview/)에서 구분자·열 구조·수식 주의 셀을 브라우저 안에서 확인할 수 있습니다.

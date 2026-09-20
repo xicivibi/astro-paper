@@ -18,6 +18,9 @@ sources:
   - "https://learn.microsoft.com/en-us/powerquery-m/text-trim"
   - "https://learn.microsoft.com/en-us/powerquery-m/text-upper"
 testingStatus: reproduced
+reproductionKit:
+  manifestPath: "/reproduction/power-query-remove-duplicates-key-normalization/26d3c1bebac3b3633e28e749d8004e5047ba4a8baae2192de8ba6a55060a6a62/manifest.json"
+  sha256: "26d3c1bebac3b3633e28e749d8004e5047ba4a8baae2192de8ba6a55060a6a62"
 ---
 
 Power Query의 **중복 제거**를 바로 누르면 행 수는 줄어듭니다. 하지만 무엇을 같은 값으로 볼지 먼저 정하지 않으면 필요한 행도 함께 사라질 수 있습니다.

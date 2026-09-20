@@ -18,6 +18,12 @@ sources:
   - "https://example.com/공식-자료"
 testingStatus: not_tested
 correctionNote: "정정 사항이 없으면 이 줄을 생략합니다."
+# 실제 검증한 합성 입력과 기대 결과를 공개할 때만 추가합니다.
+# manifestPath의 해시와 sha256은 같은 실제 파일을 가리켜야 합니다.
+# reproductionKit:
+#   manifestPath: "/reproduction/<article-id>/<sha256>/manifest.json"
+#   sha256: "<manifest SHA-256>"
+#   toolPath: "/tools/<tool>/"
 ---
 ```
 
@@ -28,5 +34,6 @@ correctionNote: "정정 사항이 없으면 이 줄을 생략합니다."
 3. 실제로 다시 실행하거나 확인한 날짜만 `lastReviewed`에 적습니다. 확인하지 않았다면 필드를 생략합니다.
 4. `testingStatus`는 `not_tested`, `reproduced`, `official_source_only` 중 실제 상태를 선택합니다. 기본값은 `not_tested`입니다.
 5. 수정 이력이 있을 때만 `correctionNote`를 적고, 게시 전 `draft: false`로 변경합니다.
+6. `reproductionKit`은 합성 입력, 기대 결과와 manifest 해시를 실제로 대조한 글에만 추가합니다. 사용자 파일, 원본 업무 파일, 계정 정보와 로컬 경로는 키트에 포함하지 않습니다.
 
 게시 후 글의 **작성·검증 정보** 패널은 비어 있는 항목을 `미제공` 또는 `미실시`로 표시합니다. 출처나 검토일을 추가했다고 해서 사이트가 독립적인 보증을 제공한다는 뜻은 아닙니다.

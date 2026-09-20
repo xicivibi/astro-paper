@@ -14,6 +14,10 @@ lastReviewed: 2026-09-20T03:05:00+09:00
 sources:
   - "https://support.microsoft.com/en-us/excel/import-data-from-a-folder-with-multiple-files-power-query"
 testingStatus: reproduced
+reproductionKit:
+  manifestPath: "/reproduction/power-query-folder-combine-header-column-order/c468658162057f362af37975e3917d8c714e788db34f4139d7db381484a4f90f/manifest.json"
+  sha256: "c468658162057f362af37975e3917d8c714e788db34f4139d7db381484a4f90f"
+  toolPath: "/tools/header-compare/"
 ---
 
 > 폴더에 넣기 전에 [파일 열 이름 비교 도구](/tools/header-compare/)로 누락 열과 열 순서 차이를 확인할 수 있습니다.

@@ -16,6 +16,10 @@ sources:
   - "https://support.microsoft.com/en-us/excel/get-started/import-or-export-text-txt-or-csv-files"
   - "https://support.microsoft.com/en-us/excel/add-a-column-based-on-a-data-type-power-query"
 testingStatus: reproduced
+reproductionKit:
+  manifestPath: "/reproduction/excel-leading-zeros-large-identifiers-power-query/c36e9e43e5e6764a485ddf57cf0f2cae33b2231a42ae5f1c6b90a33db3ab01df/manifest.json"
+  sha256: "c36e9e43e5e6764a485ddf57cf0f2cae33b2231a42ae5f1c6b90a33db3ab01df"
+  toolPath: "/tools/identifier-check/"
 ---
 
 > 가져오기 전에 [식별자 길이·선행 0 점검 도구](/tools/identifier-check/)로 텍스트 형식이 필요한 값을 확인할 수 있습니다.

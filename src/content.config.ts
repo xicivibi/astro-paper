@@ -15,6 +15,15 @@ const httpUrl = z.string().refine(
   },
   { message: "sources must use valid http or https URLs" }
 );
+const reproductionManifestPath = z
+  .string()
+  .regex(
+    /^\/reproduction\/[a-z0-9][a-z0-9._-]{0,80}\/[a-f0-9]{64}\/manifest\.json$/
+  );
+const internalToolPath = z
+  .string()
+  .regex(/^\/tools\/[a-z0-9][a-z0-9/-]*\/$/);
+const sha256 = z.string().regex(/^[a-f0-9]{64}$/);
 
 const posts = defineCollection({
   loader: glob({ pattern: "**/[^_]*.{md,mdx}", base: `./${BLOG_PATH}` }),
@@ -46,6 +55,13 @@ const posts = defineCollection({
           .enum(["not_tested", "reproduced", "official_source_only"])
           .default("not_tested"),
         correctionNote: z.string().optional(),
+        reproductionKit: z
+          .object({
+            manifestPath: reproductionManifestPath,
+            sha256,
+            toolPath: internalToolPath.optional(),
+          })
+          .optional(),
       })
       .transform(data => ({
         ...data,
