@@ -31,7 +31,7 @@ const files = changed.stdout
   .split("\0")
   .filter(file => file && supported.has(extname(file)) && existsSync(file));
 if (files.length === 0) {
-  console.log("No changed Prettier-supported files.");
+  process.stdout.write("No changed Prettier-supported files.\n");
   process.exit(0);
 }
 const prettier = resolve("node_modules/prettier/bin/prettier.cjs");
