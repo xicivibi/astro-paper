@@ -38,8 +38,8 @@ test("editorial hold is enforced across discovery surfaces", () => {
   assert.match(schema, /editorialStatus/);
   assert.match(schema, /legacy_hold/);
   assert.match(filter, /data\.editorialStatus !== "legacy_hold"/);
-  assert.match(route, /noindex=\{isHeld\}/);
-  assert.match(route, /data-pagefind-ignore=\{isHeld \? "all"/);
+  assert.match(route, /noindex=\{isHeld \|\| isExpiredTrend\}/);
+  assert.match(route, /data-pagefind-ignore=\{isHeld \|\| isExpiredTrend \? "all"/);
   assert.match(route, /PostReviewHoldNotice/);
   assert.match(sitemap, /isLegacyHoldPostPath/);
 });

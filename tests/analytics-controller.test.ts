@@ -67,3 +67,21 @@ test("revocation stops runtime and blocks later routes", () => {
   assert.equal(f.views().length, 1);
   assert.equal((f.calls.at(-1)![2] as Record<string,string>).analytics_storage, "denied");
 });
+
+test("affiliate click events require consent and carry only bounded IDs", () => {
+  const f = fixture();
+  const id = "a".repeat(16);
+  f.controller.navigate({ url: "https://example.test/posts/a?private=1", title: "A" });
+  assert.equal(f.controller.trackAffiliateClick("offer-1", "coupang", id), false);
+  f.controller.choose("granted");
+  assert.equal(f.controller.trackAffiliateClick("offer-1", "coupang", id), true);
+  assert.equal(f.controller.trackAffiliateClick("offer-1", "unapproved", id), false);
+  const click = f.views().find(call => call[1] === "affiliate_click")!;
+  assert.deepEqual(click[2], {
+    offer_id: "offer-1", network: "coupang", trend_id: id,
+    page_location: "https://example.test/posts/a",
+  });
+  assert.ok(!JSON.stringify(click).includes("private="));
+  f.controller.choose("denied");
+  assert.equal(f.controller.trackAffiliateClick("offer-1", "coupang", id), false);
+});

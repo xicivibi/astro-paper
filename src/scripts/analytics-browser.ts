@@ -73,12 +73,29 @@ export function installAnalytics(win: Window, document: Document): void {
       render();
     }
     document.addEventListener("click", event => {
-      const button = (
-        event.target as Element | null
-      )?.closest<HTMLButtonElement>(
+      const target = event.target as Element | null;
+      const button = target?.closest<HTMLButtonElement>(
         "[data-analytics-choice], [data-analytics-settings]"
       );
-      if (!button) return;
+      if (!button) {
+        const link = target?.closest<HTMLAnchorElement>(
+          "[data-affiliate-offer]"
+        );
+        const bundle = link?.closest<HTMLElement>("[data-trend-bundle]");
+        if (!link?.href || !bundle) return;
+        const now = Date.now();
+        if (
+          now >= Date.parse(bundle.dataset.freshUntil || "") ||
+          now >= Date.parse(link.dataset.expiresAt || "")
+        )
+          return;
+        controller.trackAffiliateClick(
+          link.dataset.offerId || "",
+          link.dataset.offerNetwork || "",
+          bundle.dataset.trendId || ""
+        );
+        return;
+      }
       const panel = document.querySelector<HTMLElement>(
         "#xici-analytics-consent"
       );

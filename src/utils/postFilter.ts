@@ -29,6 +29,7 @@ export function postFilter({ data }: CollectionEntry<"posts">) {
     !data.draft &&
     data.editorialStatus !== "legacy_hold" &&
     hasRequiredAiEvidence(data) &&
+    (!data.trendBundle || Date.now() < data.trendBundle.freshUntil.getTime()) &&
     (import.meta.env.DEV || isPublishTimePassed)
   );
 }

@@ -25,6 +25,8 @@ jobs:
     steps:
       - name: "☁️ Checkout repository"
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: "📦 Install pnpm"
         uses: pnpm/action-setup@v4
@@ -44,7 +46,9 @@ jobs:
         run: pnpm run lint
 
       - name: "📝 Checking code format"
-        run: pnpm run format:check
+        env:
+          FORMAT_BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        run: pnpm run format:changed
 
       - name: "🚀 Build the project"
         run: pnpm run build

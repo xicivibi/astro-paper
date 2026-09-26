@@ -1,0 +1,43 @@
+name: Trend lifecycle rebuild
+
+on:
+  schedule:
+    - cron: "17 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: trend-lifecycle-rebuild
+  cancel-in-progress: false
+
+jobs:
+  check-and-rebuild:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify and inspect published lifecycle
+        id: check
+        env:
+          DEPLOY_HOOK: ${{ secrets.XICI_VERCEL_DEPLOY_HOOK }}
+        run: |
+          if [ -z "$DEPLOY_HOOK" ]; then
+            echo "needs_rebuild=false" >> "$GITHUB_OUTPUT"
+            echo "No lifecycle deploy hook is configured."
+            exit 0
+          fi
+          python3 -m unittest scripts/test_check_trend_lifecycle.py
+          python3 scripts/check-trend-lifecycle.py --github-output "$GITHUB_OUTPUT"
+      - name: Rebuild static trend pages at lifecycle boundary
+        if: steps.check.outputs.needs_rebuild == 'true'
+        env:
+          DEPLOY_HOOK: ${{ secrets.XICI_VERCEL_DEPLOY_HOOK }}
+        run: |
+          case "$DEPLOY_HOOK" in
+            https://api.vercel.com/v1/integrations/deploy/*) ;;
+            *) echo "Deploy hook host or path is invalid." >&2; exit 1 ;;
+          esac
+          curl --fail --silent --show-error --max-time 20 --output /dev/null \
+            --request POST "$DEPLOY_HOOK"

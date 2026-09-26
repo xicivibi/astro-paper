@@ -75,3 +75,30 @@ test("cross-tab denial, deletion and storage clear withdraw; cross-tab grant doe
   const f=harness();f.install();f.emit("window","storage",{key:KEY,newValue:saved("granted")});
   assert.equal(f.scripts.length,0);
 });
+
+test("a live affiliate link emits only IDs after analytics consent", () => {
+  const f = harness();
+  f.install();
+  const bundle = { dataset: {
+    freshUntil: new Date(Date.now() + 3600000).toISOString(),
+    trendId: "a".repeat(16),
+  } };
+  const link = { href: "https://link.coupang.com/a/example", dataset: {
+    expiresAt: new Date(Date.now() + 3600000).toISOString(),
+    offerId: "offer-1", offerNetwork: "coupang",
+  }, closest: () => bundle };
+  const target = { closest: (selector: string) =>
+    selector === "[data-affiliate-offer]" ? link : null };
+  f.emit("document", "click", { target });
+  assert.equal(f.layer.filter(call => call[1] === "affiliate_click").length, 0);
+  f.click("granted");
+  f.emit("document", "click", { target });
+  const event = f.layer.find(call => call[1] === "affiliate_click")!;
+  assert.deepEqual(event[2], {
+    offer_id: "offer-1", network: "coupang", trend_id: "a".repeat(16),
+    page_location: "https://example.test/posts/a",
+  });
+  link.dataset.expiresAt = new Date(Date.now() - 1000).toISOString();
+  f.emit("document", "click", { target });
+  assert.equal(f.layer.filter(call => call[1] === "affiliate_click").length, 1);
+});
