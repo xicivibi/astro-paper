@@ -14,6 +14,7 @@
     "test": "node --experimental-strip-types --test tests/*.test.ts",
     "check": "astro check",
     "format:check": "prettier --check .",
+    "format:changed": "node scripts/check-changed-format.mjs",
     "format": "prettier --write .",
     "lint": "eslint .",
     "release:cloudflare": "node scripts/release-cloudflare.mjs"
