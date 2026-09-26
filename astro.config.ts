@@ -17,6 +17,9 @@ import {
 import { transformerFileName } from "./src/utils/transformers/fileName";
 import config from "./astro-paper.config";
 import { isLegacyHoldPostPath } from "./src/config/editorial";
+import { expiredTrendPaths } from "./src/utils/expiredTrendPaths";
+
+const expiredTrends = expiredTrendPaths("src/content/posts", new Date());
 
 export default defineConfig({
   site: config.site.url,
@@ -26,6 +29,7 @@ export default defineConfig({
       filter: page =>
         !/\/(admin|search|briefs)\/?$/.test(new URL(page).pathname) &&
         !isLegacyHoldPostPath(new URL(page).pathname) &&
+        !expiredTrends.has(new URL(page).pathname) &&
         (config.features?.showArchives !== false ||
           !page.endsWith("/archives/")),
     }),
