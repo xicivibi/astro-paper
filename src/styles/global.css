@@ -2,11 +2,20 @@
 @import "./theme.css";
 @import "./typography.css";
 
+@font-face {
+  font-family: "Hanjin Group Sans";
+  src: url("/fonts/HanjinGroupSans-Regular.ttf") format("truetype");
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+
 @custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
 
 @layer base {
   * {
     @apply border-border outline-accent/75;
+    font-family: var(--font-app);
     scrollbar-width: auto;
     scrollbar-color: var(--color-muted) transparent;
   }
@@ -44,8 +53,16 @@
   display: grid;
   place-items: center;
   background:
-    radial-gradient(circle at 20% 20%, color-mix(in srgb, hsl(var(--cover-hue) 80% 70%) 70%, transparent), transparent 45%),
-    linear-gradient(135deg, hsl(var(--cover-hue) 55% 34%), hsl(calc(var(--cover-hue) + 55) 55% 22%));
+    radial-gradient(
+      circle at 20% 20%,
+      color-mix(in srgb, hsl(var(--cover-hue) 80% 70%) 70%, transparent),
+      transparent 45%
+    ),
+    linear-gradient(
+      135deg,
+      hsl(var(--cover-hue) 55% 34%),
+      hsl(calc(var(--cover-hue) + 55) 55% 22%)
+    );
   color: white;
   font-size: 0.75rem;
   font-weight: 700;

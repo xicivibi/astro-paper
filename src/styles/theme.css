@@ -7,7 +7,9 @@
   --color-muted: var(--muted);
   --color-muted-foreground: var(--muted-foreground);
   --color-border: var(--border);
-  --font-app: "Apple SD Gothic Neo", "Malgun Gothic", "Noto Sans KR", system-ui, sans-serif;
+  --font-app: "Hanjin Group Sans", sans-serif;
+  --font-sans: "Hanjin Group Sans", sans-serif;
+  --font-mono: "Hanjin Group Sans", sans-serif;
 }
 
 /* Light theme values */
