@@ -1,7 +1,11 @@
 ---
 import config from "@/config";
 
-type TestingStatus = "not_tested" | "reproduced" | "official_source_only";
+type TestingStatus =
+  | "not_tested"
+  | "reproduced"
+  | "official_source_only"
+  | "publisher_source_only";
 
 type Props = {
   aiAssisted: boolean;
@@ -18,6 +22,7 @@ const testingStatusLabel: Record<TestingStatus, string> = {
   not_tested: "테스트 미실시",
   reproduced: "재현 기록 제공",
   official_source_only: "공식 출처만 제공",
+  publisher_source_only: "게시자 원문 확인",
 };
 const reviewedLabel = lastReviewed
   ? new Intl.DateTimeFormat("en-CA", {

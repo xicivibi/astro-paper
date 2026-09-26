@@ -1,0 +1,248 @@
+---
+import { activeTrendOffers, type TrendBundle } from "@/utils/trendBundle";
+
+type Props = { bundle: TrendBundle };
+const { bundle } = Astro.props;
+const now = new Date();
+const expired = now >= bundle.freshUntil;
+const reviewDue = now >= bundle.reviewDueAt;
+const offers = activeTrendOffers(bundle, now);
+const valueLabels = {
+  comparison: "핵심 비교",
+  timeline: "지금까지의 흐름",
+  calculator: "직접 확인할 기준",
+  checklist: "바로 확인할 항목",
+};
+const sourceNumber = (id: string) =>
+  bundle.sourceCards.findIndex(source => source.sourceId === id) + 1;
+const dateLabel = (date: Date) =>
+  new Intl.DateTimeFormat("ko-KR", {
+    timeZone: "Asia/Seoul",
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  }).format(date);
+---
+
+<div
+  data-trend-bundle
+  data-fresh-until={bundle.freshUntil.toISOString()}
+  class="mt-7 space-y-8"
+>
+  <section
+    aria-labelledby="trend-answer-title"
+    class="border-accent/30 bg-accent/5 rounded-2xl border p-5 sm:p-7"
+  >
+    <p class="text-accent text-xs font-bold tracking-wide">빠른 답</p>
+    <h2
+      id="trend-answer-title"
+      class="mt-2 text-xl leading-snug font-bold sm:text-2xl"
+    >
+      지금 알아야 할 내용
+    </h2>
+    <p class="mt-3 text-base leading-8">{bundle.shortAnswer.text}</p>
+    <p class="text-muted-foreground mt-3 text-xs">
+      근거 {
+        bundle.shortAnswer.sourceIds.map(id => (
+          <a
+            class="ml-1 underline underline-offset-2"
+            href={`#bundle-source-${sourceNumber(id)}`}
+          >
+            [{sourceNumber(id)}]
+          </a>
+        ))
+      }
+    </p>
+  </section>
+
+  <div class="text-muted-foreground flex flex-wrap gap-x-4 gap-y-1 text-xs">
+    <span
+      >트렌드 관측 <time datetime={bundle.observedAt.toISOString()}
+        >{dateLabel(bundle.observedAt)}</time
+      ></span
+    >
+    <span
+      >다음 검토 <time datetime={bundle.reviewDueAt.toISOString()}
+        >{dateLabel(bundle.reviewDueAt)}</time
+      ></span
+    >
+    {
+      (expired || reviewDue) && (
+        <strong
+          data-trend-review-due
+          class="text-amber-700 dark:text-amber-300"
+        >
+          최신 정보 재확인 필요
+        </strong>
+      )
+    }
+  </div>
+
+  <section aria-labelledby="trend-context-title" class="space-y-3">
+    <h2 id="trend-context-title" class="text-xl font-bold">왜 주목받나</h2>
+    <p class="leading-8">{bundle.context.text}</p>
+    <p class="text-muted-foreground text-xs">
+      근거 {
+        bundle.context.sourceIds.map(id => (
+          <a
+            class="ml-1 underline underline-offset-2"
+            href={`#bundle-source-${sourceNumber(id)}`}
+          >
+            [{sourceNumber(id)}]
+          </a>
+        ))
+      }
+    </p>
+  </section>
+
+  <section aria-labelledby="trend-value-title" class="space-y-4">
+    <h2 id="trend-value-title" class="text-xl font-bold">
+      {valueLabels[bundle.valueBlock]}
+    </h2>
+    <div class="grid gap-3 sm:grid-cols-2">
+      {
+        bundle.valueRows.map(row => (
+          <div class="border-border bg-muted/20 rounded-xl border p-4">
+            <h3 class="font-semibold">{row.label}</h3>
+            <p class="mt-2 text-sm leading-7">{row.explanation.text}</p>
+            <p class="text-muted-foreground mt-2 text-xs">
+              근거{" "}
+              {row.explanation.sourceIds.map(id => (
+                <a
+                  class="ml-1 underline underline-offset-2"
+                  href={`#bundle-source-${sourceNumber(id)}`}
+                >
+                  [{sourceNumber(id)}]
+                </a>
+              ))}
+            </p>
+          </div>
+        ))
+      }
+    </div>
+  </section>
+
+  {
+    offers.length > 0 && (
+      <section
+        aria-labelledby="trend-offers-title"
+        class="border-border bg-muted/20 rounded-2xl border p-4 sm:p-6"
+      >
+        <h2 id="trend-offers-title" class="text-lg font-bold">
+          관련 상품
+        </h2>
+        <p class="text-muted-foreground mt-1 text-sm">
+          구매가 필요한 경우에만 비교해 보세요.
+        </p>
+        <ul class="mt-4 grid gap-3 sm:grid-cols-2">
+          {offers.map(offer => (
+            <li class="border-border bg-background rounded-xl border p-4">
+              <p class="font-semibold">{offer.productName}</p>
+              <p class="text-muted-foreground mt-2 text-xs leading-5">
+                {offer.disclosureText}
+              </p>
+              <a
+                data-affiliate-offer
+                data-offer-id={offer.offerId}
+                data-offer-network={offer.network}
+                data-expires-at={offer.expiresAt.toISOString()}
+                href={offer.destinationUrl}
+                target="_blank"
+                rel="sponsored nofollow noopener noreferrer"
+                class="text-accent mt-3 inline-flex font-semibold underline underline-offset-4"
+              >
+                상품 보기
+              </a>
+            </li>
+          ))}
+        </ul>
+      </section>
+    )
+  }
+
+  <section aria-labelledby="trend-faq-title" class="space-y-3">
+    <h2 id="trend-faq-title" class="text-xl font-bold">자주 묻는 질문</h2>
+    {
+      bundle.faq.map(item => (
+        <details class="border-border rounded-xl border p-4">
+          <summary class="cursor-pointer font-semibold">
+            {item.question}
+          </summary>
+          <p class="mt-3 leading-7">{item.answer.text}</p>
+          <p class="text-muted-foreground mt-2 text-xs">
+            근거{" "}
+            {item.answer.sourceIds.map(id => (
+              <a
+                class="ml-1 underline underline-offset-2"
+                href={`#bundle-source-${sourceNumber(id)}`}
+              >
+                [{sourceNumber(id)}]
+              </a>
+            ))}
+          </p>
+        </details>
+      ))
+    }
+  </section>
+
+  <section
+    aria-labelledby="trend-sources-title"
+    class="border-border border-t pt-6"
+  >
+    <h2 id="trend-sources-title" class="text-lg font-bold">확인한 원문</h2>
+    <p class="text-muted-foreground mt-1 text-sm">
+      제목은 출처의 표현입니다. 링크의 게시 시각과 본문을 함께 확인하세요.
+    </p>
+    <ol class="mt-4 space-y-3">
+      {
+        bundle.sourceCards.map((source, index) => (
+          <li
+            id={`bundle-source-${index + 1}`}
+            class="bg-muted/20 rounded-lg p-3 text-sm"
+          >
+            <span class="text-muted-foreground">
+              [{index + 1}] {source.publisher} · {dateLabel(source.retrievedAt)}
+            </span>
+            <a
+              href={source.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="text-accent mt-1 block font-medium underline underline-offset-2"
+            >
+              {source.title}
+            </a>
+          </li>
+        ))
+      }
+    </ol>
+  </section>
+</div>
+
+<script is:inline>
+  (() => {
+    const bundle = document.querySelector("[data-trend-bundle]");
+    if (!bundle) return;
+    const now = Date.now();
+    const freshUntil = Date.parse(
+      bundle.getAttribute("data-fresh-until") || ""
+    );
+    if (now >= freshUntil && !bundle.querySelector("[data-trend-review-due]")) {
+      const notice = document.createElement("p");
+      notice.dataset.trendReviewDue = "";
+      notice.textContent = "최신 정보 재확인 필요";
+      notice.className = "font-semibold text-amber-700 dark:text-amber-300";
+      bundle.prepend(notice);
+    }
+    for (const link of bundle.querySelectorAll("[data-affiliate-offer]")) {
+      const expiresAt = Date.parse(link.getAttribute("data-expires-at") || "");
+      if (now >= freshUntil || now >= expiresAt) {
+        link.removeAttribute("href");
+        link.removeAttribute("target");
+        link.setAttribute("aria-disabled", "true");
+        link.textContent = "연결 확인 중";
+      }
+    }
+  })();
+</script>

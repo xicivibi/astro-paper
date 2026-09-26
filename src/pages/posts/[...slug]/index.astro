@@ -5,6 +5,7 @@ import Header from "@/components/Header.astro";
 import Footer from "@/components/Footer.astro";
 import Datetime from "@/components/Datetime.astro";
 import PostTrustPanel from "@/components/PostTrustPanel.astro";
+import TrendBundle from "@/components/TrendBundle.astro";
 import ReproductionKit from "@/components/ReproductionKit.astro";
 import PostReviewHoldNotice from "@/components/PostReviewHoldNotice.astro";
 import Tag from "@/components/Tag.astro";
@@ -23,11 +24,13 @@ import { routablePostFilter } from "@/utils/postFilter";
 
 export async function getStaticPaths() {
   const posts = await getCollection("posts");
-  const routablePosts = posts.filter(routablePostFilter).sort(
-    (a, b) =>
-      new Date(b.data.modDatetime ?? b.data.pubDatetime).getTime() -
-      new Date(a.data.modDatetime ?? a.data.pubDatetime).getTime()
-  );
+  const routablePosts = posts
+    .filter(routablePostFilter)
+    .sort(
+      (a, b) =>
+        new Date(b.data.modDatetime ?? b.data.pubDatetime).getTime() -
+        new Date(a.data.modDatetime ?? a.data.pubDatetime).getTime()
+    );
   const publicPosts = getSortedPosts(posts);
 
   return routablePosts.map(post => {
@@ -92,8 +95,12 @@ const {
   correctionNote,
   reproductionKit,
   editorialStatus,
+  trendBundle,
 } = post.data;
 const isHeld = editorialStatus === "legacy_hold";
+const isExpiredTrend = trendBundle
+  ? new Date() >= trendBundle.freshUntil
+  : false;
 const heldTitle = "검토 보류된 이전 게시물";
 const heldDescription =
   "출처·재현 기록·편집 검토가 확인되지 않아 본문 공개를 중단한 이전 게시물입니다.";
@@ -133,7 +140,7 @@ const ogImage = ogImageUrl
   author={post.data.author}
   {lastReviewed}
   {sources}
-  noindex={isHeld}
+  noindex={isHeld || isExpiredTrend}
 >
   <Header />
 
@@ -142,11 +149,13 @@ const ogImage = ogImageUrl
   <main
     id="main-content"
     class:list={["app-layout", { "mt-8": !config.features.showBackButton }]}
-    data-pagefind-body={!isHeld ? "" : undefined}
-    data-pagefind-ignore={isHeld ? "all" : undefined}
+    data-pagefind-body={!isHeld && !isExpiredTrend ? "" : undefined}
+    data-pagefind-ignore={isHeld || isExpiredTrend ? "all" : undefined}
   >
     <h1
-      style={{ viewTransitionName: slugifyStr(publicTitle.replaceAll(".", "-")) }}
+      style={{
+        viewTransitionName: slugifyStr(publicTitle.replaceAll(".", "-")),
+      }}
       class="text-accent inline-block text-2xl font-bold sm:text-3xl"
     >
       {publicTitle}
@@ -179,7 +188,7 @@ const ogImage = ogImageUrl
               "prose-pre:bg-(--shiki-light-bg) dark:prose-pre:bg-(--shiki-dark-bg)",
             ]}
           >
-            <Content />
+            {trendBundle ? <TrendBundle bundle={trendBundle} /> : <Content />}
           </article>
 
           <hr class="my-8 border-dashed" />
@@ -194,14 +203,15 @@ const ogImage = ogImageUrl
             {correctionNote}
           />
 
-          {
-            reproductionKit && (
-              <ReproductionKit
-                articleId={getPostSlug(post.id, post.filePath).replace(/^\/+/, "")}
-                reference={reproductionKit}
-              />
-            )
-          }
+          {reproductionKit && (
+            <ReproductionKit
+              articleId={getPostSlug(post.id, post.filePath).replace(
+                /^\/+/,
+                ""
+              )}
+              reference={reproductionKit}
+            />
+          )}
 
           <BackToTopButton />
         </>

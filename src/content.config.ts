@@ -2,6 +2,7 @@ import { defineCollection } from "astro:content";
 import { z } from "astro/zod";
 import { glob } from "astro/loaders";
 import config from "@/config";
+import { trendBundleSchema } from "@/utils/trendBundle";
 
 export const BLOG_PATH = "src/content/posts";
 const httpUrl = z.string().refine(
@@ -20,9 +21,7 @@ const reproductionManifestPath = z
   .regex(
     /^\/reproduction\/[a-z0-9][a-z0-9._-]{0,80}\/[a-f0-9]{64}\/manifest\.json$/
   );
-const internalToolPath = z
-  .string()
-  .regex(/^\/tools\/[a-z0-9][a-z0-9/-]*\/$/);
+const internalToolPath = z.string().regex(/^\/tools\/[a-z0-9][a-z0-9/-]*\/$/);
 const sha256 = z.string().regex(/^[a-f0-9]{64}$/);
 
 const posts = defineCollection({
@@ -47,14 +46,17 @@ const posts = defineCollection({
         timezone: z.string().optional(),
         aiAssisted: z.boolean().optional(),
         lastReviewed: z.date().optional().nullable(),
-        sources: z
-          .array(httpUrl)
-          .max(8)
-          .optional(),
+        sources: z.array(httpUrl).max(8).optional(),
         testingStatus: z
-          .enum(["not_tested", "reproduced", "official_source_only"])
+          .enum([
+            "not_tested",
+            "reproduced",
+            "official_source_only",
+            "publisher_source_only",
+          ])
           .default("not_tested"),
         correctionNote: z.string().optional(),
+        trendBundle: trendBundleSchema.optional(),
         reproductionKit: z
           .object({
             manifestPath: reproductionManifestPath,
@@ -62,6 +64,27 @@ const posts = defineCollection({
             toolPath: internalToolPath.optional(),
           })
           .optional(),
+      })
+      .superRefine((data, context) => {
+        if (!data.trendBundle) return;
+        const sourceUrls = data.trendBundle.sourceCards.map(
+          source => source.url
+        );
+        if (
+          data.draft === true ||
+          data.editorialStatus !== "published" ||
+          data.aiAssisted !== true ||
+          data.testingStatus !== "publisher_source_only" ||
+          !data.lastReviewed ||
+          sourceUrls.length !== (data.sources?.length ?? 0) ||
+          sourceUrls.some(url => !data.sources?.includes(url))
+        ) {
+          context.addIssue({
+            code: "custom",
+            message:
+              "Published trend bundles require a reviewed AI-assisted post and matching sources",
+          });
+        }
       })
       .transform(data => ({
         ...data,
