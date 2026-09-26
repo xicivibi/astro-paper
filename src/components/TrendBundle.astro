@@ -28,6 +28,7 @@ const dateLabel = (date: Date) =>
 
 <div
   data-trend-bundle
+  data-trend-id={bundle.candidateHash.slice(0, 16)}
   data-fresh-until={bundle.freshUntil.toISOString()}
   class="mt-7 space-y-8"
 >
@@ -224,10 +225,10 @@ const dateLabel = (date: Date) =>
   (() => {
     const bundle = document.querySelector("[data-trend-bundle]");
     if (!bundle) return;
-    const now = Date.now();
     const freshUntil = Date.parse(
       bundle.getAttribute("data-fresh-until") || ""
     );
+    const now = Date.now();
     if (now >= freshUntil && !bundle.querySelector("[data-trend-review-due]")) {
       const notice = document.createElement("p");
       notice.dataset.trendReviewDue = "";
@@ -235,14 +236,24 @@ const dateLabel = (date: Date) =>
       notice.className = "font-semibold text-amber-700 dark:text-amber-300";
       bundle.prepend(notice);
     }
-    for (const link of bundle.querySelectorAll("[data-affiliate-offer]")) {
+    function disableExpired(link, instant) {
       const expiresAt = Date.parse(link.getAttribute("data-expires-at") || "");
-      if (now >= freshUntil || now >= expiresAt) {
-        link.removeAttribute("href");
-        link.removeAttribute("target");
-        link.setAttribute("aria-disabled", "true");
-        link.textContent = "연결 확인 중";
-      }
+      if (instant < freshUntil && instant < expiresAt) return false;
+      link.removeAttribute("href");
+      link.removeAttribute("target");
+      link.setAttribute("aria-disabled", "true");
+      link.textContent = "연결 확인 중";
+      return true;
     }
+    for (const link of bundle.querySelectorAll("[data-affiliate-offer]"))
+      disableExpired(link, now);
+    bundle.addEventListener(
+      "click",
+      event => {
+        const link = event.target.closest?.("[data-affiliate-offer]");
+        if (link && disableExpired(link, Date.now())) event.preventDefault();
+      },
+      true
+    );
   })();
 </script>

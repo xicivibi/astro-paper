@@ -74,5 +74,25 @@ export function createAnalyticsController(
       }
       view();
     },
+    trackAffiliateClick(offerId: string, network: string, trendId: string) {
+      if (
+        choice !== "granted" ||
+        !loaded ||
+        !page ||
+        !/^[a-z0-9][a-z0-9-]{0,79}$/.test(offerId) ||
+        !["coupang", "aliexpress"].includes(network) ||
+        !/^[0-9a-f]{16}$/.test(trendId)
+      )
+        return false;
+      const url = new URL(page.url);
+      if (/^\/(admin|search)(\/|$)/.test(url.pathname)) return false;
+      effects.command("event", "affiliate_click", {
+        offer_id: offerId,
+        network,
+        trend_id: trendId,
+        page_location: url.origin + url.pathname,
+      });
+      return true;
+    },
   };
 }
