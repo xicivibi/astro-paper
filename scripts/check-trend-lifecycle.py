@@ -1,18 +1,20 @@
 """Check whether published static trend pages need a lifecycle rebuild.
 
 Only stdlib is used so the scheduled GitHub job needs no extra runtime or API
-token. A deploy hook is called by the workflow only when this proves staleness.
+token. The workflow requests one Git-backed rebuild per stale page state.
 """
 from __future__ import annotations
 
 import argparse
 from datetime import datetime, timezone
+import hashlib
 from html.parser import HTMLParser
 import json
 from pathlib import Path
 import re
 import urllib.error
 import urllib.request
+from urllib.parse import urlsplit
 
 
 _BUNDLE = re.compile(r"^trendBundle: (\{.*\})$", re.MULTILINE)
@@ -60,8 +62,13 @@ def _documents(root: Path):
 def needs_rebuild(root: Path, origin: str, *, now: datetime, fetch=None) -> list[str]:
     """Return exact reasons; a transient fetch failure is not proof of staleness."""
     instant = now.astimezone(timezone.utc)
-    if origin != "https://xici.vercel.app":
-        raise ValueError("lifecycle probe requires the configured Xici origin")
+    parsed = urlsplit(origin)
+    if (
+        parsed.scheme != "https" or not parsed.hostname or parsed.port
+        or parsed.username or parsed.password or parsed.path or parsed.query
+        or parsed.fragment or parsed.hostname == "localhost"
+    ):
+        raise ValueError("lifecycle probe requires one exact HTTPS origin")
     fetch = fetch or _fetch
     reasons: list[str] = []
     for slug, published, bundle in _documents(root):
@@ -114,8 +121,13 @@ def main() -> None:
     reasons = needs_rebuild(args.posts, args.origin, now=datetime.now(timezone.utc))
     print(json.dumps({"needs_rebuild": bool(reasons), "reasons": reasons}, sort_keys=True))
     if args.github_output:
+        fingerprint = hashlib.sha256(json.dumps(
+            {"origin": args.origin, "reasons": reasons},
+            sort_keys=True, separators=(",", ":"),
+        ).encode("utf-8")).hexdigest()
         with args.github_output.open("a", encoding="utf-8") as handle:
             handle.write(f"needs_rebuild={'true' if reasons else 'false'}\n")
+            handle.write(f"fingerprint={fingerprint}\n")
 
 
 if __name__ == "__main__":

@@ -36,6 +36,12 @@ must not be selected as the production origin.
 5. Update the privacy page's actual host and disclosure. Keep all advertising/Analytics flags off on the first preview. Verify assets, links, mobile layout, 404 and the local-only admin boundaries.
 6. Prepare an old-to-new URL map and authorized redirects where technically and contractually available. Verify the new Search Console property and sitemap, and assess Change of Address eligibility. A provider-owned `vercel.app` hostname cannot be transferred as an owned DNS domain; continuity redirects remain unresolved. [Google site moves](https://developers.google.com/search/docs/crawling-indexing/site-move-with-url-changes).
 7. Update the backend's canonical publication policy and issue new, explicitly scoped authority for the final hostname. Never silently reuse an approval bound to `xici.vercel.app`.
+   Set the repository Actions variable `XICI_SITE_ORIGIN` to the exact new HTTPS
+   origin. The hourly lifecycle probe uses this variable; a stale trend page
+   requests one rebuild by committing a small state marker to `main`. Confirm
+   that the Pages Git integration deploys that bot commit and the page passes
+   the probe. A repeated stale state fails visibly instead of writing another
+   commit. The variable is not a deployment credential.
 8. Connect the real AdSense account to the new site and perform its own review, consent and crawler checks. Hosting migration alone does not authorize ads. [AdSense sites](https://support.google.com/adsense/answer/9131547?hl=en).
 
 Completion evidence must include the real hostname, selected free plan, exact deployed commit, build/link checks, Search Console access outcome and actual AdSense status. These are still pending. The static build and this procedure are available now.
