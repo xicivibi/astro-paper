@@ -44,8 +44,9 @@ const sample = () => ({
 test("trend bundle accepts cited independent sources and a matching offer", () => {
   const bundle = trendBundleSchema.parse(sample());
   assert.equal(bundle.sourceCards.length, 2);
-  assert.equal(activeTrendOffers(bundle, new Date("2026-09-27T10:00:00Z")).length, 1);
-  assert.equal(activeTrendOffers(bundle, new Date("2026-09-28T01:00:00Z")).length, 0);
+  assert.equal(activeTrendOffers(bundle, new Date("2026-09-27T10:00:00Z"), false).length, 0);
+  assert.equal(activeTrendOffers(bundle, new Date("2026-09-27T10:00:00Z"), true).length, 1);
+  assert.equal(activeTrendOffers(bundle, new Date("2026-09-28T01:00:00Z"), true).length, 0);
 });
 
 test("trend bundle rejects invented citation, unsafe affiliate host, and noncommercial offer", () => {
