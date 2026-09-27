@@ -1,0 +1,63 @@
+{
+  "source_pack": {
+    "observation": {
+      "keyword": "과일",
+      "region": "KR",
+      "window": "past 24 hours",
+      "displayed_searches": "2만+",
+      "status": "active",
+      "observed_at": "2026-09-27T09:02:20+09:00"
+    },
+    "sources": [
+      {
+        "sourceId": "e70c0ab586b8144ce3b3ae2e8755a0dee96191410a04552c7fae93995c4663f2",
+        "title": "Google 인기 검색어 — 대한민국",
+        "publisher": "Google Trends",
+        "url": "https://trends.google.co.kr/trending?geo=KR&hl=ko",
+        "retrievedAt": "2026-09-27T09:02:20+09:00"
+      },
+      {
+        "sourceId": "d996dedbe48ecc232bfa730eed49e03a1fa0a5941a10c80087a651aacf29f084",
+        "title": "잔류농약을 줄이는 과일·채소 세척법",
+        "publisher": "식품안전나라",
+        "url": "https://www.foodsafetykorea.go.kr/portal/board/boardDetail.do?bbs_no=bbs001&menu_grp=MENU_NEW01&menu_no=3120&ntctxt_no=1100621",
+        "retrievedAt": "2026-09-27T09:02:20+09:00"
+      },
+      {
+        "sourceId": "c7cfc37761233f38c877389f2de94b55d6ab39dab89a3ee237a30212ed7f82e3",
+        "title": "과일·채소 에틸렌과 보관 방법",
+        "publisher": "식품안전나라",
+        "url": "https://www.foodsafetykorea.go.kr/portal/board/boardDetail.do?bbs_no=bbs001&menu_grp=MENU_NEW01&menu_no=3120&ntctxt_no=1107612",
+        "retrievedAt": "2026-09-27T09:02:20+09:00"
+      },
+      {
+        "sourceId": "0ef65137969f3caed4b8b06e78dc6d02b9fcceeb7b2ef40ce9fc9013c79cb313",
+        "title": "통신판매 농식품 원산지 표시 확인 안내",
+        "publisher": "농림축산식품부",
+        "url": "https://www.mafra.go.kr/bbs/mafra/68/323578/artclView.do",
+        "retrievedAt": "2026-09-27T09:02:20+09:00"
+      }
+    ],
+    "checked_claims": [
+      "Google Trends shows an approximate 20K+ active search label, not purchases or a cause.",
+      "MAFRA advises checking origin labels on online listings and delivered packaging.",
+      "Food Safety Korea provides fruit washing and ethylene storage guidance."
+    ]
+  },
+  "review": {
+    "reviewed_at": "2026-09-27T09:02:20+09:00",
+    "result": "pass_manual_editorial",
+    "scope": "source-matched short search landing bundle",
+    "checked": [
+      "trend wording",
+      "claim-to-source mapping",
+      "no invented cause",
+      "no price claim",
+      "no unverified affiliate link"
+    ],
+    "reviewer": "Codex",
+    "source_pack_hash": "053d7a59f739781f850744eec80dcca715e17c8358917440b5ef8363b40df17a"
+  },
+  "article_id": "trend-ed0e90733d1a21cf0b03",
+  "url_path": "/posts/xici-trend-ed0e90733d1a21cf0b03/"
+}
