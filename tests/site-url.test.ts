@@ -31,12 +31,14 @@ test("PUBLIC_SITE_URL selects and normalizes the deployment origin", () => {
   );
   assert.match(
     html,
-    /<link rel="alternate" type="application\/rss\+xml" title="직장인 자동화 실험실 RSS" href="\/rss\.xml"/,
+    /<link rel="alternate" type="application\/rss\+xml" title="Xici RSS" href="\/rss\.xml"/,
   );
   assert.match(
     html,
-    /<h1[^>]*>\s*Excel·CSV 실무 문제 해결\s*<\/h1>/
+    /<h1[^>]*>\s*최근 검색에서 뜬 주제\s*<\/h1>/
   );
+  assert.match(html, /<h2[^>]*>\s*Excel·CSV 실무 문제 해결\s*<\/h2>/);
+  assert.match(html, /href="\/tags\/trend\/"[^>]*>\s*트렌드/);
   assert.match(html, /href="\/tools\/"[^>]*>\s*도구\s*<\/a>/);
   assert.match(html, /href="\/topics\/excel-csv\/"[\s\S]*?공개 글 6개/);
   assert.doesNotMatch(

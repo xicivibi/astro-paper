@@ -14,7 +14,12 @@ import config from "@/config";
 const locale = Astro.currentLocale ?? config.site.lang;
 const posts = await getCollection("posts", ({ data }) => !data.draft);
 const sortedPosts = getSortedPosts(posts);
-const latestPosts = sortedPosts.slice(0, Math.max(config.posts.perIndex, 30));
+const trendPosts = sortedPosts
+  .filter(post => post.data.tags.includes("trend"))
+  .slice(0, 6);
+const latestPosts = sortedPosts
+  .filter(post => !post.data.tags.includes("trend"))
+  .slice(0, Math.max(config.posts.perIndex, 30));
 const latestPost = sortedPosts[0];
 const latestDate = latestPost?.data.pubDatetime
   ? latestPost.data.pubDatetime.toLocaleDateString("ko-KR", {
@@ -29,6 +34,7 @@ const searchPath = getRelativeLocaleUrl(locale, "search");
 const topicsPath = getRelativeLocaleUrl(locale, "topics");
 const toolsPath = getRelativeLocaleUrl(locale, "tools");
 const excelTopicPath = getRelativeLocaleUrl(locale, "topics/excel-csv");
+const trendPath = `/tags/${slugifyStr("trend")}/`;
 const activeTopics = getActiveTopicSummaries(sortedPosts, topics);
 const allTags = sortedPosts.flatMap(post => post.data.tags ?? []);
 const tagCount = allTags.reduce<Record<string, number>>((acc, tag) => {
@@ -43,6 +49,40 @@ const topTags = Object.entries(tagCount)
 <Layout>
   <Header />
   <main id="main-content" data-layout="index" class="app-layout py-4 sm:py-6">
+    {
+      trendPosts.length > 0 && (
+        <section
+          class="news-board border-border bg-background mb-5 overflow-hidden border"
+          aria-labelledby="trend-posts-title"
+        >
+          <div class="border-border bg-muted/55 flex flex-wrap items-end justify-between gap-3 border-b px-3 py-3 sm:px-4">
+            <div>
+              <p class="text-accent text-xs font-bold tracking-[0.18em] uppercase">
+                TREND WATCH
+              </p>
+              <h1
+                id="trend-posts-title"
+                class="mt-1 text-xl font-bold sm:text-2xl"
+              >
+                최근 검색에서 뜬 주제
+              </h1>
+              <p class="text-muted-foreground mt-1 max-w-3xl text-sm leading-6">
+                검색 신호를 확인하고, 구매 전에 필요한 비교와 원문을 짧게
+                묶었습니다. 검색량은 실제 구매량을 뜻하지 않습니다.
+              </p>
+            </div>
+            <a href={trendPath} class="text-accent text-sm font-semibold">
+              트렌드 글 모두 보기 →
+            </a>
+          </div>
+          <ol>
+            {trendPosts.map((post, index) => (
+              <NewsItem {...post} index={index} />
+            ))}
+          </ol>
+        </section>
+      )
+    }
     <section
       class="news-board border-border bg-background overflow-hidden border"
     >
@@ -56,9 +96,17 @@ const topTags = Object.entries(tagCount)
             >
               WORK AUTOMATION LAB
             </p>
-            <h1 class="mt-1 text-xl font-bold sm:text-2xl">
-              Excel·CSV 실무 문제 해결
-            </h1>
+            {
+              trendPosts.length > 0 ? (
+                <h2 class="mt-1 text-xl font-bold sm:text-2xl">
+                  Excel·CSV 실무 문제 해결
+                </h2>
+              ) : (
+                <h1 class="mt-1 text-xl font-bold sm:text-2xl">
+                  Excel·CSV 실무 문제 해결
+                </h1>
+              )
+            }
             <p class="text-muted-foreground mt-1 max-w-3xl text-sm leading-6">
               파일이 깨지거나 Power Query 결과가 달라질 때 바로 따라 할 수 있는
               절차를 제공합니다. 공식 문서, 재현 환경, 검토 날짜를 함께
@@ -87,6 +135,11 @@ const topTags = Object.entries(tagCount)
           class="mt-3 flex flex-wrap gap-2 text-xs font-semibold"
           aria-label="홈 바로가기"
         >
+          <a
+            href={trendPath}
+            class="border-border bg-background hover:border-accent hover:text-accent border px-2.5 py-1.5 no-underline"
+            >트렌드 글</a
+          >
           <a
             href={postsPath}
             class="border-border bg-background hover:border-accent hover:text-accent border px-2.5 py-1.5 no-underline"
