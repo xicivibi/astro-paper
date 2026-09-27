@@ -92,6 +92,33 @@ class TrendLifecycleTests(unittest.TestCase):
         self.assertEqual(state.read_bytes(), original)
         self.assertTrue(mark_module.mark(state, "b" * 64, now=now))
 
+    def test_manual_trend_is_rebuilt_at_review_and_expiry(self):
+        (self.root / "manual-shopping-trend.md").write_text(
+            "---\npubDatetime: 2026-09-27T02:00:00+00:00\n"
+            'trendLifecycle:\n'
+            '  observedAt: 2026-09-27T02:00:00+00:00\n'
+            '  reviewDueAt: 2026-09-27T06:00:00+00:00\n'
+            '  freshUntil: 2026-09-27T12:00:00+00:00\n---\n',
+            encoding="utf-8",
+        )
+        def page(url):
+            if url == self.url:
+                return '<html><div data-trend-bundle data-trend-review-due></div></html>'
+            if url == "https://xici.vercel.app/posts/manual-shopping-trend/":
+                return '<html><div data-trend-lifecycle></div></html>'
+            self.fail(url)
+
+        self.assertEqual(module.needs_rebuild(
+            self.root, "https://xici.vercel.app",
+            now=datetime(2026, 9, 27, 7, tzinfo=timezone.utc), fetch=page,
+        ), ["manual-shopping-trend:review_notice_missing"])
+        self.assertEqual(module.needs_rebuild(
+            self.root, "https://xici.vercel.app",
+            now=datetime(2026, 9, 27, 13, tzinfo=timezone.utc), fetch=page,
+        ), ["manual-shopping-trend:expired_page_indexable",
+            "manual-shopping-trend:review_notice_missing",
+            "xici-trend-example:expired_page_indexable"])
+
 
 if __name__ == "__main__":
     unittest.main()

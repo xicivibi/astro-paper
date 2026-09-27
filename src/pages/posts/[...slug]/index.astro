@@ -96,11 +96,16 @@ const {
   reproductionKit,
   editorialStatus,
   trendBundle,
+  trendLifecycle,
 } = post.data;
 const isHeld = editorialStatus === "legacy_hold";
-const isExpiredTrend = trendBundle
-  ? new Date() >= trendBundle.freshUntil
-  : false;
+const trendFreshUntil = trendBundle?.freshUntil ?? trendLifecycle?.freshUntil;
+const isExpiredTrend = Boolean(
+  trendFreshUntil && new Date() >= trendFreshUntil
+);
+const isReviewDue = Boolean(
+  trendLifecycle && new Date() >= trendLifecycle.reviewDueAt
+);
 const heldTitle = "검토 보류된 이전 게시물";
 const heldDescription =
   "출처·재현 기록·편집 검토가 확인되지 않아 본문 공개를 중단한 이전 게시물입니다.";
@@ -188,6 +193,32 @@ const ogImage = ogImageUrl
               "prose-pre:bg-(--shiki-light-bg) dark:prose-pre:bg-(--shiki-dark-bg)",
             ]}
           >
+            {trendLifecycle && (
+              <div
+                data-trend-lifecycle
+                data-fresh-until={trendLifecycle.freshUntil.toISOString()}
+                class="border-accent/30 bg-accent/5 mb-6 rounded-xl border px-4 py-3 text-sm"
+              >
+                <p>
+                  트렌드 관측{" "}
+                  <time datetime={trendLifecycle.observedAt.toISOString()}>
+                    {trendLifecycle.observedAt.toLocaleString("ko-KR", {
+                      timeZone: "Asia/Seoul",
+                    })}
+                  </time>
+                  {" · "}
+                  다음 검토{" "}
+                  <time datetime={trendLifecycle.reviewDueAt.toISOString()}>
+                    {trendLifecycle.reviewDueAt.toLocaleString("ko-KR", {
+                      timeZone: "Asia/Seoul",
+                    })}
+                  </time>
+                </p>
+                {isReviewDue && (
+                  <strong data-trend-review-due>최신 정보 재확인 필요</strong>
+                )}
+              </div>
+            )}
             {trendBundle ? <TrendBundle bundle={trendBundle} /> : <Content />}
           </article>
 

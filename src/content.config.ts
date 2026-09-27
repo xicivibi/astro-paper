@@ -57,6 +57,21 @@ const posts = defineCollection({
           .default("not_tested"),
         correctionNote: z.string().optional(),
         trendBundle: trendBundleSchema.optional(),
+        trendLifecycle: z
+          .object({
+            observedAt: z.coerce.date(),
+            reviewDueAt: z.coerce.date(),
+            freshUntil: z.coerce.date(),
+          })
+          .refine(
+            value =>
+              value.observedAt < value.reviewDueAt &&
+              value.reviewDueAt <= value.freshUntil &&
+              value.freshUntil.getTime() - value.observedAt.getTime() <=
+                30 * 86400000,
+            { message: "manual trend lifecycle must be ordered within 30 days" }
+          )
+          .optional(),
         reproductionKit: z
           .object({
             manifestPath: reproductionManifestPath,
@@ -66,6 +81,15 @@ const posts = defineCollection({
           .optional(),
       })
       .superRefine((data, context) => {
+        if (
+          data.tags.includes("trend") &&
+          Boolean(data.trendBundle) === Boolean(data.trendLifecycle)
+        ) {
+          context.addIssue({
+            code: "custom",
+            message: "trend posts require exactly one lifecycle source",
+          });
+        }
         if (!data.trendBundle) return;
         const sourceUrls = data.trendBundle.sourceCards.map(
           source => source.url
