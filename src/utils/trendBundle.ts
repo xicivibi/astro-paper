@@ -198,8 +198,12 @@ export const trendBundleSchema = z
 
 export type TrendBundle = z.infer<typeof trendBundleSchema>;
 
-export function activeTrendOffers(bundle: TrendBundle, now: Date) {
-  if (now >= bundle.freshUntil) return [];
+export function activeTrendOffers(
+  bundle: TrendBundle,
+  now: Date,
+  commercialHostingConfirmed: boolean
+) {
+  if (!commercialHostingConfirmed || now >= bundle.freshUntil) return [];
   return bundle.offers.filter(
     offer => offer.verifiedAt <= now && now < offer.expiresAt
   );

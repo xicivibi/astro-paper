@@ -1,12 +1,17 @@
 ---
 import { activeTrendOffers, type TrendBundle } from "@/utils/trendBundle";
+import { monetization } from "@/config/monetization";
 
 type Props = { bundle: TrendBundle };
 const { bundle } = Astro.props;
 const now = new Date();
 const expired = now >= bundle.freshUntil;
 const reviewDue = now >= bundle.reviewDueAt;
-const offers = activeTrendOffers(bundle, now);
+const offers = activeTrendOffers(
+  bundle,
+  now,
+  monetization.commercialHostingConfirmed
+);
 const valueLabels = {
   comparison: "핵심 비교",
   timeline: "지금까지의 흐름",

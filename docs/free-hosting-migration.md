@@ -1,8 +1,10 @@
 # Free static hosting migration preparation
 
-Checked 2026-09-20. This is a reviewable migration procedure, not a deployed site or a new account.
+Checked 2026-09-27. This is a reviewable migration procedure, not a deployed site or a new account. The Cloudflare dashboard currently requires sign-in, so no account-owned Pages project or hostname has been verified.
 
 Xici is currently on Vercel Hobby, verified through the connected project's team and domain records. [Hobby](https://vercel.com/docs/plans/hobby) limits use to non-commercial personal projects. Ads cannot launch under that plan. Additional spending remains zero.
+
+Trend-bundle affiliate offers are also withheld at build time until `PUBLIC_COMMERCIAL_HOSTING_CONFIRMED=true`. The current Vercel Hobby build leaves that flag unset; source content alone cannot expose a commission link. A future commercial host must be verified before setting it.
 
 Cloudflare Pages is the preferred free candidate for the existing static Astro output. The current build fits its [Free limits](https://developers.cloudflare.com/pages/platform/limits/): 500 builds/month, one concurrent build, 20-minute timeout, 20,000 files and 25 MiB per asset. Static requests are [free and unlimited](https://developers.cloudflare.com/pages/functions/pricing/). No server adapter, Functions, R2 or paid Worker is needed for this site.
 
