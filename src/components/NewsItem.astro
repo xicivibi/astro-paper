@@ -14,7 +14,7 @@ const {
   title,
   description,
   tags = [],
-  author = "직장인 자동화 실험실",
+  author = config.site.author,
   ...props
 } = data;
 const href = getPostUrl(id, filePath, Astro.currentLocale);

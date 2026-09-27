@@ -21,7 +21,7 @@ def mark(path: Path, fingerprint: str, *, now: datetime) -> bool:
     path.write_text(json.dumps({
         "fingerprint": fingerprint,
         "requestedAt": now.astimezone(timezone.utc).isoformat(),
-    }, sort_keys=True) + "\n", encoding="utf-8")
+    }, indent=2, sort_keys=True) + "\n", encoding="utf-8")
     return True
 
 

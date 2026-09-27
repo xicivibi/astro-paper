@@ -26,6 +26,11 @@ const isActive = (path: string) => {
 
 const navItems = [
   {
+    href: getRelativeLocaleUrl(locale, "tags/trend"),
+    label: "트렌드",
+    active: currentPath === "/tags/trend",
+  },
+  {
     href: getRelativeLocaleUrl(locale, "posts"),
     label: "최신글",
     active: isActive("/posts") && !isActive("/posts/list"),
