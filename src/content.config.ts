@@ -92,11 +92,12 @@ const posts = defineCollection({
       .superRefine((data, context) => {
         if (
           data.marketplaceQuery &&
-          (!data.tags.includes("trend") || !data.trendLifecycle)
+          (!data.tags.includes("trend") ||
+            (!data.trendLifecycle && !data.trendBundle))
         ) {
           context.addIssue({
             code: "custom",
-            message: "Marketplace query requires a manual trend lifecycle",
+            message: "Marketplace query requires a trend lifecycle or bundle",
           });
         }
         if (

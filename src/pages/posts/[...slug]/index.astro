@@ -221,7 +221,11 @@ const ogImage = ogImageUrl
                 )}
               </div>
             )}
-            {trendBundle ? <TrendBundle bundle={trendBundle} /> : <Content />}
+            {trendBundle ? (
+              <TrendBundle bundle={trendBundle} marketplaceQuery={marketplaceQuery} />
+            ) : (
+              <Content />
+            )}
             {marketplaceQuery && trendLifecycle && (
               <MarketplaceSearch
                 query={marketplaceQuery}

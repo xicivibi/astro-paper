@@ -3,8 +3,8 @@ import { activeTrendOffers, type TrendBundle } from "@/utils/trendBundle";
 import { monetization } from "@/config/monetization";
 import MarketplaceSearch from "@/components/MarketplaceSearch.astro";
 
-type Props = { bundle: TrendBundle };
-const { bundle } = Astro.props;
+type Props = { bundle: TrendBundle; marketplaceQuery?: string };
+const { bundle, marketplaceQuery } = Astro.props;
 const now = new Date();
 const expired = now >= bundle.freshUntil;
 const reviewDue = now >= bundle.reviewDueAt;
@@ -170,9 +170,9 @@ const dateLabel = (date: Date) =>
   }
 
   {
-    offers.length === 0 && (
+    marketplaceQuery && offers.length === 0 && (
       <MarketplaceSearch
-        query={bundle.intentCluster}
+        query={marketplaceQuery}
         freshUntil={bundle.freshUntil}
       />
     )

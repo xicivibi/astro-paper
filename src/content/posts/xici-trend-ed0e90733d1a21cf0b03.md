@@ -2,6 +2,7 @@
 title: "과일 검색 급증: 온라인 구매 전에 확인할 3가지"
 description: "원산지 표시, 보관, 세척법을 한눈에 확인하는 과일 구매 체크리스트."
 tags: ["trend"]
+marketplaceQuery: "과일"
 author: "Xici"
 pubDatetime: 2026-09-27T09:02:20+09:00
 draft: false
