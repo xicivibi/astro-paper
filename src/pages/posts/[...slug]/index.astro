@@ -6,6 +6,7 @@ import Footer from "@/components/Footer.astro";
 import Datetime from "@/components/Datetime.astro";
 import PostTrustPanel from "@/components/PostTrustPanel.astro";
 import TrendBundle from "@/components/TrendBundle.astro";
+import MarketplaceSearch from "@/components/MarketplaceSearch.astro";
 import ReproductionKit from "@/components/ReproductionKit.astro";
 import PostReviewHoldNotice from "@/components/PostReviewHoldNotice.astro";
 import Tag from "@/components/Tag.astro";
@@ -97,6 +98,7 @@ const {
   editorialStatus,
   trendBundle,
   trendLifecycle,
+  marketplaceQuery,
 } = post.data;
 const isHeld = editorialStatus === "legacy_hold";
 const trendFreshUntil = trendBundle?.freshUntil ?? trendLifecycle?.freshUntil;
@@ -220,6 +222,12 @@ const ogImage = ogImageUrl
               </div>
             )}
             {trendBundle ? <TrendBundle bundle={trendBundle} /> : <Content />}
+            {marketplaceQuery && trendLifecycle && (
+              <MarketplaceSearch
+                query={marketplaceQuery}
+                freshUntil={trendLifecycle.freshUntil}
+              />
+            )}
           </article>
 
           <hr class="my-8 border-dashed" />

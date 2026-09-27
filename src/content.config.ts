@@ -56,6 +56,15 @@ const posts = defineCollection({
           ])
           .default("not_tested"),
         correctionNote: z.string().optional(),
+        marketplaceQuery: z
+          .string()
+          .min(2)
+          .max(60)
+          .refine(
+            value =>
+              value === value.trim() && !/[\u0000-\u001f\u007f]/u.test(value)
+          )
+          .optional(),
         trendBundle: trendBundleSchema.optional(),
         trendLifecycle: z
           .object({
@@ -81,6 +90,15 @@ const posts = defineCollection({
           .optional(),
       })
       .superRefine((data, context) => {
+        if (
+          data.marketplaceQuery &&
+          (!data.tags.includes("trend") || !data.trendLifecycle)
+        ) {
+          context.addIssue({
+            code: "custom",
+            message: "Marketplace query requires a manual trend lifecycle",
+          });
+        }
         if (
           data.tags.includes("trend") &&
           Boolean(data.trendBundle) === Boolean(data.trendLifecycle)
