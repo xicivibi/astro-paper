@@ -14,3 +14,6 @@
 
 # Ignore MDX files
 *.mdx
+
+# Generated trend bundle frontmatter is canonical one-line JSON read by lifecycle checks.
+/src/content/posts/xici-trend-*.md
