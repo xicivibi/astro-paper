@@ -13,14 +13,19 @@ test("expired trend stays routable but is removed from sitemap inputs", () => {
       resolve(root, filename),
       `---\ntrendBundle: ${JSON.stringify({ schemaVersion: "trend-bundle-v1", freshUntil: "2026-09-27T12:00:00Z" })}\n---\n`
     );
+    const manualFilename = "manual-shopping-trend.md";
+    writeFileSync(
+      resolve(root, manualFilename),
+      `---\ntrendLifecycle:\n  freshUntil: 2026-09-27T12:00:00Z\n---\n`
+    );
     const route = `/posts/${filename.slice(0, -3)}/`;
     assert.deepEqual(
       [...expiredTrendPaths(root, new Date("2026-09-27T11:59:59Z"))],
       []
     );
     assert.deepEqual(
-      [...expiredTrendPaths(root, new Date("2026-09-27T12:00:00Z"))],
-      [route]
+      [...expiredTrendPaths(root, new Date("2026-09-27T12:00:00Z"))].sort(),
+      ["/posts/manual-shopping-trend/", route]
     );
   } finally {
     assert.equal(basename(root).startsWith("xici-trend-paths-"), true);

@@ -22,6 +22,8 @@ export function hasRequiredAiEvidence(data: PostData) {
  * - In dev, always shows non-draft posts to make authoring easier
  */
 export function postFilter({ data }: CollectionEntry<"posts">) {
+  const freshUntil =
+    data.trendBundle?.freshUntil ?? data.trendLifecycle?.freshUntil;
   const isPublishTimePassed =
     Date.now() >
     new Date(data.pubDatetime).getTime() - config.posts.scheduledPostMargin;
@@ -29,7 +31,7 @@ export function postFilter({ data }: CollectionEntry<"posts">) {
     !data.draft &&
     data.editorialStatus !== "legacy_hold" &&
     hasRequiredAiEvidence(data) &&
-    (!data.trendBundle || Date.now() < data.trendBundle.freshUntil.getTime()) &&
+    (!freshUntil || Date.now() < freshUntil.getTime()) &&
     (import.meta.env.DEV || isPublishTimePassed)
   );
 }

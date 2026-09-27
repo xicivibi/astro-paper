@@ -18,6 +18,7 @@ from urllib.parse import urlsplit
 
 
 _BUNDLE = re.compile(r"^trendBundle: (\{.*\})$", re.MULTILINE)
+_MANUAL = re.compile(r"^trendLifecycle:\r?\n((?:  [^\r\n]+\r?\n)+)", re.MULTILINE)
 _PUBLISHED = re.compile(r"^pubDatetime: (\S+)$", re.MULTILINE)
 
 
@@ -25,7 +26,7 @@ class _PageSignals(HTMLParser):
     def __init__(self) -> None:
         super().__init__(convert_charrefs=True)
         self.noindex = False
-        self.bundle = False
+        self.lifecycle = False
         self.review_due = False
         self.offers: list[tuple[str | None, str | None]] = []
 
@@ -33,7 +34,7 @@ class _PageSignals(HTMLParser):
         values = dict(attrs)
         if tag == "meta" and values.get("name") == "robots":
             self.noindex |= "noindex" in (values.get("content") or "").split(",")[0]
-        self.bundle |= "data-trend-bundle" in values
+        self.lifecycle |= "data-trend-bundle" in values or "data-trend-lifecycle" in values
         self.review_due |= "data-trend-review-due" in values
         if tag == "a" and "data-affiliate-offer" in values:
             self.offers.append((values.get("data-expires-at"), values.get("href")))
@@ -47,16 +48,30 @@ def _instant(value: str) -> datetime:
 
 
 def _documents(root: Path):
-    for path in sorted(root.glob("xici-trend-*.md")):
+    for path in sorted(root.glob("*.md")):
         text = path.read_text(encoding="utf-8")
         bundle_match = _BUNDLE.search(text)
+        manual_match = _MANUAL.search(text)
+        is_managed = path.name.startswith("xici-trend-")
+        if not bundle_match and not manual_match and not is_managed:
+            continue
         published_match = _PUBLISHED.search(text)
-        if not bundle_match or not published_match:
+        if (is_managed and not bundle_match) or not published_match:
             raise ValueError(f"trend document metadata is missing: {path.name}")
-        bundle = json.loads(bundle_match.group(1))
-        if bundle.get("schemaVersion") != "trend-bundle-v1":
+        if bundle_match and manual_match:
+            raise ValueError(f"trend document metadata is duplicated: {path.name}")
+        if bundle_match:
+            lifecycle = json.loads(bundle_match.group(1))
+        else:
+            lifecycle = dict(re.findall(
+                r"^  (observedAt|reviewDueAt|freshUntil): (\S+)$",
+                manual_match.group(1), re.MULTILINE,
+            ))
+            if set(lifecycle) != {"observedAt", "reviewDueAt", "freshUntil"}:
+                raise ValueError(f"manual trend lifecycle is incomplete: {path.name}")
+        if bundle_match and lifecycle.get("schemaVersion") != "trend-bundle-v1":
             raise ValueError(f"trend schema is unsupported: {path.name}")
-        yield path.stem, _instant(published_match.group(1)), bundle
+        yield path.stem, _instant(published_match.group(1)), lifecycle
 
 
 def needs_rebuild(root: Path, origin: str, *, now: datetime, fetch=None) -> list[str]:
@@ -84,8 +99,8 @@ def needs_rebuild(root: Path, origin: str, *, now: datetime, fetch=None) -> list
             raise
         signals = _PageSignals()
         signals.feed(html)
-        if not signals.bundle:
-            reasons.append(f"{slug}:missing_bundle")
+        if not signals.lifecycle:
+            reasons.append(f"{slug}:missing_lifecycle")
             continue
         expired = instant >= _instant(bundle["freshUntil"])
         review_due = instant >= _instant(bundle["reviewDueAt"])

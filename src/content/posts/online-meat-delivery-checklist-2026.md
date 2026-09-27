@@ -13,6 +13,10 @@ sources:
   - "https://www.foodsafetykorea.go.kr/portal/board/boardDetail.do?bbs_no=bbs109&menu_grp=MENU_NEW05&menu_no=2873&ntctxt_no=1090416"
   - "https://www.foodsafetykorea.go.kr/portal/board/boardDetail.do?bbs_no=bbs001&menu_grp=MENU_NEW01&menu_no=3120&ntctxt_no=1098051"
 testingStatus: publisher_source_only
+trendLifecycle:
+  observedAt: 2026-09-27T09:57:16+09:00
+  reviewDueAt: 2026-09-27T21:57:16+09:00
+  freshUntil: 2026-09-28T09:57:16+09:00
 ---
 
 9월 27일 오전 한국 [Google 인기 검색어](https://trends.google.co.kr/trending?geo=KR&hl=ko)에서 **‘고기’가 활성 검색어(1만+ 구간)**로 표시됐습니다. 이는 검색량 구간일 뿐 주문량이나 가격 변동의 증거는 아닙니다. 온라인에서 냉장육을 고르고 있다면, 할인율보다 **제때 차갑게 받을 수 있는지**부터 확인하세요.

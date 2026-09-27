@@ -14,6 +14,10 @@ sources:
   - "https://www.energy.or.kr/front/conts/105002004003000.do"
   - "https://eep.energy.or.kr/certification/certi_list_153.aspx"
 testingStatus: publisher_source_only
+trendLifecycle:
+  observedAt: 2026-09-27T09:31:31+09:00
+  reviewDueAt: 2026-09-27T21:31:31+09:00
+  freshUntil: 2026-09-28T09:31:31+09:00
 ---
 
 2026년 9월 27일 오전, 한국 [Google 인기 검색어](https://trends.google.co.kr/trending?geo=KR&hl=ko)에 **‘에어컨’이 활성 검색어**로 표시됐습니다. 검색량이 늘어난 이유나 실제 구매량은 이 화면만으로 알 수 없습니다. 지금 에어컨을 찾는다면 상품 페이지의 할인율보다 **설치까지 끝낸 뒤 낼 금액**을 먼저 비교해 보세요.
