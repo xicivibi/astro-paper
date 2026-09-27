@@ -1,0 +1,42 @@
+---
+import { coupangSearchUrl } from "@/utils/marketplaceSearch";
+
+type Props = { query: string; freshUntil: Date };
+const { query, freshUntil } = Astro.props;
+const href = coupangSearchUrl(query);
+const visibleAtBuild = new Date() < freshUntil;
+---
+
+{
+  href && visibleAtBuild && (
+    <aside
+      data-marketplace-search
+      data-fresh-until={freshUntil.toISOString()}
+      class="border-border bg-muted/20 my-7 rounded-2xl border p-4 sm:p-6"
+      aria-label="쇼핑 검색"
+    >
+      <p class="font-semibold">상품을 직접 비교하려면</p>
+      <p class="text-muted-foreground mt-1 text-sm">
+        쿠팡의 검색 결과로 이동합니다. 특정 상품이나 가격을 추천하거나 검증한
+        링크는 아닙니다. 제휴 링크가 아닙니다.
+      </p>
+      <a
+        href={href}
+        target="_blank"
+        rel="nofollow noopener noreferrer"
+        class="text-accent mt-3 inline-flex font-semibold underline underline-offset-4"
+      >
+        쿠팡에서 {query} 검색하기
+      </a>
+    </aside>
+  )
+}
+
+<script>
+  for (const panel of document.querySelectorAll<HTMLElement>(
+    "[data-marketplace-search]"
+  )) {
+    if (Date.now() >= Date.parse(panel.dataset.freshUntil || ""))
+      panel.remove();
+  }
+</script>

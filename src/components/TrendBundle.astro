@@ -1,6 +1,7 @@
 ---
 import { activeTrendOffers, type TrendBundle } from "@/utils/trendBundle";
 import { monetization } from "@/config/monetization";
+import MarketplaceSearch from "@/components/MarketplaceSearch.astro";
 
 type Props = { bundle: TrendBundle };
 const { bundle } = Astro.props;
@@ -165,6 +166,15 @@ const dateLabel = (date: Date) =>
           ))}
         </ul>
       </section>
+    )
+  }
+
+  {
+    offers.length === 0 && (
+      <MarketplaceSearch
+        query={bundle.intentCluster}
+        freshUntil={bundle.freshUntil}
+      />
     )
   }
 

@@ -2,6 +2,7 @@
 title: "고기 온라인 주문, 가격보다 먼저 볼 3가지: 냉장 배송·수령·보관"
 description: "냉장육을 온라인으로 살 때 배송 방식, 받을 수 있는 시간, 도착 후 상태를 빠르게 확인하는 체크리스트."
 tags: ["trend", "shopping"]
+marketplaceQuery: "냉장 소고기"
 author: "Xici"
 pubDatetime: 2026-09-27T09:57:16+09:00
 draft: false

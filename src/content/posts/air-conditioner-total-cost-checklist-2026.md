@@ -2,6 +2,7 @@
 title: "에어컨 온라인 최저가, 설치비까지 보면 달라진다: 구매 전 4칸 비교표"
 description: "에어컨 상품가에 기본·추가 설치비를 더해 실제 부담액을 비교하는 간단한 표. 에너지효율 등급과 설치 후 확인사항도 함께 정리했습니다."
 tags: ["trend", "shopping"]
+marketplaceQuery: "에어컨"
 author: "Xici"
 pubDatetime: 2026-09-27T09:31:31+09:00
 draft: false
