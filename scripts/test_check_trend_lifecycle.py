@@ -11,6 +11,11 @@ spec = importlib.util.spec_from_file_location(
 )
 module = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(module)
+mark_spec = importlib.util.spec_from_file_location(
+    "mark_trend_lifecycle", Path(__file__).with_name("mark-trend-lifecycle.py")
+)
+mark_module = importlib.util.module_from_spec(mark_spec)
+mark_spec.loader.exec_module(mark_module)
 
 
 class TrendLifecycleTests(unittest.TestCase):
@@ -67,6 +72,25 @@ class TrendLifecycleTests(unittest.TestCase):
         self.assertEqual(module.needs_rebuild(
             self.root, "https://xici.vercel.app", now=now, fetch=lambda _url: current,
         ), [])
+
+    def test_commercial_origin_and_duplicate_rebuild_marker(self):
+        now = datetime(2026, 9, 27, 13, tzinfo=timezone.utc)
+        self.assertEqual(module.needs_rebuild(
+            self.root, "https://example.pages.dev", now=now,
+            fetch=lambda url: '<html><div data-trend-bundle></div></html>'
+            if url == "https://example.pages.dev/posts/xici-trend-example/"
+            else self.fail(url),
+        ), ["xici-trend-example:expired_page_indexable",
+            "xici-trend-example:review_notice_missing"])
+        with self.assertRaises(ValueError):
+            module.needs_rebuild(self.root, "http://example.pages.dev", now=now)
+        state = self.root / "state.json"
+        first = "a" * 64
+        self.assertTrue(mark_module.mark(state, first, now=now))
+        original = state.read_bytes()
+        self.assertFalse(mark_module.mark(state, first, now=now))
+        self.assertEqual(state.read_bytes(), original)
+        self.assertTrue(mark_module.mark(state, "b" * 64, now=now))
 
 
 if __name__ == "__main__":
