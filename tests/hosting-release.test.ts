@@ -66,10 +66,10 @@ test("production source requires a clean exact current canonical main", () => {
 test("remote verification rejects stale releases even when the homepage is healthy", async () => {
   const origin = "https://xici-example.pages.dev";
   const sha = "a".repeat(40);
-  const fetcher = async (url: string, options: RequestInit) => {
-    assert.equal(options.redirect, "error");
-    assert.equal(options.cache, "no-store");
-    const path = new URL(url).pathname;
+  const fetcher: typeof fetch = async (input, options) => {
+    assert.equal(options?.redirect, "error");
+    assert.equal(options?.cache, "no-store");
+    const path = new URL(input instanceof Request ? input.url : input).pathname;
     const body = path.endsWith("xici-release.json")
       ? JSON.stringify({ commitHash: sha, origin })
       : path === "/"
