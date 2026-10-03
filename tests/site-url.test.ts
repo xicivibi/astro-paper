@@ -31,13 +31,17 @@ test("PUBLIC_SITE_URL selects and normalizes the deployment origin", () => {
   );
   assert.match(
     html,
-    /<link rel="alternate" type="application\/rss\+xml" title="Xici RSS" href="\/rss\.xml"/,
+    /<link rel="alternate" type="application\/rss\+xml" title="Xici RSS" href="\/rss\.xml"/
   );
-  assert.match(
-    html,
-    /<h1[^>]*>\s*최근 검색에서 뜬 주제\s*<\/h1>/
-  );
-  assert.match(html, /<h2[^>]*>\s*Excel·CSV 실무 문제 해결\s*<\/h2>/);
+  // Trend posts intentionally leave discovery when they expire. A host
+  // migration must also build after the last active trend has expired.
+  assert.equal((html.match(/<h1\b/g) ?? []).length, 1);
+  if (html.includes('id="trend-posts-title"')) {
+    assert.match(html, /<h1[^>]*>\s*최근 검색에서 뜬 주제\s*<\/h1>/);
+    assert.match(html, /<h2[^>]*>\s*Excel·CSV 실무 문제 해결\s*<\/h2>/);
+  } else {
+    assert.match(html, /<h1[^>]*>\s*Excel·CSV 실무 문제 해결\s*<\/h1>/);
+  }
   assert.match(html, /href="\/tags\/trend\/"[^>]*>\s*트렌드/);
   assert.match(html, /href="\/tools\/"[^>]*>\s*도구\s*<\/a>/);
   assert.match(html, /href="\/topics\/excel-csv\/"[\s\S]*?공개 글 6개/);
@@ -51,10 +55,7 @@ test("PUBLIC_SITE_URL selects and normalizes the deployment origin", () => {
     "utf8"
   );
   assert.match(topicsHtml, /Excel·CSV[\s\S]*?공개 글 6개/);
-  assert.doesNotMatch(
-    topicsHtml,
-    /Google Sheets·Apps Script|문서·웹 업무/
-  );
+  assert.doesNotMatch(topicsHtml, /Google Sheets·Apps Script|문서·웹 업무/);
 
   const toolsHtml = readFileSync(
     new URL("../dist/tools/index.html", import.meta.url),
@@ -64,7 +65,7 @@ test("PUBLIC_SITE_URL selects and normalizes the deployment origin", () => {
   assert.match(toolsHtml, /href="\/tools\/csv-preview\/"/);
   assert.match(
     readFileSync(new URL("../dist/rss.xml", import.meta.url), "utf8"),
-    /<rss version="2\.0">.*<link>https:\/\/xici-example\.pages\.dev\//s,
+    /<rss version="2\.0">.*<link>https:\/\/xici-example\.pages\.dev\//s
   );
   assert.match(
     readFileSync(new URL("../dist/robots.txt", import.meta.url), "utf8"),

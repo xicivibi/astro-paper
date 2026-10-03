@@ -7,7 +7,88 @@ import { resolveHosting } from "../src/config/hosting.ts";
 import {
   inspectDist,
   validateReleaseInput,
+  verifyProductionSource,
+  verifyRemote,
 } from "../scripts/release-cloudflare.mjs";
+
+test("production source requires a clean exact current canonical main", () => {
+  const sha = "a".repeat(40);
+  const calls: string[][] = [];
+  const execute = (_command: string, args: string[]) => {
+    calls.push(args);
+    if (args[0] === "status") return "";
+    if (args[0] === "rev-parse") return sha;
+    return `${sha}\trefs/heads/main\n`;
+  };
+  assert.equal(verifyProductionSource(sha, execute).commitHash, sha);
+  assert.deepEqual(calls[2], [
+    "ls-remote",
+    "--exit-code",
+    "https://github.com/xicivibi/astro-paper.git",
+    "refs/heads/main",
+  ]);
+  for (const dirty of [" M src/config.ts", "?? public/unreviewed.html"]) {
+    assert.throws(
+      () => verifyProductionSource(sha, () => dirty),
+      /clean worktree/
+    );
+  }
+  assert.throws(
+    () =>
+      verifyProductionSource(sha, (_: string, args: string[]) => {
+        return args[0] === "status" ? "" : "b".repeat(40);
+      }),
+    /HEAD changed/
+  );
+  for (const remote of [
+    "",
+    `${"b".repeat(40)}\trefs/heads/main`,
+    `${sha}\trefs/heads/feature`,
+  ]) {
+    assert.throws(
+      () =>
+        verifyProductionSource(sha, (command: string, args: string[]) => {
+          return args[0] === "ls-remote" ? remote : execute(command, args);
+        }),
+      /current xicivibi/
+    );
+  }
+  assert.throws(
+    () =>
+      verifyProductionSource(sha, (command: string, args: string[]) => {
+        if (args[0] === "ls-remote") throw new Error("network unavailable");
+        return execute(command, args);
+      }),
+    /network unavailable/
+  );
+});
+
+test("remote verification rejects stale releases even when the homepage is healthy", async () => {
+  const origin = "https://xici-example.pages.dev";
+  const sha = "a".repeat(40);
+  const fetcher: typeof fetch = async (input, options) => {
+    assert.equal(options?.redirect, "error");
+    assert.equal(options?.cache, "no-store");
+    const path = new URL(input instanceof Request ? input.url : input).pathname;
+    const body = path.endsWith("xici-release.json")
+      ? JSON.stringify({ commitHash: sha, origin })
+      : path === "/"
+        ? `<link rel="canonical" href="${origin}/">`
+        : path === "/ads.txt"
+          ? "# Advertising is not enabled on this deployment.\n"
+          : "ok";
+    return new Response(body);
+  };
+  assert.equal((await verifyRemote(origin, sha, fetcher)).length, 6);
+  await assert.rejects(
+    verifyRemote(origin, "b".repeat(40), fetcher),
+    /release identity/
+  );
+  await assert.rejects(
+    verifyRemote(origin, sha, async () => new Response("{}")),
+    /release identity/
+  );
+});
 
 test("hosting disclosure follows the configured or inferred provider", () => {
   assert.equal(
@@ -88,7 +169,10 @@ test("release inspection binds all discovery files and keeps ads off", () => {
     const result = inspectDist(directory, origin);
     assert.equal(result.files, 7);
 
-    writeFileSync(join(directory, "rss.xml"), "https://xici.vercel.app/rss.xml");
+    writeFileSync(
+      join(directory, "rss.xml"),
+      "https://xici.vercel.app/rss.xml"
+    );
     assert.throws(
       () => inspectDist(directory, origin),
       /still contains the Vercel production origin/
@@ -104,13 +188,12 @@ test("both hosts ship the same restrictive security policy", () => {
     new URL("deploy/cloudflare-headers", root),
     "utf8"
   );
-  const vercel = JSON.parse(
-    readFileSync(new URL("vercel.json", root), "utf8")
-  );
+  const vercel = JSON.parse(readFileSync(new URL("vercel.json", root), "utf8"));
   const headers = Object.fromEntries(
-    vercel.headers[0].headers.map(
-      (item: { key: string; value: string }) => [item.key, item.value]
-    )
+    vercel.headers[0].headers.map((item: { key: string; value: string }) => [
+      item.key,
+      item.value,
+    ])
   );
 
   for (const directive of [
@@ -120,7 +203,10 @@ test("both hosts ship the same restrictive security policy", () => {
     "form-action 'self'",
   ]) {
     assert.match(cloudflare, new RegExp(directive.replaceAll("'", "\\'")));
-    assert.match(headers["Content-Security-Policy"], new RegExp(directive.replaceAll("'", "\\'")));
+    assert.match(
+      headers["Content-Security-Policy"],
+      new RegExp(directive.replaceAll("'", "\\'"))
+    );
   }
   assert.equal(headers["X-Content-Type-Options"], "nosniff");
   assert.equal(headers["X-Frame-Options"], "DENY");

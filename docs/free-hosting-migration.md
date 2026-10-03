@@ -66,6 +66,25 @@ commit:
 npm run release:cloudflare -- --origin https://ACTUAL_PROJECT.pages.dev --project ACTUAL_PROJECT --deploy
 ```
 
+Production deployment requires a clean checkout, including non-ignored
+untracked files, whose HEAD matches the current `main` SHA read directly from
+`https://github.com/xicivibi/astro-paper.git`. The tool checks before building
+and again immediately before uploading. A stale local tracking ref, an
+unmerged feature commit, a changed HEAD, or a failed remote read cannot pass.
+Local preflight remains available for a committed candidate and reports
+`productionSourceVerified: false`; it is not production authorization.
+
+The built release contains `/.well-known/xici-release.json` with its exact
+commit and origin. Post-deployment verification requires that identity at the
+production origin before reporting success. A healthy older homepage cannot
+stand in for this release; redirects and timeouts fail verification.
+
+Tool selection (2026-10-03): reuse the existing Git/Node release tool and
+connected GitHub integration. The plugin directory search returned no
+Cloudflare match; no additional plugin or dependency was installed. This is
+not proof that the wider directory has no Cloudflare integration. Account
+authentication and ownership remain separate from local preflight.
+
 The release tool intentionally requires an existing project. It never creates
 an account or project, changes billing, enables ads, or chooses Direct Upload
 on the operator's behalf. After deployment it fetches the homepage,
