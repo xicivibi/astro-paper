@@ -1,9 +1,11 @@
 import { spawnSync } from "node:child_process";
 import {
   existsSync,
+  mkdirSync,
   readFileSync,
   readdirSync,
   statSync,
+  writeFileSync,
 } from "node:fs";
 import { dirname, join, relative, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -21,6 +23,8 @@ const requiredFiles = [
 const textExtensions = /\.(?:html|xml|txt)$/i;
 const maxFiles = 20_000;
 const maxFileBytes = 25 * 1024 * 1024;
+const productionRepository = "https://github.com/xicivibi/astro-paper.git";
+const releaseMarker = "/.well-known/xici-release.json";
 
 function print(value) {
   process.stdout.write(`${value}\n`);
@@ -36,8 +40,7 @@ function invocation(name, args) {
     if (!npmCli) {
       throw new Error("npm_execpath is required for a Windows release");
     }
-    const cli =
-      name === "npm" ? npmCli : join(dirname(npmCli), "npx-cli.js");
+    const cli = name === "npm" ? npmCli : join(dirname(npmCli), "npx-cli.js");
     if (!existsSync(cli)) {
       throw new Error(`cannot locate ${name} CLI at ${cli}`);
     }
@@ -48,14 +51,20 @@ function invocation(name, args) {
 
 function run(executable, args, options = {}) {
   const processInvocation = invocation(executable, args);
-  const result = spawnSync(processInvocation.executable, processInvocation.args, {
-    cwd: root,
-    encoding: "utf8",
-    stdio: options.capture ? "pipe" : "inherit",
-    env: options.env ?? process.env,
-  });
+  const result = spawnSync(
+    processInvocation.executable,
+    processInvocation.args,
+    {
+      cwd: root,
+      encoding: "utf8",
+      stdio: options.capture ? "pipe" : "inherit",
+      env: options.env ?? process.env,
+    }
+  );
   if (result.status !== 0) {
-    const launchError = result.error?.message ? `: ${result.error.message}` : "";
+    const launchError = result.error?.message
+      ? `: ${result.error.message}`
+      : "";
     const detail = options.capture
       ? `${result.stdout || ""}\n${result.stderr || ""}`.trim()
       : "";
@@ -89,6 +98,36 @@ export function validateReleaseInput(originValue, projectValue) {
     );
   }
   return { origin: origin.origin, project };
+}
+
+export function verifyProductionSource(commitHash, execute = run) {
+  if (!/^[a-f0-9]{40}$/.test(commitHash)) {
+    throw new Error("release commit must be a full Git SHA");
+  }
+  const git = args => execute("git", args, { capture: true }).trim();
+  if (git(["status", "--porcelain", "--untracked-files=normal"])) {
+    throw new Error(
+      "production release requires a clean worktree including untracked files"
+    );
+  }
+  if (git(["rev-parse", "HEAD"]) !== commitHash) {
+    throw new Error("release HEAD changed during the build");
+  }
+  // Query the canonical repository, not a possibly stale origin/main ref or
+  // a local origin that points at a fork. Network errors stop deployment.
+  const remote = git([
+    "ls-remote",
+    "--exit-code",
+    productionRepository,
+    "refs/heads/main",
+  ]);
+  const match = /^([a-f0-9]{40})\s+refs\/heads\/main$/.exec(remote);
+  if (!match || match[1] !== commitHash) {
+    throw new Error(
+      "production release must match current xicivibi/astro-paper main"
+    );
+  }
+  return { repository: productionRepository, branch: "main", commitHash };
 }
 
 function listFiles(directory) {
@@ -172,12 +211,14 @@ function parseArgs(args) {
 function parseJsonArray(output) {
   const start = output.indexOf("[");
   const end = output.lastIndexOf("]");
-  if (start < 0 || end < start) throw new Error("Wrangler returned no JSON list");
+  if (start < 0 || end < start)
+    throw new Error("Wrangler returned no JSON list");
   return JSON.parse(output.slice(start, end + 1));
 }
 
-async function verifyRemote(origin) {
+export async function verifyRemote(origin, commitHash, fetcher = fetch) {
   const paths = [
+    releaseMarker,
     "/",
     "/robots.txt",
     "/rss.xml",
@@ -186,13 +227,32 @@ async function verifyRemote(origin) {
   ];
   const results = [];
   for (const path of paths) {
-    const response = await fetch(`${origin}${path}`, { redirect: "follow" });
+    const response = await fetcher(`${origin}${path}`, {
+      redirect: "error",
+      cache: "no-store",
+      signal: AbortSignal.timeout(20_000),
+    });
     if (!response.ok) {
-      throw new Error(`remote verification failed for ${path}: ${response.status}`);
+      throw new Error(
+        `remote verification failed for ${path}: ${response.status}`
+      );
     }
     const body = await response.text();
-    if (path === "/" && !body.includes(`<link rel="canonical" href="${origin}/">`)) {
-      throw new Error("remote homepage canonical does not match the release origin");
+    if (path === releaseMarker) {
+      const marker = JSON.parse(body);
+      if (marker.commitHash !== commitHash || marker.origin !== origin) {
+        throw new Error(
+          "remote release identity does not match the deployed commit and origin"
+        );
+      }
+    }
+    if (
+      path === "/" &&
+      !body.includes(`<link rel="canonical" href="${origin}/">`)
+    ) {
+      throw new Error(
+        "remote homepage canonical does not match the release origin"
+      );
     }
     if (
       path === "/ads.txt" &&
@@ -220,14 +280,17 @@ async function main() {
     { capture: true }
   ).trim();
   if (trackedChanges) {
-    throw new Error("tracked workspace changes must be committed before release");
+    throw new Error(
+      "tracked workspace changes must be committed before release"
+    );
   }
-  const commitHash = run("git", ["rev-parse", "HEAD"], { capture: true }).trim();
-  const commitMessage = run(
-    "git",
-    ["log", "-1", "--pretty=%s"],
-    { capture: true }
-  ).trim();
+  const commitHash = run("git", ["rev-parse", "HEAD"], {
+    capture: true,
+  }).trim();
+  if (args.deploy) verifyProductionSource(commitHash);
+  const commitMessage = run("git", ["log", "-1", "--pretty=%s"], {
+    capture: true,
+  }).trim();
   const releaseEnv = {
     ...process.env,
     PUBLIC_SITE_URL: origin,
@@ -237,6 +300,11 @@ async function main() {
     PUBLIC_COMMERCIAL_HOSTING_CONFIRMED: "false",
   };
   run("npm", ["run", "build"], { env: releaseEnv, capture: true });
+  mkdirSync(join(root, "dist", ".well-known"), { recursive: true });
+  writeFileSync(
+    join(root, "dist", releaseMarker.slice(1)),
+    JSON.stringify({ commitHash, origin }) + "\n"
+  );
   const inspection = inspectDist(join(root, "dist"), origin);
 
   if (!args.deploy) {
@@ -245,6 +313,7 @@ async function main() {
         status: "preflight_passed",
         project,
         commitHash,
+        productionSourceVerified: false,
         ...inspection,
         nextCommand: `npm run release:cloudflare -- --origin ${origin} --project ${project} --deploy`,
       })
@@ -254,17 +323,18 @@ async function main() {
 
   run("npx", ["--yes", "wrangler@4", "whoami"], { capture: true });
   const projects = parseJsonArray(
-    run(
-      "npx",
-      ["--yes", "wrangler@4", "pages", "project", "list", "--json"],
-      { capture: true }
-    )
+    run("npx", ["--yes", "wrangler@4", "pages", "project", "list", "--json"], {
+      capture: true,
+    })
   );
   if (!projects.some(item => item?.name === project)) {
     throw new Error(
       `Cloudflare Pages project '${project}' does not exist in the authenticated account`
     );
   }
+  // Recheck after the build and account lookups so a changed main/HEAD cannot
+  // be published under the SHA captured before the build.
+  const source = verifyProductionSource(commitHash);
   run("npx", [
     "--yes",
     "wrangler@4",
@@ -281,12 +351,13 @@ async function main() {
     commitMessage,
     "--commit-dirty=false",
   ]);
-  const remote = await verifyRemote(origin);
+  const remote = await verifyRemote(origin, commitHash);
   print(
     JSON.stringify({
       status: "deployed_and_verified",
       project,
       commitHash,
+      source,
       ...inspection,
       remote,
     })
