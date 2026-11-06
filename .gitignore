@@ -25,3 +25,19 @@ pnpm-debug.log*
 
 # pagefind
 public/pagefind
+# Excel lab: machine-specific run output stays local; inputs, queries and sanitized results are public.
+lab/excel/runs/
+lab/excel/__pycache__/
+lab/excel/summary.json
+lab/excel/repeatability.json
+lab/excel/process-verification.json
+lab/excel/file-list.txt
+lab/excel/REPORT.md
+lab/excel/cases/*/owned-process.json
+lab/excel/cases/*/~$*.xlsx
+lab/excel/cases/*/evidence.xlsx
+lab/excel/cases/*/working-export.xlsx
+lab/excel/cases/*/before-file-move.xlsx
+lab/excel/cases/*/*.pdf
+lab/excel/cases/*/*-export.csv
+public/reproduction/*/pending/

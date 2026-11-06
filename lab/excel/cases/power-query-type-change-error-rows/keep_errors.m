@@ -1,0 +1,1 @@
+Table.SelectRowsWithErrors(query,{"Amount"})

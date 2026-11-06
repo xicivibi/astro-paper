@@ -1,5 +1,7 @@
 import type { APIRoute } from "astro";
 
+// One group for every crawler (Googlebot, Yeti for Naver, Bingbot, ...):
+// a crawler-specific group would replace these rules for that crawler.
 const getRobotsTxt = (sitemapURL: URL) => `
 User-agent: *
 Allow: /

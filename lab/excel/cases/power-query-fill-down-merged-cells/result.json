@@ -1,0 +1,874 @@
+{
+  "slug": "power-query-fill-down-merged-cells",
+  "excel_version": "16.0",
+  "excel_build": "20527",
+  "ui_language": {
+    "lcid": 1042,
+    "culture": "ko-KR"
+  },
+  "run_at": "2026-11-06T17:40:09.7115820Z",
+  "input_sha256": {
+    "input.json": "4abc91cc8c2e1f4f64243701946d321557c4ed5732e8031ff50e1ca9e529187e",
+    "input.xlsx": "8160d360f2dacbc65fdd3201f853cd898176163b9203050492959e83db3df454"
+  },
+  "steps": [
+    {
+      "name": "input_readback",
+      "formula_or_m": "Worksheet.UsedRange.Value2/Text (synthetic fixture)",
+      "observed": {
+        "columns": [
+          "Group",
+          "Item",
+          "Note"
+        ],
+        "rows": [
+          [
+            "Invented-A",
+            "S1",
+            "Seed"
+          ],
+          [
+            null,
+            "S2",
+            null
+          ],
+          [
+            "Invented-B",
+            "S3",
+            ""
+          ],
+          [
+            null,
+            "S4",
+            null
+          ],
+          [
+            "Invented-C",
+            "S5",
+            "Next"
+          ],
+          [
+            null,
+            "S6",
+            null
+          ]
+        ],
+        "display": [
+          [
+            "Invented-A",
+            "S1",
+            "Seed"
+          ],
+          [
+            "",
+            "S2",
+            ""
+          ],
+          [
+            "Invented-B",
+            "S3",
+            ""
+          ],
+          [
+            "",
+            "S4",
+            ""
+          ],
+          [
+            "Invented-C",
+            "S5",
+            "Next"
+          ],
+          [
+            "",
+            "S6",
+            ""
+          ]
+        ],
+        "row_count": 6,
+        "excel_error_cells": []
+      }
+    },
+    {
+      "name": "query_load",
+      "formula_or_m": "let S=Excel.Workbook(File.Contents(\"샘플폴더/input.xlsx\"),null,true), D=S{[Item=\"Input\",Kind=\"Sheet\"]}[Data] in Table.PromoteHeaders(D,[PromoteAllScalars=true])\r\n",
+      "observed": {
+        "refresh_return": true,
+        "refreshing": false,
+        "load_error": null,
+        "table": {
+          "columns": [
+            "Group",
+            "Item",
+            "Note"
+          ],
+          "rows": [
+            [
+              "Invented-A",
+              "S1",
+              "Seed"
+            ],
+            [
+              null,
+              "S2",
+              null
+            ],
+            [
+              "Invented-B",
+              "S3",
+              ""
+            ],
+            [
+              null,
+              "S4",
+              null
+            ],
+            [
+              "Invented-C",
+              "S5",
+              "Next"
+            ],
+            [
+              null,
+              "S6",
+              null
+            ]
+          ],
+          "display": [
+            [
+              "Invented-A",
+              "S1",
+              "Seed"
+            ],
+            [
+              "",
+              "S2",
+              ""
+            ],
+            [
+              "Invented-B",
+              "S3",
+              ""
+            ],
+            [
+              "",
+              "S4",
+              ""
+            ],
+            [
+              "Invented-C",
+              "S5",
+              "Next"
+            ],
+            [
+              "",
+              "S6",
+              ""
+            ]
+          ],
+          "row_count": 6,
+          "excel_error_cells": []
+        }
+      }
+    },
+    {
+      "name": "fill_load",
+      "formula_or_m": "Table.FillDown(query,{\"Group\",\"Note\"})\r\n",
+      "observed": {
+        "refresh_return": true,
+        "refreshing": false,
+        "load_error": null,
+        "table": {
+          "columns": [
+            "Group",
+            "Item",
+            "Note"
+          ],
+          "rows": [
+            [
+              "Invented-A",
+              "S1",
+              "Seed"
+            ],
+            [
+              "Invented-A",
+              "S2",
+              "Seed"
+            ],
+            [
+              "Invented-B",
+              "S3",
+              ""
+            ],
+            [
+              "Invented-B",
+              "S4",
+              ""
+            ],
+            [
+              "Invented-C",
+              "S5",
+              "Next"
+            ],
+            [
+              "Invented-C",
+              "S6",
+              "Next"
+            ]
+          ],
+          "display": [
+            [
+              "Invented-A",
+              "S1",
+              "Seed"
+            ],
+            [
+              "Invented-A",
+              "S2",
+              "Seed"
+            ],
+            [
+              "Invented-B",
+              "S3",
+              ""
+            ],
+            [
+              "Invented-B",
+              "S4",
+              ""
+            ],
+            [
+              "Invented-C",
+              "S5",
+              "Next"
+            ],
+            [
+              "Invented-C",
+              "S6",
+              "Next"
+            ]
+          ],
+          "row_count": 6,
+          "excel_error_cells": []
+        }
+      }
+    },
+    {
+      "name": "empty_string_load",
+      "formula_or_m": "let S=Table.AddColumn(query,\"LiteralEmpty\",each if [Item]=\"S1\" then \"Seed\" else if [Item]=\"S3\" then \"\" else null,type text), F=Table.FillDown(S,{\"Group\",\"LiteralEmpty\"}) in Table.AddColumn(F,\"IsEmptyString\",each [LiteralEmpty]=\"\",type logical)\r\n",
+      "observed": {
+        "refresh_return": true,
+        "refreshing": false,
+        "load_error": null,
+        "table": {
+          "columns": [
+            "Group",
+            "Item",
+            "Note",
+            "LiteralEmpty",
+            "IsEmptyString"
+          ],
+          "rows": [
+            [
+              "Invented-A",
+              "S1",
+              "Seed",
+              "Seed",
+              false
+            ],
+            [
+              "Invented-A",
+              "S2",
+              null,
+              "Seed",
+              false
+            ],
+            [
+              "Invented-B",
+              "S3",
+              "",
+              "",
+              true
+            ],
+            [
+              "Invented-B",
+              "S4",
+              null,
+              "",
+              true
+            ],
+            [
+              "Invented-C",
+              "S5",
+              "Next",
+              "",
+              true
+            ],
+            [
+              "Invented-C",
+              "S6",
+              null,
+              "",
+              true
+            ]
+          ],
+          "display": [
+            [
+              "Invented-A",
+              "S1",
+              "Seed",
+              "Seed",
+              "FALSE"
+            ],
+            [
+              "Invented-A",
+              "S2",
+              "",
+              "Seed",
+              "FALSE"
+            ],
+            [
+              "Invented-B",
+              "S3",
+              "",
+              "",
+              "TRUE"
+            ],
+            [
+              "Invented-B",
+              "S4",
+              "",
+              "",
+              "TRUE"
+            ],
+            [
+              "Invented-C",
+              "S5",
+              "Next",
+              "",
+              "TRUE"
+            ],
+            [
+              "Invented-C",
+              "S6",
+              "",
+              "",
+              "TRUE"
+            ]
+          ],
+          "row_count": 6,
+          "excel_error_cells": []
+        }
+      }
+    },
+    {
+      "name": "fixed_load",
+      "formula_or_m": "let S=Table.AddColumn(query,\"LiteralEmpty\",each if [Item]=\"S1\" then \"Seed\" else if [Item]=\"S3\" then \"\" else null,type text), N=Table.ReplaceValue(S,\"\",null,Replacer.ReplaceValue,{\"LiteralEmpty\"}) in Table.FillDown(N,{\"Group\",\"LiteralEmpty\"})\r\n",
+      "observed": {
+        "refresh_return": true,
+        "refreshing": false,
+        "load_error": null,
+        "table": {
+          "columns": [
+            "Group",
+            "Item",
+            "Note",
+            "LiteralEmpty"
+          ],
+          "rows": [
+            [
+              "Invented-A",
+              "S1",
+              "Seed",
+              "Seed"
+            ],
+            [
+              "Invented-A",
+              "S2",
+              null,
+              "Seed"
+            ],
+            [
+              "Invented-B",
+              "S3",
+              "",
+              "Seed"
+            ],
+            [
+              "Invented-B",
+              "S4",
+              null,
+              "Seed"
+            ],
+            [
+              "Invented-C",
+              "S5",
+              "Next",
+              "Seed"
+            ],
+            [
+              "Invented-C",
+              "S6",
+              null,
+              "Seed"
+            ]
+          ],
+          "display": [
+            [
+              "Invented-A",
+              "S1",
+              "Seed",
+              "Seed"
+            ],
+            [
+              "Invented-A",
+              "S2",
+              "",
+              "Seed"
+            ],
+            [
+              "Invented-B",
+              "S3",
+              "",
+              "Seed"
+            ],
+            [
+              "Invented-B",
+              "S4",
+              "",
+              "Seed"
+            ],
+            [
+              "Invented-C",
+              "S5",
+              "Next",
+              "Seed"
+            ],
+            [
+              "Invented-C",
+              "S6",
+              "",
+              "Seed"
+            ]
+          ],
+          "row_count": 6,
+          "excel_error_cells": []
+        }
+      }
+    }
+  ],
+  "wrong_result": {
+    "literal_empty_fill": {
+      "columns": [
+        "Group",
+        "Item",
+        "Note",
+        "LiteralEmpty",
+        "IsEmptyString"
+      ],
+      "rows": [
+        [
+          "Invented-A",
+          "S1",
+          "Seed",
+          "Seed",
+          false
+        ],
+        [
+          "Invented-A",
+          "S2",
+          null,
+          "Seed",
+          false
+        ],
+        [
+          "Invented-B",
+          "S3",
+          "",
+          "",
+          true
+        ],
+        [
+          "Invented-B",
+          "S4",
+          null,
+          "",
+          true
+        ],
+        [
+          "Invented-C",
+          "S5",
+          "Next",
+          "",
+          true
+        ],
+        [
+          "Invented-C",
+          "S6",
+          null,
+          "",
+          true
+        ]
+      ],
+      "display": [
+        [
+          "Invented-A",
+          "S1",
+          "Seed",
+          "Seed",
+          "FALSE"
+        ],
+        [
+          "Invented-A",
+          "S2",
+          "",
+          "Seed",
+          "FALSE"
+        ],
+        [
+          "Invented-B",
+          "S3",
+          "",
+          "",
+          "TRUE"
+        ],
+        [
+          "Invented-B",
+          "S4",
+          "",
+          "",
+          "TRUE"
+        ],
+        [
+          "Invented-C",
+          "S5",
+          "Next",
+          "",
+          "TRUE"
+        ],
+        [
+          "Invented-C",
+          "S6",
+          "",
+          "",
+          "TRUE"
+        ]
+      ],
+      "row_count": 6,
+      "excel_error_cells": []
+    },
+    "xlsx_read": {
+      "columns": [
+        "Group",
+        "Item",
+        "Note"
+      ],
+      "rows": [
+        [
+          "Invented-A",
+          "S1",
+          "Seed"
+        ],
+        [
+          null,
+          "S2",
+          null
+        ],
+        [
+          "Invented-B",
+          "S3",
+          ""
+        ],
+        [
+          null,
+          "S4",
+          null
+        ],
+        [
+          "Invented-C",
+          "S5",
+          "Next"
+        ],
+        [
+          null,
+          "S6",
+          null
+        ]
+      ],
+      "display": [
+        [
+          "Invented-A",
+          "S1",
+          "Seed"
+        ],
+        [
+          "",
+          "S2",
+          ""
+        ],
+        [
+          "Invented-B",
+          "S3",
+          ""
+        ],
+        [
+          "",
+          "S4",
+          ""
+        ],
+        [
+          "Invented-C",
+          "S5",
+          "Next"
+        ],
+        [
+          "",
+          "S6",
+          ""
+        ]
+      ],
+      "row_count": 6,
+      "excel_error_cells": []
+    }
+  },
+  "fixed_result": {
+    "empty_to_null_fill": {
+      "columns": [
+        "Group",
+        "Item",
+        "Note",
+        "LiteralEmpty"
+      ],
+      "rows": [
+        [
+          "Invented-A",
+          "S1",
+          "Seed",
+          "Seed"
+        ],
+        [
+          "Invented-A",
+          "S2",
+          null,
+          "Seed"
+        ],
+        [
+          "Invented-B",
+          "S3",
+          "",
+          "Seed"
+        ],
+        [
+          "Invented-B",
+          "S4",
+          null,
+          "Seed"
+        ],
+        [
+          "Invented-C",
+          "S5",
+          "Next",
+          "Seed"
+        ],
+        [
+          "Invented-C",
+          "S6",
+          null,
+          "Seed"
+        ]
+      ],
+      "display": [
+        [
+          "Invented-A",
+          "S1",
+          "Seed",
+          "Seed"
+        ],
+        [
+          "Invented-A",
+          "S2",
+          "",
+          "Seed"
+        ],
+        [
+          "Invented-B",
+          "S3",
+          "",
+          "Seed"
+        ],
+        [
+          "Invented-B",
+          "S4",
+          "",
+          "Seed"
+        ],
+        [
+          "Invented-C",
+          "S5",
+          "Next",
+          "Seed"
+        ],
+        [
+          "Invented-C",
+          "S6",
+          "",
+          "Seed"
+        ]
+      ],
+      "row_count": 6,
+      "excel_error_cells": []
+    },
+    "merged_fill": {
+      "columns": [
+        "Group",
+        "Item",
+        "Note"
+      ],
+      "rows": [
+        [
+          "Invented-A",
+          "S1",
+          "Seed"
+        ],
+        [
+          "Invented-A",
+          "S2",
+          "Seed"
+        ],
+        [
+          "Invented-B",
+          "S3",
+          ""
+        ],
+        [
+          "Invented-B",
+          "S4",
+          ""
+        ],
+        [
+          "Invented-C",
+          "S5",
+          "Next"
+        ],
+        [
+          "Invented-C",
+          "S6",
+          "Next"
+        ]
+      ],
+      "display": [
+        [
+          "Invented-A",
+          "S1",
+          "Seed"
+        ],
+        [
+          "Invented-A",
+          "S2",
+          "Seed"
+        ],
+        [
+          "Invented-B",
+          "S3",
+          ""
+        ],
+        [
+          "Invented-B",
+          "S4",
+          ""
+        ],
+        [
+          "Invented-C",
+          "S5",
+          "Next"
+        ],
+        [
+          "Invented-C",
+          "S6",
+          "Next"
+        ]
+      ],
+      "row_count": 6,
+      "excel_error_cells": []
+    }
+  },
+  "reconciliation": {
+    "formula_empty_xlsx_read": "",
+    "empty_string_rows_after_fill": 4,
+    "merged_blank_groups": 3,
+    "rows_after": 6,
+    "source_rows": 6
+  },
+  "observations_ko": [
+    "병합 xlsx를 읽은 결과 그룹 null은 3개였다. M에서 만든 빈 문자열은 채우기 뒤에도 4행에 남았다.",
+    "xlsx의 빈 문자열 수식 셀을 읽은 값은 ''였다. 리터럴 빈 문자열과의 차이는 별도 열로 검사했다."
+  ],
+  "not_verified": [
+    "COM/API execution does not verify the exact Korean ribbon click path, other Excel builds, other OS locales, or human review of the post."
+  ],
+  "differences_from_brief": [],
+  "assertions": [
+    {
+      "name": "Excel.Workbook reads the actual merged workbook with null followers",
+      "passed": true
+    },
+    {
+      "name": "FillDown fills a merged-cell follower",
+      "passed": true
+    },
+    {
+      "name": "Two nonblank private-data-free native Excel PNGs recorded",
+      "passed": true
+    }
+  ],
+  "expectations": [
+    {
+      "name": "FillDown leaves literal empty strings; replacing them with null permits fill",
+      "matched": true
+    }
+  ],
+  "screenshots": [
+    {
+      "file": "before.png",
+      "valid": true,
+      "method": "ExportAsFixedFormat + PyMuPDF",
+      "sheet": "Q_query",
+      "range": "$A$1:$C$7",
+      "width": 367,
+      "height": 278,
+      "distinct_colors": 703,
+      "pdf_text_checked": true,
+      "pdf_pages": 1,
+      "bytes": 18742,
+      "sha256": "67639d06b4d34c25d2d966ab6c31e0194d26f15ddea76dc22f6bd7f06f05e845",
+      "clipboard": "Untouched: GetDataObject failed in this session; both CopyPicture modes require clipboard access"
+    },
+    {
+      "file": "after.png",
+      "valid": true,
+      "method": "ExportAsFixedFormat + PyMuPDF",
+      "sheet": "Q_fixed",
+      "range": "$A$1:$D$7",
+      "width": 577,
+      "height": 278,
+      "distinct_colors": 781,
+      "pdf_text_checked": true,
+      "pdf_pages": 1,
+      "bytes": 31648,
+      "sha256": "4e7c4d8ca020d2e63ab4fa8d17b25c1c70673866877b7fc14e08809213bbf661",
+      "clipboard": "Untouched: GetDataObject failed in this session; both CopyPicture modes require clipboard access"
+    }
+  ],
+  "status": "pass",
+  "failure": null,
+  "environment": {
+    "os_culture": "ko-KR",
+    "excel_decimal_separator": ".",
+    "excel_thousands_separator": ",",
+    "excel_date_order": 2,
+    "excel_list_separator": ",",
+    "synthetic": true
+  },
+  "query_refresh_attempts": 4,
+  "cleanup_verified": true
+}

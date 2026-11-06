@@ -4,6 +4,7 @@ pubDatetime: 2026-09-20T03:05:00+09:00
 title: "Power Query 폴더 결합: 헤더 중복과 열 순서 오류를 막는 방법"
 featured: false
 draft: false
+topic: "excel-csv"
 tags:
   - "excel"
   - "csv"
@@ -11,8 +12,11 @@ tags:
 description: "월별 CSV를 폴더에서 합칠 때 헤더가 데이터로 들어가거나 열 순서가 달라지는 문제를 막기 위해 전용 폴더, 열 이름, Source.Name과 새로고침 결과를 확인하는 절차입니다."
 aiAssisted: true
 lastReviewed: 2026-09-20T03:05:00+09:00
+humanReviewedBy: ""
+humanReviewedAt:
 sources:
   - "https://support.microsoft.com/en-us/excel/import-data-from-a-folder-with-multiple-files-power-query"
+  - "https://learn.microsoft.com/en-us/power-query/combine-files-overview"
 testingStatus: reproduced
 reproductionKit:
   manifestPath: "/reproduction/power-query-folder-combine-header-column-order/c468658162057f362af37975e3917d8c714e788db34f4139d7db381484a4f90f/manifest.json"

@@ -1,0 +1,57 @@
+{
+  "synthetic": true,
+  "columns": [
+    "ID",
+    "Number",
+    "SourceLocale"
+  ],
+  "rows": [
+    [
+      "S1",
+      "1.234,56",
+      "de-DE"
+    ],
+    [
+      "S2",
+      "1,234.56",
+      "en-US"
+    ],
+    [
+      "S3",
+      "1.234",
+      "de-DE"
+    ],
+    [
+      "S4",
+      "1,234",
+      "en-US"
+    ],
+    [
+      "S5",
+      "1234,56",
+      "de-DE"
+    ],
+    [
+      "S6",
+      "1234.56",
+      "en-US"
+    ]
+  ],
+  "csv": true,
+  "expected_numbers": [
+    1234.56,
+    1234.56,
+    1234,
+    1234,
+    1234.56,
+    1234.56
+  ],
+  "query_files": {
+    "query": "query.m",
+    "fixed": "fixed.m",
+    "de": "de.m",
+    "us": "us.m",
+    "de_audit": "de_audit.m",
+    "us_audit": "us_audit.m"
+  }
+}

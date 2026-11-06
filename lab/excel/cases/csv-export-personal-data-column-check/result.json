@@ -1,0 +1,511 @@
+{
+  "slug": "csv-export-personal-data-column-check",
+  "excel_version": "16.0",
+  "excel_build": "20527",
+  "ui_language": {
+    "lcid": 1042,
+    "culture": "ko-KR"
+  },
+  "run_at": "2026-11-06T17:43:29.0836044Z",
+  "input_sha256": {
+    "input.json": "76c6d95977415a01b1fa4e8f25293ae1c53e4c63f6c2f034284cfa99a7fd1fa8",
+    "input.xlsx": "b5dcd716341c2bfb183d633b2b2323b25191528bd8d9cdf356d427eec714eba0"
+  },
+  "steps": [
+    {
+      "name": "input_readback",
+      "formula_or_m": "Worksheet.UsedRange.Value2/Text (synthetic fixture)",
+      "observed": {
+        "columns": [
+          "ID",
+          "FakeName",
+          "FakeEmail",
+          "FakePhone",
+          "Amount"
+        ],
+        "rows": [
+          [
+            "S1",
+            "INVENTED PERSON 1",
+            "fake1@example.invalid",
+            "000-0000-0001",
+            10
+          ],
+          [
+            "S2",
+            "INVENTED PERSON 2",
+            "fake2@example.invalid",
+            "000-0000-0002",
+            20
+          ],
+          [
+            "S3",
+            "INVENTED PERSON 3",
+            "fake3@example.invalid",
+            "000-0000-0003",
+            30
+          ],
+          [
+            "S4",
+            "INVENTED PERSON 4",
+            "fake4@example.invalid",
+            "000-0000-0004",
+            40
+          ],
+          [
+            "S5",
+            "INVENTED PERSON 5",
+            "fake5@example.invalid",
+            "000-0000-0005",
+            50
+          ]
+        ],
+        "display": [
+          [
+            "S1",
+            "INVENTED PERSON 1",
+            "fake1@example.invalid",
+            "000-0000-0001",
+            "10"
+          ],
+          [
+            "S2",
+            "INVENTED PERSON 2",
+            "fake2@example.invalid",
+            "000-0000-0002",
+            "20"
+          ],
+          [
+            "S3",
+            "INVENTED PERSON 3",
+            "fake3@example.invalid",
+            "000-0000-0003",
+            "30"
+          ],
+          [
+            "S4",
+            "INVENTED PERSON 4",
+            "fake4@example.invalid",
+            "000-0000-0004",
+            "40"
+          ],
+          [
+            "S5",
+            "INVENTED PERSON 5",
+            "fake5@example.invalid",
+            "000-0000-0005",
+            "50"
+          ]
+        ],
+        "row_count": 5,
+        "excel_error_cells": []
+      }
+    },
+    {
+      "name": "csv_export_hidden_columns",
+      "formula_or_m": "Input.Columns(B:D).Hidden=true; other worksheet.Visible=xlSheetHidden; Input.Activate; Workbook.SaveAs(xlCSVUTF8)",
+      "observed": {
+        "raw_csv": "ID,FakeName,FakeEmail,FakePhone,Amount\r\nS1,INVENTED PERSON 1,fake1@example.invalid,000-0000-0001,10\r\nS2,INVENTED PERSON 2,fake2@example.invalid,000-0000-0002,20\r\nS3,INVENTED PERSON 3,fake3@example.invalid,000-0000-0003,30\r\nS4,INVENTED PERSON 4,fake4@example.invalid,000-0000-0004,40\r\nS5,INVENTED PERSON 5,fake5@example.invalid,000-0000-0005,50\r\n",
+        "columns_in_csv": [
+          "ID",
+          "FakeName",
+          "FakeEmail",
+          "FakePhone",
+          "Amount"
+        ],
+        "csv_records": 5,
+        "direct_open": {
+          "columns": [
+            "ID",
+            "FakeName",
+            "FakeEmail",
+            "FakePhone",
+            "Amount"
+          ],
+          "rows": [
+            [
+              "S1",
+              "INVENTED PERSON 1",
+              "fake1@example.invalid",
+              "000-0000-0001",
+              10
+            ],
+            [
+              "S2",
+              "INVENTED PERSON 2",
+              "fake2@example.invalid",
+              "000-0000-0002",
+              20
+            ],
+            [
+              "S3",
+              "INVENTED PERSON 3",
+              "fake3@example.invalid",
+              "000-0000-0003",
+              30
+            ],
+            [
+              "S4",
+              "INVENTED PERSON 4",
+              "fake4@example.invalid",
+              "000-0000-0004",
+              40
+            ],
+            [
+              "S5",
+              "INVENTED PERSON 5",
+              "fake5@example.invalid",
+              "000-0000-0005",
+              50
+            ]
+          ],
+          "display": [
+            [
+              "S1",
+              "INVENTED PERSON 1",
+              "fake1@example.invalid",
+              "000-0000-0001",
+              "10"
+            ],
+            [
+              "S2",
+              "INVENTED PERSON 2",
+              "fake2@example.invalid",
+              "000-0000-0002",
+              "20"
+            ],
+            [
+              "S3",
+              "INVENTED PERSON 3",
+              "fake3@example.invalid",
+              "000-0000-0003",
+              "30"
+            ],
+            [
+              "S4",
+              "INVENTED PERSON 4",
+              "fake4@example.invalid",
+              "000-0000-0004",
+              "40"
+            ],
+            [
+              "S5",
+              "INVENTED PERSON 5",
+              "fake5@example.invalid",
+              "000-0000-0005",
+              "50"
+            ]
+          ],
+          "row_count": 5,
+          "excel_error_cells": []
+        },
+        "hidden_sheet_marker_written": false,
+        "hidden_column_value_written": true,
+        "hidden_sheet_visible_state": 0,
+        "exported_sheet": "full-export"
+      }
+    },
+    {
+      "name": "csv_export_allowlist",
+      "formula_or_m": "Copy ID and Amount only to a dedicated sheet; activate it; Workbook.SaveAs(xlCSVUTF8)",
+      "observed": {
+        "raw_csv": "ID,Amount\r\nS1,10\r\nS2,20\r\nS3,30\r\nS4,40\r\nS5,50\r\n",
+        "direct_open": {
+          "columns": [
+            "ID",
+            "Amount"
+          ],
+          "rows": [
+            [
+              "S1",
+              10
+            ],
+            [
+              "S2",
+              20
+            ],
+            [
+              "S3",
+              30
+            ],
+            [
+              "S4",
+              40
+            ],
+            [
+              "S5",
+              50
+            ]
+          ],
+          "display": [
+            [
+              "S1",
+              "10"
+            ],
+            [
+              "S2",
+              "20"
+            ],
+            [
+              "S3",
+              "30"
+            ],
+            [
+              "S4",
+              "40"
+            ],
+            [
+              "S5",
+              "50"
+            ]
+          ],
+          "row_count": 5,
+          "excel_error_cells": []
+        },
+        "fake_email_present": false,
+        "hidden_sheet_marker_written": false
+      }
+    }
+  ],
+  "wrong_result": {
+    "raw_csv": "ID,FakeName,FakeEmail,FakePhone,Amount\r\nS1,INVENTED PERSON 1,fake1@example.invalid,000-0000-0001,10\r\nS2,INVENTED PERSON 2,fake2@example.invalid,000-0000-0002,20\r\nS3,INVENTED PERSON 3,fake3@example.invalid,000-0000-0003,30\r\nS4,INVENTED PERSON 4,fake4@example.invalid,000-0000-0004,40\r\nS5,INVENTED PERSON 5,fake5@example.invalid,000-0000-0005,50\r\n",
+    "columns_in_csv": [
+      "ID",
+      "FakeName",
+      "FakeEmail",
+      "FakePhone",
+      "Amount"
+    ],
+    "csv_records": 5,
+    "direct_open": {
+      "columns": [
+        "ID",
+        "FakeName",
+        "FakeEmail",
+        "FakePhone",
+        "Amount"
+      ],
+      "rows": [
+        [
+          "S1",
+          "INVENTED PERSON 1",
+          "fake1@example.invalid",
+          "000-0000-0001",
+          10
+        ],
+        [
+          "S2",
+          "INVENTED PERSON 2",
+          "fake2@example.invalid",
+          "000-0000-0002",
+          20
+        ],
+        [
+          "S3",
+          "INVENTED PERSON 3",
+          "fake3@example.invalid",
+          "000-0000-0003",
+          30
+        ],
+        [
+          "S4",
+          "INVENTED PERSON 4",
+          "fake4@example.invalid",
+          "000-0000-0004",
+          40
+        ],
+        [
+          "S5",
+          "INVENTED PERSON 5",
+          "fake5@example.invalid",
+          "000-0000-0005",
+          50
+        ]
+      ],
+      "display": [
+        [
+          "S1",
+          "INVENTED PERSON 1",
+          "fake1@example.invalid",
+          "000-0000-0001",
+          "10"
+        ],
+        [
+          "S2",
+          "INVENTED PERSON 2",
+          "fake2@example.invalid",
+          "000-0000-0002",
+          "20"
+        ],
+        [
+          "S3",
+          "INVENTED PERSON 3",
+          "fake3@example.invalid",
+          "000-0000-0003",
+          "30"
+        ],
+        [
+          "S4",
+          "INVENTED PERSON 4",
+          "fake4@example.invalid",
+          "000-0000-0004",
+          "40"
+        ],
+        [
+          "S5",
+          "INVENTED PERSON 5",
+          "fake5@example.invalid",
+          "000-0000-0005",
+          "50"
+        ]
+      ],
+      "row_count": 5,
+      "excel_error_cells": []
+    },
+    "hidden_sheet_marker_written": false,
+    "hidden_column_value_written": true,
+    "hidden_sheet_visible_state": 0,
+    "exported_sheet": "full-export"
+  },
+  "fixed_result": {
+    "raw_csv": "ID,Amount\r\nS1,10\r\nS2,20\r\nS3,30\r\nS4,40\r\nS5,50\r\n",
+    "direct_open": {
+      "columns": [
+        "ID",
+        "Amount"
+      ],
+      "rows": [
+        [
+          "S1",
+          10
+        ],
+        [
+          "S2",
+          20
+        ],
+        [
+          "S3",
+          30
+        ],
+        [
+          "S4",
+          40
+        ],
+        [
+          "S5",
+          50
+        ]
+      ],
+      "display": [
+        [
+          "S1",
+          "10"
+        ],
+        [
+          "S2",
+          "20"
+        ],
+        [
+          "S3",
+          "30"
+        ],
+        [
+          "S4",
+          "40"
+        ],
+        [
+          "S5",
+          "50"
+        ]
+      ],
+      "row_count": 5,
+      "excel_error_cells": []
+    },
+    "fake_email_present": false,
+    "hidden_sheet_marker_written": false
+  },
+  "reconciliation": {
+    "safe_amount_total": 150,
+    "safe_export_columns": 2,
+    "full_export_rows": 5,
+    "full_export_columns": 5,
+    "safe_export_rows": 5,
+    "invented_only": true,
+    "full_amount_total": 150
+  },
+  "observations_ko": [
+    "숨긴 열을 포함한 CSV는 5열·5행이었고 숨긴 열 값 포함 여부는 True, 숨긴 시트 표식 포함 여부는 False였다. 허용 열 전용 CSV는 2열이었다."
+  ],
+  "not_verified": [
+    "COM/API execution does not verify the exact Korean ribbon click path, other Excel builds, other OS locales, or human review of the post."
+  ],
+  "differences_from_brief": [],
+  "assertions": [
+    {
+      "name": "Allowlist export retains all synthetic records with only approved columns",
+      "passed": true
+    },
+    {
+      "name": "Allowlist CSV reconciles to the full CSV amount total",
+      "passed": true
+    },
+    {
+      "name": "The allowlist CSV excludes synthetic personal-looking values",
+      "passed": true
+    },
+    {
+      "name": "Two nonblank private-data-free native Excel PNGs recorded",
+      "passed": true
+    }
+  ],
+  "expectations": [
+    {
+      "name": "Hidden columns are exported; the hidden nonactive worksheet is not exported",
+      "matched": true
+    }
+  ],
+  "screenshots": [
+    {
+      "file": "before.png",
+      "valid": true,
+      "method": "ExportAsFixedFormat + PyMuPDF",
+      "sheet": "full-export",
+      "range": "$A$1:$E$6",
+      "width": 1008,
+      "height": 241,
+      "distinct_colors": 813,
+      "pdf_text_checked": true,
+      "pdf_pages": 1,
+      "bytes": 61286,
+      "sha256": "708144bcb2cee418c802e71e390f2d8360fbc132b485fa89145df2a6b22fbaab",
+      "clipboard": "Untouched: GetDataObject failed in this session; both CopyPicture modes require clipboard access"
+    },
+    {
+      "file": "after.png",
+      "valid": true,
+      "method": "ExportAsFixedFormat + PyMuPDF",
+      "sheet": "allowlist-export",
+      "range": "$A$1:$B$6",
+      "width": 179,
+      "height": 241,
+      "distinct_colors": 249,
+      "pdf_text_checked": true,
+      "pdf_pages": 1,
+      "bytes": 7597,
+      "sha256": "263841f1aaa2cad5993e9b056aab2dce5139358eec92c59dce3b38a8f60e5f1b",
+      "clipboard": "Untouched: GetDataObject failed in this session; both CopyPicture modes require clipboard access"
+    }
+  ],
+  "status": "pass",
+  "failure": null,
+  "environment": {
+    "os_culture": "ko-KR",
+    "excel_decimal_separator": ".",
+    "excel_thousands_separator": ",",
+    "excel_date_order": 2,
+    "excel_list_separator": ",",
+    "synthetic": true
+  },
+  "query_refresh_attempts": 0,
+  "cleanup_verified": true
+}

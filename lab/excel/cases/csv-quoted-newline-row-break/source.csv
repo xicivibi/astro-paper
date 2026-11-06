@@ -1,0 +1,8 @@
+﻿ID,Note,Amount
+S1,"first
+second",10
+S2,plain,20
+S3,"has ""quotes"", comma",30
+S4,"third
+fourth",40
+S5,end,50

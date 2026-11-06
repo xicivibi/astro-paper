@@ -1,0 +1,1 @@
+let S=Excel.CurrentWorkbook(){[Name="Lookup"]}[Content], G=Table.Group(S,{"Key"},{{"Count",each Table.RowCount(_),Int64.Type},{"Minimum",each List.Min([Price]),type number},{"Maximum",each List.Max([Price]),type number}}) in Table.SelectRows(G,each [Count]>1)

@@ -1,5 +1,6 @@
 import type { CollectionEntry } from "astro:content";
 import config from "@/config";
+import { featureFlags, isTrendPost } from "@/config/features";
 
 type PostData = CollectionEntry<"posts">["data"];
 
@@ -17,6 +18,7 @@ export function hasRequiredAiEvidence(data: PostData) {
  * Determines whether a post is eligible to be listed/rendered.
  *
  * - Excludes drafts always
+ * - Excludes frozen trend posts unless PUBLIC_TREND_SURFACES=true
  * - Excludes posts under editorial hold from public discovery surfaces
  * - In production, excludes scheduled posts until `pubDatetime` minus the configured margin
  * - In dev, always shows non-draft posts to make authoring easier
@@ -29,6 +31,7 @@ export function postFilter({ data }: CollectionEntry<"posts">) {
     new Date(data.pubDatetime).getTime() - config.posts.scheduledPostMargin;
   return (
     !data.draft &&
+    (featureFlags.trendSurfaces || !isTrendPost(data)) &&
     data.editorialStatus !== "legacy_hold" &&
     hasRequiredAiEvidence(data) &&
     (!freshUntil || Date.now() < freshUntil.getTime()) &&
@@ -43,6 +46,7 @@ export function routablePostFilter({ data }: CollectionEntry<"posts">) {
     new Date(data.pubDatetime).getTime() - config.posts.scheduledPostMargin;
   return (
     !data.draft &&
+    (featureFlags.trendSurfaces || !isTrendPost(data)) &&
     (data.editorialStatus === "legacy_hold" || hasRequiredAiEvidence(data)) &&
     (import.meta.env.DEV || isPublishTimePassed)
   );

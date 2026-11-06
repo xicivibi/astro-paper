@@ -1,5 +1,7 @@
 # Free static hosting migration preparation
 
+> 2026-10-24 갱신: 배포 방식 선택, verify 모드 릴리스, 301 생성, 검색엔진 이전 절차는 [domain-migration.md](./domain-migration.md)를 기준으로 합니다. 아래는 2026-09-27 조사 기록입니다.
+
 Checked 2026-09-27. This is a reviewable migration procedure, not a deployed site or a new account. The Cloudflare dashboard currently requires sign-in, so no account-owned Pages project or hostname has been verified.
 
 Xici is currently on Vercel Hobby, verified through the connected project's team and domain records. [Hobby](https://vercel.com/docs/plans/hobby) limits use to non-commercial personal projects. Ads cannot launch under that plan. Additional spending remains zero.

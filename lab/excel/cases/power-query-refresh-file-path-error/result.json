@@ -1,0 +1,433 @@
+{
+  "slug": "power-query-refresh-file-path-error",
+  "excel_version": "16.0",
+  "excel_build": "20527",
+  "ui_language": {
+    "lcid": 1042,
+    "culture": "ko-KR"
+  },
+  "run_at": "2026-11-06T17:41:09.3350214Z",
+  "input_sha256": {
+    "input.json": "7767fca52b901df1e7c1c9906e20d764dc8d86d8e015712df9180c1a5a833ee2",
+    "input.xlsx": "1d619d335fa193b71ee4ac8d323f05e0e4839cc0fc1ae3db84a04a6d3f1379ce",
+    "source.csv": "ffbbcd093403fcc443ec6359f9a41d80938c711b625bbc5ac8ca00dbdc079712"
+  },
+  "steps": [
+    {
+      "name": "input_readback",
+      "formula_or_m": "Worksheet.UsedRange.Value2/Text (synthetic fixture)",
+      "observed": {
+        "columns": [
+          "ID",
+          "Amount"
+        ],
+        "rows": [
+          [
+            "S1",
+            10
+          ],
+          [
+            "S2",
+            20
+          ],
+          [
+            "S3",
+            30
+          ],
+          [
+            "S4",
+            40
+          ],
+          [
+            "S5",
+            50
+          ]
+        ],
+        "display": [
+          [
+            "S1",
+            "10"
+          ],
+          [
+            "S2",
+            "20"
+          ],
+          [
+            "S3",
+            "30"
+          ],
+          [
+            "S4",
+            "40"
+          ],
+          [
+            "S5",
+            "50"
+          ]
+        ],
+        "row_count": 5,
+        "excel_error_cells": []
+      }
+    },
+    {
+      "name": "query_load",
+      "formula_or_m": "let S=Csv.Document(File.Contents(\"샘플폴더/source.csv\"),[Delimiter=\",\",Encoding=65001,QuoteStyle=QuoteStyle.Csv]) in Table.PromoteHeaders(S,[PromoteAllScalars=true])\r\n",
+      "observed": {
+        "refresh_return": true,
+        "refreshing": false,
+        "load_error": null,
+        "table": {
+          "columns": [
+            "ID",
+            "Amount"
+          ],
+          "rows": [
+            [
+              "S1",
+              "10"
+            ],
+            [
+              "S2",
+              "20"
+            ],
+            [
+              "S3",
+              "30"
+            ],
+            [
+              "S4",
+              "40"
+            ],
+            [
+              "S5",
+              "50"
+            ]
+          ],
+          "display": [
+            [
+              "S1",
+              "10"
+            ],
+            [
+              "S2",
+              "20"
+            ],
+            [
+              "S3",
+              "30"
+            ],
+            [
+              "S4",
+              "40"
+            ],
+            [
+              "S5",
+              "50"
+            ]
+          ],
+          "row_count": 5,
+          "excel_error_cells": []
+        }
+      }
+    },
+    {
+      "name": "file_move_after_closing_workbook",
+      "formula_or_m": "Workbook.SaveAs(before-file-move.xlsx); Close/Quit own instance; release COM; Move-Item own source.csv; new hidden instance reopens workbook without updating links",
+      "observed": {
+        "original_path_exists": false,
+        "reopened_query_count": 1,
+        "moved_path_exists": true,
+        "initial_owned_instance_exited": true
+      }
+    },
+    {
+      "name": "refresh_after_file_rename",
+      "formula_or_m": "let S=Csv.Document(File.Contents(\"샘플폴더/source.csv\"),[Delimiter=\",\",Encoding=65001,QuoteStyle=QuoteStyle.Csv]) in Table.PromoteHeaders(S,[PromoteAllScalars=true])\r\n",
+      "observed": {
+        "refresh_return": null,
+        "refreshing": null,
+        "load_error": {
+          "message": "[DataSource.NotFound] File or Folder: '샘플폴더/source.csv' 파일을 찾을 수 없습니다.",
+          "fully_qualified_error_id": "System.Runtime.InteropServices.COMException",
+          "exception_chain": [
+            {
+              "type": "System.Runtime.InteropServices.COMException",
+              "message": "[DataSource.NotFound] File or Folder: '샘플폴더/source.csv' 파일을 찾을 수 없습니다.",
+              "hresult": -2146827284,
+              "error_code": -2146827284
+            }
+          ]
+        },
+        "table": null
+      }
+    },
+    {
+      "name": "diagnostics_load",
+      "formula_or_m": "let T=try Binary.Length(Binary.Buffer(File.Contents(\"샘플폴더/source.csv\"))) in #table({\"HasError\",\"Reason\",\"Message\",\"Detail\"},{{T[HasError],if T[HasError] then T[Error][Reason] else null,if T[HasError] then T[Error][Message] else null,if T[HasError] then (try Text.From(T[Error][Detail]) otherwise Text.FromBinary(Json.FromValue(T[Error][Detail]),TextEncoding.Utf8)) else null}})\r\n",
+      "observed": {
+        "refresh_return": true,
+        "refreshing": false,
+        "load_error": null,
+        "table": {
+          "columns": [
+            "HasError",
+            "Reason",
+            "Message",
+            "Detail"
+          ],
+          "rows": [
+            [
+              true,
+              "DataSource.NotFound",
+              "File or Folder: '샘플폴더/source.csv' 파일을 찾을 수 없습니다.",
+              "샘플폴더/source.csv"
+            ]
+          ],
+          "display": [
+            [
+              "TRUE",
+              "DataSource.NotFound",
+              "File or Folder: '샘플폴더/source.csv' 파일을 찾을 수 없습니다.",
+              "샘플폴더/source.csv"
+            ]
+          ],
+          "row_count": 1,
+          "excel_error_cells": []
+        }
+      }
+    },
+    {
+      "name": "fixed_load",
+      "formula_or_m": "let P=Excel.CurrentWorkbook(){[Name=\"SourcePath\"]}[Content]{0}[Column1], S=Csv.Document(File.Contents(P),[Delimiter=\",\",Encoding=65001,QuoteStyle=QuoteStyle.Csv]) in Table.PromoteHeaders(S,[PromoteAllScalars=true])\r\n",
+      "observed": {
+        "refresh_return": true,
+        "refreshing": false,
+        "load_error": null,
+        "table": {
+          "columns": [
+            "ID",
+            "Amount"
+          ],
+          "rows": [
+            [
+              "S1",
+              "10"
+            ],
+            [
+              "S2",
+              "20"
+            ],
+            [
+              "S3",
+              "30"
+            ],
+            [
+              "S4",
+              "40"
+            ],
+            [
+              "S5",
+              "50"
+            ]
+          ],
+          "display": [
+            [
+              "S1",
+              "10"
+            ],
+            [
+              "S2",
+              "20"
+            ],
+            [
+              "S3",
+              "30"
+            ],
+            [
+              "S4",
+              "40"
+            ],
+            [
+              "S5",
+              "50"
+            ]
+          ],
+          "row_count": 5,
+          "excel_error_cells": []
+        }
+      }
+    }
+  ],
+  "wrong_result": {
+    "refresh": {
+      "refresh_return": null,
+      "refreshing": null,
+      "load_error": {
+        "message": "[DataSource.NotFound] File or Folder: '샘플폴더/source.csv' 파일을 찾을 수 없습니다.",
+        "fully_qualified_error_id": "System.Runtime.InteropServices.COMException",
+        "exception_chain": [
+          {
+            "type": "System.Runtime.InteropServices.COMException",
+            "message": "[DataSource.NotFound] File or Folder: '샘플폴더/source.csv' 파일을 찾을 수 없습니다.",
+            "hresult": -2146827284,
+            "error_code": -2146827284
+          }
+        ]
+      },
+      "table": null
+    },
+    "m_error": {
+      "columns": [
+        "HasError",
+        "Reason",
+        "Message",
+        "Detail"
+      ],
+      "rows": [
+        [
+          true,
+          "DataSource.NotFound",
+          "File or Folder: '샘플폴더/source.csv' 파일을 찾을 수 없습니다.",
+          "샘플폴더/source.csv"
+        ]
+      ],
+      "display": [
+        [
+          "TRUE",
+          "DataSource.NotFound",
+          "File or Folder: '샘플폴더/source.csv' 파일을 찾을 수 없습니다.",
+          "샘플폴더/source.csv"
+        ]
+      ],
+      "row_count": 1,
+      "excel_error_cells": []
+    }
+  },
+  "fixed_result": {
+    "columns": [
+      "ID",
+      "Amount"
+    ],
+    "rows": [
+      [
+        "S1",
+        "10"
+      ],
+      [
+        "S2",
+        "20"
+      ],
+      [
+        "S3",
+        "30"
+      ],
+      [
+        "S4",
+        "40"
+      ],
+      [
+        "S5",
+        "50"
+      ]
+    ],
+    "display": [
+      [
+        "S1",
+        "10"
+      ],
+      [
+        "S2",
+        "20"
+      ],
+      [
+        "S3",
+        "30"
+      ],
+      [
+        "S4",
+        "40"
+      ],
+      [
+        "S5",
+        "50"
+      ]
+    ],
+    "row_count": 5,
+    "excel_error_cells": []
+  },
+  "reconciliation": {
+    "initial_rows": 5,
+    "source_path_named_cell": "샘플폴더/moved-source.csv",
+    "fixed_rows": 5,
+    "file_move_required_closing_source_workbook": true
+  },
+  "observations_ko": [
+    "이름을 바꾼 뒤 절대 경로 새로 고침 오류: File or Folder: '샘플폴더/source.csv' 파일을 찾을 수 없습니다.",
+    "이름 정의 셀로 경로를 바꾼 뒤 5행을 로드했다."
+  ],
+  "not_verified": [
+    "Excel held the CSV open even after closing the workbook; the owned Excel instance was quit and recreated around the file move. A rename while the first instance remained open was blocked by the OS.",
+    "COM/API execution does not verify the exact Korean ribbon click path, other Excel builds, other OS locales, or human review of the post."
+  ],
+  "differences_from_brief": [],
+  "assertions": [
+    {
+      "name": "Named-cell parameter reads all rows at the renamed location",
+      "passed": true
+    },
+    {
+      "name": "Two nonblank private-data-free native Excel PNGs recorded",
+      "passed": true
+    }
+  ],
+  "expectations": [
+    {
+      "name": "Refreshing a missing absolute path fails",
+      "matched": true
+    }
+  ],
+  "screenshots": [
+    {
+      "file": "before.png",
+      "valid": true,
+      "method": "ExportAsFixedFormat + PyMuPDF",
+      "sheet": "Q_diagnostics",
+      "range": "$A$1:$B$2",
+      "width": 444,
+      "height": 100,
+      "distinct_colors": 493,
+      "pdf_text_checked": true,
+      "pdf_pages": 1,
+      "bytes": 8605,
+      "sha256": "d2ff3b935de1ebfe8a5cef5a97e0eeba6b154d6ab8f67b3dd6dd02cad81cc6c2",
+      "clipboard": "Untouched: GetDataObject failed in this session; both CopyPicture modes require clipboard access"
+    },
+    {
+      "file": "after.png",
+      "valid": true,
+      "method": "ExportAsFixedFormat + PyMuPDF",
+      "sheet": "Q_fixed",
+      "range": "$A$1:$B$6",
+      "width": 223,
+      "height": 261,
+      "distinct_colors": 654,
+      "pdf_text_checked": true,
+      "pdf_pages": 1,
+      "bytes": 11348,
+      "sha256": "32ab0a250e401cb0e1345ce91b365d99cc7babf25afe8f32ca7028c7253829f1",
+      "clipboard": "Untouched: GetDataObject failed in this session; both CopyPicture modes require clipboard access"
+    }
+  ],
+  "status": "pass",
+  "failure": null,
+  "environment": {
+    "os_culture": "ko-KR",
+    "excel_decimal_separator": ".",
+    "excel_thousands_separator": ",",
+    "excel_date_order": 2,
+    "excel_list_separator": ",",
+    "synthetic": true
+  },
+  "query_refresh_attempts": 4,
+  "cleanup_verified": true
+}

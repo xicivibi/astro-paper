@@ -42,7 +42,7 @@ test("PUBLIC_SITE_URL selects and normalizes the deployment origin", () => {
   } else {
     assert.match(html, /<h1[^>]*>\s*Excel·CSV 실무 문제 해결\s*<\/h1>/);
   }
-  assert.match(html, /href="\/tags\/trend\/"[^>]*>\s*트렌드/);
+  assert.doesNotMatch(html, /href="\/tags\/trend\/"/);
   assert.match(html, /href="\/tools\/"[^>]*>\s*도구\s*<\/a>/);
   assert.match(html, /href="\/topics\/excel-csv\/"[\s\S]*?공개 글 6개/);
   assert.doesNotMatch(

@@ -1,0 +1,804 @@
+{
+  "slug": "power-query-type-change-error-rows",
+  "excel_version": "16.0",
+  "excel_build": "20527",
+  "ui_language": {
+    "lcid": 1042,
+    "culture": "ko-KR"
+  },
+  "run_at": "2026-11-06T17:40:30.1700232Z",
+  "input_sha256": {
+    "input.json": "65829d6b4d8f620f7426983fde97e031e3e75242d0a48a9e29758b3264df25cd",
+    "input.xlsx": "5e9b8babcca169306da0016ef9a41c90e7d22936a37e0a22c3c5119ab05d60be"
+  },
+  "steps": [
+    {
+      "name": "input_readback",
+      "formula_or_m": "Worksheet.UsedRange.Value2/Text (synthetic fixture)",
+      "observed": {
+        "columns": [
+          "Code",
+          "Amount"
+        ],
+        "rows": [
+          [
+            "00101",
+            "10"
+          ],
+          [
+            "00102",
+            "bad"
+          ],
+          [
+            "00103",
+            "0"
+          ],
+          [
+            "00104",
+            null
+          ],
+          [
+            "00105",
+            "12x"
+          ],
+          [
+            "00106",
+            "25"
+          ]
+        ],
+        "display": [
+          [
+            "00101",
+            "10"
+          ],
+          [
+            "00102",
+            "bad"
+          ],
+          [
+            "00103",
+            "0"
+          ],
+          [
+            "00104",
+            ""
+          ],
+          [
+            "00105",
+            "12x"
+          ],
+          [
+            "00106",
+            "25"
+          ]
+        ],
+        "row_count": 6,
+        "excel_error_cells": []
+      }
+    },
+    {
+      "name": "query_load",
+      "formula_or_m": "Table.TransformColumnTypes(Excel.CurrentWorkbook(){[Name=\"Input\"]}[Content],{{\"Code\",Int64.Type},{\"Amount\",type number}},\"en-US\")\r\n",
+      "observed": {
+        "refresh_return": true,
+        "refreshing": false,
+        "load_error": null,
+        "table": {
+          "columns": [
+            "Code",
+            "Amount"
+          ],
+          "rows": [
+            [
+              101,
+              10
+            ],
+            [
+              102,
+              null
+            ],
+            [
+              103,
+              0
+            ],
+            [
+              104,
+              null
+            ],
+            [
+              105,
+              null
+            ],
+            [
+              106,
+              25
+            ]
+          ],
+          "display": [
+            [
+              "101",
+              "10"
+            ],
+            [
+              "102",
+              ""
+            ],
+            [
+              "103",
+              "0"
+            ],
+            [
+              "104",
+              ""
+            ],
+            [
+              "105",
+              ""
+            ],
+            [
+              "106",
+              "25"
+            ]
+          ],
+          "row_count": 6,
+          "excel_error_cells": []
+        }
+      }
+    },
+    {
+      "name": "keep_errors_load",
+      "formula_or_m": "Table.SelectRowsWithErrors(query,{\"Amount\"})\r\n",
+      "observed": {
+        "refresh_return": true,
+        "refreshing": false,
+        "load_error": null,
+        "table": {
+          "columns": [
+            "Code",
+            "Amount"
+          ],
+          "rows": [
+            [
+              102,
+              null
+            ],
+            [
+              105,
+              null
+            ]
+          ],
+          "display": [
+            [
+              "102",
+              ""
+            ],
+            [
+              "105",
+              ""
+            ]
+          ],
+          "row_count": 2,
+          "excel_error_cells": []
+        }
+      }
+    },
+    {
+      "name": "replace_errors_load",
+      "formula_or_m": "Table.ReplaceErrorValues(query,{{\"Amount\",null}})\r\n",
+      "observed": {
+        "refresh_return": true,
+        "refreshing": false,
+        "load_error": null,
+        "table": {
+          "columns": [
+            "Code",
+            "Amount"
+          ],
+          "rows": [
+            [
+              101,
+              10
+            ],
+            [
+              102,
+              null
+            ],
+            [
+              103,
+              0
+            ],
+            [
+              104,
+              null
+            ],
+            [
+              105,
+              null
+            ],
+            [
+              106,
+              25
+            ]
+          ],
+          "display": [
+            [
+              "101",
+              "10"
+            ],
+            [
+              "102",
+              ""
+            ],
+            [
+              "103",
+              "0"
+            ],
+            [
+              "104",
+              ""
+            ],
+            [
+              "105",
+              ""
+            ],
+            [
+              "106",
+              "25"
+            ]
+          ],
+          "row_count": 6,
+          "excel_error_cells": []
+        }
+      }
+    },
+    {
+      "name": "diagnostics_load",
+      "formula_or_m": "let S=Excel.CurrentWorkbook(){[Name=\"Input\"]}[Content], T=Table.AddColumn(S,\"Attempt\",each try Number.FromText([Amount],\"en-US\")), H=Table.AddColumn(T,\"HasError\",each [Attempt][HasError]), M=Table.AddColumn(H,\"Message\",each if [HasError] then [Attempt][Error][Message] else null) in Table.RemoveColumns(M,{\"Attempt\"})\r\n",
+      "observed": {
+        "refresh_return": true,
+        "refreshing": false,
+        "load_error": null,
+        "table": {
+          "columns": [
+            "Code",
+            "Amount",
+            "HasError",
+            "Message"
+          ],
+          "rows": [
+            [
+              "00101",
+              "10",
+              false,
+              null
+            ],
+            [
+              "00102",
+              "bad",
+              true,
+              "Number로 변환할 수 없습니다."
+            ],
+            [
+              "00103",
+              "0",
+              false,
+              null
+            ],
+            [
+              "00104",
+              null,
+              false,
+              null
+            ],
+            [
+              "00105",
+              "12x",
+              true,
+              "Number로 변환할 수 없습니다."
+            ],
+            [
+              "00106",
+              "25",
+              false,
+              null
+            ]
+          ],
+          "display": [
+            [
+              "00101",
+              "10",
+              "FALSE",
+              ""
+            ],
+            [
+              "00102",
+              "bad",
+              "TRUE",
+              "Number로 변환할 수 없습니다."
+            ],
+            [
+              "00103",
+              "0",
+              "FALSE",
+              ""
+            ],
+            [
+              "00104",
+              "",
+              "FALSE",
+              ""
+            ],
+            [
+              "00105",
+              "12x",
+              "TRUE",
+              "Number로 변환할 수 없습니다."
+            ],
+            [
+              "00106",
+              "25",
+              "FALSE",
+              ""
+            ]
+          ],
+          "row_count": 6,
+          "excel_error_cells": []
+        }
+      }
+    },
+    {
+      "name": "fixed_load",
+      "formula_or_m": "Table.ReplaceErrorValues(Table.TransformColumnTypes(Excel.CurrentWorkbook(){[Name=\"Input\"]}[Content],{{\"Code\",type text},{\"Amount\",type number}},\"en-US\"),{{\"Amount\",null}})\r\n",
+      "observed": {
+        "refresh_return": true,
+        "refreshing": false,
+        "load_error": null,
+        "table": {
+          "columns": [
+            "Code",
+            "Amount"
+          ],
+          "rows": [
+            [
+              "00101",
+              10
+            ],
+            [
+              "00102",
+              null
+            ],
+            [
+              "00103",
+              0
+            ],
+            [
+              "00104",
+              null
+            ],
+            [
+              "00105",
+              null
+            ],
+            [
+              "00106",
+              25
+            ]
+          ],
+          "display": [
+            [
+              "00101",
+              "10"
+            ],
+            [
+              "00102",
+              ""
+            ],
+            [
+              "00103",
+              "0"
+            ],
+            [
+              "00104",
+              ""
+            ],
+            [
+              "00105",
+              ""
+            ],
+            [
+              "00106",
+              "25"
+            ]
+          ],
+          "row_count": 6,
+          "excel_error_cells": []
+        }
+      }
+    }
+  ],
+  "wrong_result": {
+    "refresh_return": true,
+    "refreshing": false,
+    "load_error": null,
+    "table": {
+      "columns": [
+        "Code",
+        "Amount"
+      ],
+      "rows": [
+        [
+          101,
+          10
+        ],
+        [
+          102,
+          null
+        ],
+        [
+          103,
+          0
+        ],
+        [
+          104,
+          null
+        ],
+        [
+          105,
+          null
+        ],
+        [
+          106,
+          25
+        ]
+      ],
+      "display": [
+        [
+          "101",
+          "10"
+        ],
+        [
+          "102",
+          ""
+        ],
+        [
+          "103",
+          "0"
+        ],
+        [
+          "104",
+          ""
+        ],
+        [
+          "105",
+          ""
+        ],
+        [
+          "106",
+          "25"
+        ]
+      ],
+      "row_count": 6,
+      "excel_error_cells": []
+    }
+  },
+  "fixed_result": {
+    "columns": [
+      "Code",
+      "Amount"
+    ],
+    "rows": [
+      [
+        "00101",
+        10
+      ],
+      [
+        "00102",
+        null
+      ],
+      [
+        "00103",
+        0
+      ],
+      [
+        "00104",
+        null
+      ],
+      [
+        "00105",
+        null
+      ],
+      [
+        "00106",
+        25
+      ]
+    ],
+    "display": [
+      [
+        "00101",
+        "10"
+      ],
+      [
+        "00102",
+        ""
+      ],
+      [
+        "00103",
+        "0"
+      ],
+      [
+        "00104",
+        ""
+      ],
+      [
+        "00105",
+        ""
+      ],
+      [
+        "00106",
+        "25"
+      ]
+    ],
+    "row_count": 6,
+    "excel_error_cells": []
+  },
+  "reconciliation": {
+    "replace_errors": {
+      "columns": [
+        "Code",
+        "Amount"
+      ],
+      "rows": [
+        [
+          101,
+          10
+        ],
+        [
+          102,
+          null
+        ],
+        [
+          103,
+          0
+        ],
+        [
+          104,
+          null
+        ],
+        [
+          105,
+          null
+        ],
+        [
+          106,
+          25
+        ]
+      ],
+      "display": [
+        [
+          "101",
+          "10"
+        ],
+        [
+          "102",
+          ""
+        ],
+        [
+          "103",
+          "0"
+        ],
+        [
+          "104",
+          ""
+        ],
+        [
+          "105",
+          ""
+        ],
+        [
+          "106",
+          "25"
+        ]
+      ],
+      "row_count": 6,
+      "excel_error_cells": []
+    },
+    "loaded_error_cells": 0,
+    "diagnostics": {
+      "columns": [
+        "Code",
+        "Amount",
+        "HasError",
+        "Message"
+      ],
+      "rows": [
+        [
+          "00101",
+          "10",
+          false,
+          null
+        ],
+        [
+          "00102",
+          "bad",
+          true,
+          "Number로 변환할 수 없습니다."
+        ],
+        [
+          "00103",
+          "0",
+          false,
+          null
+        ],
+        [
+          "00104",
+          null,
+          false,
+          null
+        ],
+        [
+          "00105",
+          "12x",
+          true,
+          "Number로 변환할 수 없습니다."
+        ],
+        [
+          "00106",
+          "25",
+          false,
+          null
+        ]
+      ],
+      "display": [
+        [
+          "00101",
+          "10",
+          "FALSE",
+          ""
+        ],
+        [
+          "00102",
+          "bad",
+          "TRUE",
+          "Number로 변환할 수 없습니다."
+        ],
+        [
+          "00103",
+          "0",
+          "FALSE",
+          ""
+        ],
+        [
+          "00104",
+          "",
+          "FALSE",
+          ""
+        ],
+        [
+          "00105",
+          "12x",
+          "TRUE",
+          "Number로 변환할 수 없습니다."
+        ],
+        [
+          "00106",
+          "25",
+          "FALSE",
+          ""
+        ]
+      ],
+      "row_count": 6,
+      "excel_error_cells": []
+    },
+    "numeric_code": 101,
+    "keep_errors": {
+      "refresh_return": true,
+      "refreshing": false,
+      "load_error": null,
+      "table": {
+        "columns": [
+          "Code",
+          "Amount"
+        ],
+        "rows": [
+          [
+            102,
+            null
+          ],
+          [
+            105,
+            null
+          ]
+        ],
+        "display": [
+          [
+            "102",
+            ""
+          ],
+          [
+            "105",
+            ""
+          ]
+        ],
+        "row_count": 2,
+        "excel_error_cells": []
+      }
+    },
+    "fixed_code": "00101",
+    "replaced_amount_total": 35,
+    "original_code": "00101",
+    "conversion_error_rows": 2
+  },
+  "observations_ko": [
+    "숫자 변환 오류는 2행, 로드된 오류 셀은 0개였다. 숫자형 코드는 '101', 텍스트형 코드는 '00101'였다."
+  ],
+  "not_verified": [
+    "COM/API execution does not verify the exact Korean ribbon click path, other Excel builds, other OS locales, or human review of the post."
+  ],
+  "differences_from_brief": [
+    "A query with cell errors loads and exposes Excel error cells"
+  ],
+  "assertions": [
+    {
+      "name": "Two invalid synthetic amounts are isolated without dropping rows",
+      "passed": true
+    },
+    {
+      "name": "Text type preserves leading zeros",
+      "passed": true
+    },
+    {
+      "name": "Two nonblank private-data-free native Excel PNGs recorded",
+      "passed": true
+    }
+  ],
+  "expectations": [
+    {
+      "name": "A query with cell errors loads and exposes Excel error cells",
+      "matched": false
+    }
+  ],
+  "screenshots": [
+    {
+      "file": "before.png",
+      "valid": true,
+      "method": "ExportAsFixedFormat + PyMuPDF",
+      "sheet": "Q_query",
+      "range": "$A$1:$B$7",
+      "width": 268,
+      "height": 278,
+      "distinct_colors": 661,
+      "pdf_text_checked": true,
+      "pdf_pages": 1,
+      "bytes": 10709,
+      "sha256": "1c60fb118c994748264f57557e4166e891768e0b643b4b9d6573a454bae524de",
+      "clipboard": "Untouched: GetDataObject failed in this session; both CopyPicture modes require clipboard access"
+    },
+    {
+      "file": "after.png",
+      "valid": true,
+      "method": "ExportAsFixedFormat + PyMuPDF",
+      "sheet": "Q_fixed",
+      "range": "$A$1:$B$7",
+      "width": 268,
+      "height": 278,
+      "distinct_colors": 692,
+      "pdf_text_checked": true,
+      "pdf_pages": 1,
+      "bytes": 13387,
+      "sha256": "956b0398ec933823bdcaaa7d59c1261207c57aa651a5399839579f14238d0ea6",
+      "clipboard": "Untouched: GetDataObject failed in this session; both CopyPicture modes require clipboard access"
+    }
+  ],
+  "status": "pass",
+  "failure": null,
+  "environment": {
+    "os_culture": "ko-KR",
+    "excel_decimal_separator": ".",
+    "excel_thousands_separator": ",",
+    "excel_date_order": 2,
+    "excel_list_separator": ",",
+    "synthetic": true
+  },
+  "query_refresh_attempts": 5,
+  "cleanup_verified": true
+}

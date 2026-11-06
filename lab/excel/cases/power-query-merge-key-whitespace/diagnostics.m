@@ -1,0 +1,1 @@
+let S=Excel.CurrentWorkbook(){[Name="Input"]}[Content], T=Table.AddColumn(S,"Trim",each Text.Trim([Key])), C=Table.AddColumn(T,"Clean",each Text.Clean([Key])), N=Table.AddColumn(C,"Normalized",each Text.Trim(Text.Clean(Text.Replace([Key],Character.FromNumber(160)," ")))) in N

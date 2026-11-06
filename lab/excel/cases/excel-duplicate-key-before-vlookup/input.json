@@ -1,0 +1,94 @@
+{
+  "synthetic": true,
+  "columns": [
+    "ID",
+    "Key",
+    "Quantity"
+  ],
+  "rows": [
+    [
+      "S1",
+      "A",
+      1
+    ],
+    [
+      "S2",
+      "B",
+      2
+    ],
+    [
+      "S3",
+      "C",
+      3
+    ],
+    [
+      "S4",
+      "D",
+      1
+    ],
+    [
+      "S5",
+      "E",
+      2
+    ]
+  ],
+  "lookup_columns": [
+    "Key",
+    "Price"
+  ],
+  "lookup_rows": [
+    [
+      "A",
+      10
+    ],
+    [
+      "B",
+      20
+    ],
+    [
+      "B",
+      200
+    ],
+    [
+      "C",
+      30
+    ],
+    [
+      "D",
+      40
+    ],
+    [
+      "E",
+      50
+    ]
+  ],
+  "approved_columns": [
+    "Key",
+    "Price"
+  ],
+  "approved_rows": [
+    [
+      "A",
+      10
+    ],
+    [
+      "B",
+      200
+    ],
+    [
+      "C",
+      30
+    ],
+    [
+      "D",
+      40
+    ],
+    [
+      "E",
+      50
+    ]
+  ],
+  "query_files": {
+    "query": "query.m"
+  }
+}

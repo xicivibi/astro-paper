@@ -1,0 +1,17 @@
+[
+  "power-query-unpivot-monthly-columns",
+  "power-query-split-column-delimiter",
+  "power-query-group-by-subtotal",
+  "power-query-fill-down-merged-cells",
+  "power-query-type-change-error-rows",
+  "power-query-merge-key-whitespace",
+  "power-query-refresh-file-path-error",
+  "csv-date-day-month-swap-checklist",
+  "csv-decimal-thousands-separator",
+  "csv-quoted-newline-row-break",
+  "excel-text-stored-numbers-convert",
+  "excel-duplicate-key-before-vlookup",
+  "excel-pdf-export-print-area-check",
+  "csv-export-personal-data-column-check",
+  "power-query-csv-date-using-locale"
+]

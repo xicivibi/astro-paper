@@ -1,0 +1,1435 @@
+{
+  "slug": "csv-date-day-month-swap-checklist",
+  "excel_version": "16.0",
+  "excel_build": "20527",
+  "ui_language": {
+    "lcid": 1042,
+    "culture": "ko-KR"
+  },
+  "run_at": "2026-11-06T17:41:34.4204250Z",
+  "input_sha256": {
+    "input.json": "04e37c126714f6f62f933b53b7d6fc2e24cb66531f4717b000b6e1df1f7a11d9",
+    "input.xlsx": "3417e3afde94b2fa3278a1d9ccb8560f03af16554038a8e1d2f52d36fee8f40a",
+    "source.csv": "0c37ff6654fd78284e77a6cfcb24e83abf20d9c907a71e1249b713caea5cd04e"
+  },
+  "steps": [
+    {
+      "name": "input_readback",
+      "formula_or_m": "Worksheet.UsedRange.Value2/Text (synthetic fixture)",
+      "observed": {
+        "columns": [
+          "ID",
+          "Date"
+        ],
+        "rows": [
+          [
+            "S1",
+            "03/04/2026"
+          ],
+          [
+            "S2",
+            "25/04/2026"
+          ],
+          [
+            "S3",
+            "04/03/2026"
+          ],
+          [
+            "S4",
+            "12/11/2026"
+          ],
+          [
+            "S5",
+            "31/02/2026"
+          ],
+          [
+            "S6",
+            ""
+          ]
+        ],
+        "display": [
+          [
+            "S1",
+            "03/04/2026"
+          ],
+          [
+            "S2",
+            "25/04/2026"
+          ],
+          [
+            "S3",
+            "04/03/2026"
+          ],
+          [
+            "S4",
+            "12/11/2026"
+          ],
+          [
+            "S5",
+            "31/02/2026"
+          ],
+          [
+            "S6",
+            ""
+          ]
+        ],
+        "row_count": 6,
+        "excel_error_cells": []
+      }
+    },
+    {
+      "name": "query_load",
+      "formula_or_m": "Table.PromoteHeaders(Csv.Document(File.Contents(\"샘플폴더/source.csv\"),[Delimiter=\",\",Encoding=65001,QuoteStyle=QuoteStyle.Csv]),[PromoteAllScalars=true])\r\n",
+      "observed": {
+        "refresh_return": true,
+        "refreshing": false,
+        "load_error": null,
+        "table": {
+          "columns": [
+            "ID",
+            "Date"
+          ],
+          "rows": [
+            [
+              "S1",
+              "03/04/2026"
+            ],
+            [
+              "S2",
+              "25/04/2026"
+            ],
+            [
+              "S3",
+              "04/03/2026"
+            ],
+            [
+              "S4",
+              "12/11/2026"
+            ],
+            [
+              "S5",
+              "31/02/2026"
+            ],
+            [
+              "S6",
+              ""
+            ]
+          ],
+          "display": [
+            [
+              "S1",
+              "03/04/2026"
+            ],
+            [
+              "S2",
+              "25/04/2026"
+            ],
+            [
+              "S3",
+              "04/03/2026"
+            ],
+            [
+              "S4",
+              "12/11/2026"
+            ],
+            [
+              "S5",
+              "31/02/2026"
+            ],
+            [
+              "S6",
+              ""
+            ]
+          ],
+          "row_count": 6,
+          "excel_error_cells": []
+        }
+      }
+    },
+    {
+      "name": "gb_load",
+      "formula_or_m": "Table.TransformColumnTypes(query,{{\"Date\",type date}},\"en-GB\")\r\n",
+      "observed": {
+        "refresh_return": true,
+        "refreshing": false,
+        "load_error": null,
+        "table": {
+          "columns": [
+            "ID",
+            "Date"
+          ],
+          "rows": [
+            [
+              "S1",
+              46115
+            ],
+            [
+              "S2",
+              46137
+            ],
+            [
+              "S3",
+              46085
+            ],
+            [
+              "S4",
+              46338
+            ],
+            [
+              "S5",
+              null
+            ],
+            [
+              "S6",
+              null
+            ]
+          ],
+          "display": [
+            [
+              "S1",
+              "2026-04-03"
+            ],
+            [
+              "S2",
+              "2026-04-25"
+            ],
+            [
+              "S3",
+              "2026-03-04"
+            ],
+            [
+              "S4",
+              "2026-11-12"
+            ],
+            [
+              "S5",
+              ""
+            ],
+            [
+              "S6",
+              ""
+            ]
+          ],
+          "row_count": 6,
+          "excel_error_cells": []
+        }
+      }
+    },
+    {
+      "name": "us_load",
+      "formula_or_m": "Table.TransformColumnTypes(query,{{\"Date\",type date}},\"en-US\")\r\n",
+      "observed": {
+        "refresh_return": true,
+        "refreshing": false,
+        "load_error": null,
+        "table": {
+          "columns": [
+            "ID",
+            "Date"
+          ],
+          "rows": [
+            [
+              "S1",
+              46085
+            ],
+            [
+              "S2",
+              null
+            ],
+            [
+              "S3",
+              46115
+            ],
+            [
+              "S4",
+              46367
+            ],
+            [
+              "S5",
+              null
+            ],
+            [
+              "S6",
+              null
+            ]
+          ],
+          "display": [
+            [
+              "S1",
+              "2026-03-04"
+            ],
+            [
+              "S2",
+              ""
+            ],
+            [
+              "S3",
+              "2026-04-03"
+            ],
+            [
+              "S4",
+              "2026-12-11"
+            ],
+            [
+              "S5",
+              ""
+            ],
+            [
+              "S6",
+              ""
+            ]
+          ],
+          "row_count": 6,
+          "excel_error_cells": []
+        }
+      }
+    },
+    {
+      "name": "gb_audit_load",
+      "formula_or_m": "let S=Table.DuplicateColumn(query,\"Date\",\"Original\"), T=Table.TransformColumnTypes(S,{{\"Date\",type date}},\"en-GB\"), A=Table.AddColumn(T,\"Check\",each let V=try [Date] in [HasError=V[HasError],ISO=if V[HasError] or V[Value]=null then null else Date.ToText(V[Value],\"yyyy-MM-dd\",\"en-US\"),Message=if V[HasError] then V[Error][Message] else null]), R=Table.RemoveColumns(A,{\"Date\"}) in Table.ExpandRecordColumn(R,\"Check\",{\"HasError\",\"ISO\",\"Message\"})\r\n",
+      "observed": {
+        "refresh_return": true,
+        "refreshing": false,
+        "load_error": null,
+        "table": {
+          "columns": [
+            "ID",
+            "Original",
+            "HasError",
+            "ISO",
+            "Message"
+          ],
+          "rows": [
+            [
+              "S1",
+              "03/04/2026",
+              false,
+              "2026-04-03",
+              null
+            ],
+            [
+              "S2",
+              "25/04/2026",
+              false,
+              "2026-04-25",
+              null
+            ],
+            [
+              "S3",
+              "04/03/2026",
+              false,
+              "2026-03-04",
+              null
+            ],
+            [
+              "S4",
+              "12/11/2026",
+              false,
+              "2026-11-12",
+              null
+            ],
+            [
+              "S5",
+              "31/02/2026",
+              true,
+              null,
+              "Date 값에 제공된 입력을 구문 분석할 수 없습니다."
+            ],
+            [
+              "S6",
+              "",
+              false,
+              null,
+              null
+            ]
+          ],
+          "display": [
+            [
+              "S1",
+              "03/04/2026",
+              "FALSE",
+              "2026-04-03",
+              ""
+            ],
+            [
+              "S2",
+              "25/04/2026",
+              "FALSE",
+              "2026-04-25",
+              ""
+            ],
+            [
+              "S3",
+              "04/03/2026",
+              "FALSE",
+              "2026-03-04",
+              ""
+            ],
+            [
+              "S4",
+              "12/11/2026",
+              "FALSE",
+              "2026-11-12",
+              ""
+            ],
+            [
+              "S5",
+              "31/02/2026",
+              "TRUE",
+              "",
+              "Date 값에 제공된 입력을 구문 분석할 수 없습니다."
+            ],
+            [
+              "S6",
+              "",
+              "FALSE",
+              "",
+              ""
+            ]
+          ],
+          "row_count": 6,
+          "excel_error_cells": []
+        }
+      }
+    },
+    {
+      "name": "us_audit_load",
+      "formula_or_m": "let S=Table.DuplicateColumn(query,\"Date\",\"Original\"), T=Table.TransformColumnTypes(S,{{\"Date\",type date}},\"en-US\"), A=Table.AddColumn(T,\"Check\",each let V=try [Date] in [HasError=V[HasError],ISO=if V[HasError] or V[Value]=null then null else Date.ToText(V[Value],\"yyyy-MM-dd\",\"en-US\"),Message=if V[HasError] then V[Error][Message] else null]), R=Table.RemoveColumns(A,{\"Date\"}) in Table.ExpandRecordColumn(R,\"Check\",{\"HasError\",\"ISO\",\"Message\"})\r\n",
+      "observed": {
+        "refresh_return": true,
+        "refreshing": false,
+        "load_error": null,
+        "table": {
+          "columns": [
+            "ID",
+            "Original",
+            "HasError",
+            "ISO",
+            "Message"
+          ],
+          "rows": [
+            [
+              "S1",
+              "03/04/2026",
+              false,
+              "2026-03-04",
+              null
+            ],
+            [
+              "S2",
+              "25/04/2026",
+              true,
+              null,
+              "Date 값에 제공된 입력을 구문 분석할 수 없습니다."
+            ],
+            [
+              "S3",
+              "04/03/2026",
+              false,
+              "2026-04-03",
+              null
+            ],
+            [
+              "S4",
+              "12/11/2026",
+              false,
+              "2026-12-11",
+              null
+            ],
+            [
+              "S5",
+              "31/02/2026",
+              true,
+              null,
+              "Date 값에 제공된 입력을 구문 분석할 수 없습니다."
+            ],
+            [
+              "S6",
+              "",
+              false,
+              null,
+              null
+            ]
+          ],
+          "display": [
+            [
+              "S1",
+              "03/04/2026",
+              "FALSE",
+              "2026-03-04",
+              ""
+            ],
+            [
+              "S2",
+              "25/04/2026",
+              "TRUE",
+              "",
+              "Date 값에 제공된 입력을 구문 분석할 수 없습니다."
+            ],
+            [
+              "S3",
+              "04/03/2026",
+              "FALSE",
+              "2026-04-03",
+              ""
+            ],
+            [
+              "S4",
+              "12/11/2026",
+              "FALSE",
+              "2026-12-11",
+              ""
+            ],
+            [
+              "S5",
+              "31/02/2026",
+              "TRUE",
+              "",
+              "Date 값에 제공된 입력을 구문 분석할 수 없습니다."
+            ],
+            [
+              "S6",
+              "",
+              "FALSE",
+              "",
+              ""
+            ]
+          ],
+          "row_count": 6,
+          "excel_error_cells": []
+        }
+      }
+    },
+    {
+      "name": "excel_direct_open",
+      "formula_or_m": "Workbooks.Open(source.csv, ReadOnly=true, Local=true)",
+      "observed": {
+        "columns": [
+          "ID",
+          "Date"
+        ],
+        "rows": [
+          [
+            "S1",
+            "03/04/2026"
+          ],
+          [
+            "S2",
+            "25/04/2026"
+          ],
+          [
+            "S3",
+            "04/03/2026"
+          ],
+          [
+            "S4",
+            "12/11/2026"
+          ],
+          [
+            "S5",
+            "31/02/2026"
+          ],
+          [
+            "S6",
+            null
+          ]
+        ],
+        "display": [
+          [
+            "S1",
+            "03/04/2026"
+          ],
+          [
+            "S2",
+            "25/04/2026"
+          ],
+          [
+            "S3",
+            "04/03/2026"
+          ],
+          [
+            "S4",
+            "12/11/2026"
+          ],
+          [
+            "S5",
+            "31/02/2026"
+          ],
+          [
+            "S6",
+            ""
+          ]
+        ],
+        "row_count": 6,
+        "excel_error_cells": [],
+        "date_audit": {
+          "columns": [
+            "ID",
+            "Date",
+            "IsNumber",
+            "DirectISO"
+          ],
+          "rows": [
+            [
+              "S1",
+              "03/04/2026",
+              false,
+              "TEXT:03/04/2026"
+            ],
+            [
+              "S2",
+              "25/04/2026",
+              false,
+              "TEXT:25/04/2026"
+            ],
+            [
+              "S3",
+              "04/03/2026",
+              false,
+              "TEXT:04/03/2026"
+            ],
+            [
+              "S4",
+              "12/11/2026",
+              false,
+              "TEXT:12/11/2026"
+            ],
+            [
+              "S5",
+              "31/02/2026",
+              false,
+              "TEXT:31/02/2026"
+            ],
+            [
+              "S6",
+              null,
+              false,
+              "TEXT:"
+            ]
+          ],
+          "display": [
+            [
+              "S1",
+              "03/04/2026",
+              "FALSE",
+              "TEXT:03/04/2026"
+            ],
+            [
+              "S2",
+              "25/04/2026",
+              "FALSE",
+              "TEXT:25/04/2026"
+            ],
+            [
+              "S3",
+              "04/03/2026",
+              "FALSE",
+              "TEXT:04/03/2026"
+            ],
+            [
+              "S4",
+              "12/11/2026",
+              "FALSE",
+              "TEXT:12/11/2026"
+            ],
+            [
+              "S5",
+              "31/02/2026",
+              "FALSE",
+              "TEXT:31/02/2026"
+            ],
+            [
+              "S6",
+              "",
+              "FALSE",
+              "TEXT:"
+            ]
+          ],
+          "row_count": 6,
+          "excel_error_cells": []
+        }
+      }
+    }
+  ],
+  "wrong_result": {
+    "load": {
+      "refresh_return": true,
+      "refreshing": false,
+      "load_error": null,
+      "table": {
+        "columns": [
+          "ID",
+          "Date"
+        ],
+        "rows": [
+          [
+            "S1",
+            46085
+          ],
+          [
+            "S2",
+            null
+          ],
+          [
+            "S3",
+            46115
+          ],
+          [
+            "S4",
+            46367
+          ],
+          [
+            "S5",
+            null
+          ],
+          [
+            "S6",
+            null
+          ]
+        ],
+        "display": [
+          [
+            "S1",
+            "2026-03-04"
+          ],
+          [
+            "S2",
+            ""
+          ],
+          [
+            "S3",
+            "2026-04-03"
+          ],
+          [
+            "S4",
+            "2026-12-11"
+          ],
+          [
+            "S5",
+            ""
+          ],
+          [
+            "S6",
+            ""
+          ]
+        ],
+        "row_count": 6,
+        "excel_error_cells": []
+      }
+    },
+    "en_us": {
+      "columns": [
+        "ID",
+        "Original",
+        "HasError",
+        "ISO",
+        "Message"
+      ],
+      "rows": [
+        [
+          "S1",
+          "03/04/2026",
+          false,
+          "2026-03-04",
+          null
+        ],
+        [
+          "S2",
+          "25/04/2026",
+          true,
+          null,
+          "Date 값에 제공된 입력을 구문 분석할 수 없습니다."
+        ],
+        [
+          "S3",
+          "04/03/2026",
+          false,
+          "2026-04-03",
+          null
+        ],
+        [
+          "S4",
+          "12/11/2026",
+          false,
+          "2026-12-11",
+          null
+        ],
+        [
+          "S5",
+          "31/02/2026",
+          true,
+          null,
+          "Date 값에 제공된 입력을 구문 분석할 수 없습니다."
+        ],
+        [
+          "S6",
+          "",
+          false,
+          null,
+          null
+        ]
+      ],
+      "display": [
+        [
+          "S1",
+          "03/04/2026",
+          "FALSE",
+          "2026-03-04",
+          ""
+        ],
+        [
+          "S2",
+          "25/04/2026",
+          "TRUE",
+          "",
+          "Date 값에 제공된 입력을 구문 분석할 수 없습니다."
+        ],
+        [
+          "S3",
+          "04/03/2026",
+          "FALSE",
+          "2026-04-03",
+          ""
+        ],
+        [
+          "S4",
+          "12/11/2026",
+          "FALSE",
+          "2026-12-11",
+          ""
+        ],
+        [
+          "S5",
+          "31/02/2026",
+          "TRUE",
+          "",
+          "Date 값에 제공된 입력을 구문 분석할 수 없습니다."
+        ],
+        [
+          "S6",
+          "",
+          "FALSE",
+          "",
+          ""
+        ]
+      ],
+      "row_count": 6,
+      "excel_error_cells": []
+    },
+    "direct_open": {
+      "columns": [
+        "ID",
+        "Date"
+      ],
+      "rows": [
+        [
+          "S1",
+          "03/04/2026"
+        ],
+        [
+          "S2",
+          "25/04/2026"
+        ],
+        [
+          "S3",
+          "04/03/2026"
+        ],
+        [
+          "S4",
+          "12/11/2026"
+        ],
+        [
+          "S5",
+          "31/02/2026"
+        ],
+        [
+          "S6",
+          null
+        ]
+      ],
+      "display": [
+        [
+          "S1",
+          "03/04/2026"
+        ],
+        [
+          "S2",
+          "25/04/2026"
+        ],
+        [
+          "S3",
+          "04/03/2026"
+        ],
+        [
+          "S4",
+          "12/11/2026"
+        ],
+        [
+          "S5",
+          "31/02/2026"
+        ],
+        [
+          "S6",
+          ""
+        ]
+      ],
+      "row_count": 6,
+      "excel_error_cells": [],
+      "date_audit": {
+        "columns": [
+          "ID",
+          "Date",
+          "IsNumber",
+          "DirectISO"
+        ],
+        "rows": [
+          [
+            "S1",
+            "03/04/2026",
+            false,
+            "TEXT:03/04/2026"
+          ],
+          [
+            "S2",
+            "25/04/2026",
+            false,
+            "TEXT:25/04/2026"
+          ],
+          [
+            "S3",
+            "04/03/2026",
+            false,
+            "TEXT:04/03/2026"
+          ],
+          [
+            "S4",
+            "12/11/2026",
+            false,
+            "TEXT:12/11/2026"
+          ],
+          [
+            "S5",
+            "31/02/2026",
+            false,
+            "TEXT:31/02/2026"
+          ],
+          [
+            "S6",
+            null,
+            false,
+            "TEXT:"
+          ]
+        ],
+        "display": [
+          [
+            "S1",
+            "03/04/2026",
+            "FALSE",
+            "TEXT:03/04/2026"
+          ],
+          [
+            "S2",
+            "25/04/2026",
+            "FALSE",
+            "TEXT:25/04/2026"
+          ],
+          [
+            "S3",
+            "04/03/2026",
+            "FALSE",
+            "TEXT:04/03/2026"
+          ],
+          [
+            "S4",
+            "12/11/2026",
+            "FALSE",
+            "TEXT:12/11/2026"
+          ],
+          [
+            "S5",
+            "31/02/2026",
+            "FALSE",
+            "TEXT:31/02/2026"
+          ],
+          [
+            "S6",
+            "",
+            "FALSE",
+            "TEXT:"
+          ]
+        ],
+        "row_count": 6,
+        "excel_error_cells": []
+      }
+    }
+  },
+  "fixed_result": {
+    "en_gb": {
+      "columns": [
+        "ID",
+        "Original",
+        "HasError",
+        "ISO",
+        "Message"
+      ],
+      "rows": [
+        [
+          "S1",
+          "03/04/2026",
+          false,
+          "2026-04-03",
+          null
+        ],
+        [
+          "S2",
+          "25/04/2026",
+          false,
+          "2026-04-25",
+          null
+        ],
+        [
+          "S3",
+          "04/03/2026",
+          false,
+          "2026-03-04",
+          null
+        ],
+        [
+          "S4",
+          "12/11/2026",
+          false,
+          "2026-11-12",
+          null
+        ],
+        [
+          "S5",
+          "31/02/2026",
+          true,
+          null,
+          "Date 값에 제공된 입력을 구문 분석할 수 없습니다."
+        ],
+        [
+          "S6",
+          "",
+          false,
+          null,
+          null
+        ]
+      ],
+      "display": [
+        [
+          "S1",
+          "03/04/2026",
+          "FALSE",
+          "2026-04-03",
+          ""
+        ],
+        [
+          "S2",
+          "25/04/2026",
+          "FALSE",
+          "2026-04-25",
+          ""
+        ],
+        [
+          "S3",
+          "04/03/2026",
+          "FALSE",
+          "2026-03-04",
+          ""
+        ],
+        [
+          "S4",
+          "12/11/2026",
+          "FALSE",
+          "2026-11-12",
+          ""
+        ],
+        [
+          "S5",
+          "31/02/2026",
+          "TRUE",
+          "",
+          "Date 값에 제공된 입력을 구문 분석할 수 없습니다."
+        ],
+        [
+          "S6",
+          "",
+          "FALSE",
+          "",
+          ""
+        ]
+      ],
+      "row_count": 6,
+      "excel_error_cells": []
+    },
+    "load": {
+      "refresh_return": true,
+      "refreshing": false,
+      "load_error": null,
+      "table": {
+        "columns": [
+          "ID",
+          "Date"
+        ],
+        "rows": [
+          [
+            "S1",
+            46115
+          ],
+          [
+            "S2",
+            46137
+          ],
+          [
+            "S3",
+            46085
+          ],
+          [
+            "S4",
+            46338
+          ],
+          [
+            "S5",
+            null
+          ],
+          [
+            "S6",
+            null
+          ]
+        ],
+        "display": [
+          [
+            "S1",
+            "2026-04-03"
+          ],
+          [
+            "S2",
+            "2026-04-25"
+          ],
+          [
+            "S3",
+            "2026-03-04"
+          ],
+          [
+            "S4",
+            "2026-11-12"
+          ],
+          [
+            "S5",
+            ""
+          ],
+          [
+            "S6",
+            ""
+          ]
+        ],
+        "row_count": 6,
+        "excel_error_cells": []
+      }
+    }
+  },
+  "reconciliation": {
+    "us_error_rows": 2,
+    "direct_open": {
+      "columns": [
+        "ID",
+        "Date"
+      ],
+      "rows": [
+        [
+          "S1",
+          "03/04/2026"
+        ],
+        [
+          "S2",
+          "25/04/2026"
+        ],
+        [
+          "S3",
+          "04/03/2026"
+        ],
+        [
+          "S4",
+          "12/11/2026"
+        ],
+        [
+          "S5",
+          "31/02/2026"
+        ],
+        [
+          "S6",
+          null
+        ]
+      ],
+      "display": [
+        [
+          "S1",
+          "03/04/2026"
+        ],
+        [
+          "S2",
+          "25/04/2026"
+        ],
+        [
+          "S3",
+          "04/03/2026"
+        ],
+        [
+          "S4",
+          "12/11/2026"
+        ],
+        [
+          "S5",
+          "31/02/2026"
+        ],
+        [
+          "S6",
+          ""
+        ]
+      ],
+      "row_count": 6,
+      "excel_error_cells": [],
+      "date_audit": {
+        "columns": [
+          "ID",
+          "Date",
+          "IsNumber",
+          "DirectISO"
+        ],
+        "rows": [
+          [
+            "S1",
+            "03/04/2026",
+            false,
+            "TEXT:03/04/2026"
+          ],
+          [
+            "S2",
+            "25/04/2026",
+            false,
+            "TEXT:25/04/2026"
+          ],
+          [
+            "S3",
+            "04/03/2026",
+            false,
+            "TEXT:04/03/2026"
+          ],
+          [
+            "S4",
+            "12/11/2026",
+            false,
+            "TEXT:12/11/2026"
+          ],
+          [
+            "S5",
+            "31/02/2026",
+            false,
+            "TEXT:31/02/2026"
+          ],
+          [
+            "S6",
+            null,
+            false,
+            "TEXT:"
+          ]
+        ],
+        "display": [
+          [
+            "S1",
+            "03/04/2026",
+            "FALSE",
+            "TEXT:03/04/2026"
+          ],
+          [
+            "S2",
+            "25/04/2026",
+            "FALSE",
+            "TEXT:25/04/2026"
+          ],
+          [
+            "S3",
+            "04/03/2026",
+            "FALSE",
+            "TEXT:04/03/2026"
+          ],
+          [
+            "S4",
+            "12/11/2026",
+            "FALSE",
+            "TEXT:12/11/2026"
+          ],
+          [
+            "S5",
+            "31/02/2026",
+            "FALSE",
+            "TEXT:31/02/2026"
+          ],
+          [
+            "S6",
+            "",
+            "FALSE",
+            "TEXT:"
+          ]
+        ],
+        "row_count": 6,
+        "excel_error_cells": []
+      }
+    },
+    "silently_different_date_rows": [
+      {
+        "original": "03/04/2026",
+        "gb": "2026-04-03",
+        "id": "S1",
+        "us": "2026-03-04"
+      },
+      {
+        "original": "04/03/2026",
+        "gb": "2026-03-04",
+        "id": "S3",
+        "us": "2026-04-03"
+      },
+      {
+        "original": "12/11/2026",
+        "gb": "2026-11-12",
+        "id": "S4",
+        "us": "2026-12-11"
+      }
+    ],
+    "gb_error_rows": 1,
+    "source_rows": 6,
+    "original": {
+      "columns": [
+        "ID",
+        "Date"
+      ],
+      "rows": [
+        [
+          "S1",
+          "03/04/2026"
+        ],
+        [
+          "S2",
+          "25/04/2026"
+        ],
+        [
+          "S3",
+          "04/03/2026"
+        ],
+        [
+          "S4",
+          "12/11/2026"
+        ],
+        [
+          "S5",
+          "31/02/2026"
+        ],
+        [
+          "S6",
+          ""
+        ]
+      ],
+      "display": [
+        [
+          "S1",
+          "03/04/2026"
+        ],
+        [
+          "S2",
+          "25/04/2026"
+        ],
+        [
+          "S3",
+          "04/03/2026"
+        ],
+        [
+          "S4",
+          "12/11/2026"
+        ],
+        [
+          "S5",
+          "31/02/2026"
+        ],
+        [
+          "S6",
+          ""
+        ]
+      ],
+      "row_count": 6,
+      "excel_error_cells": []
+    }
+  },
+  "observations_ko": [
+    "CSV 6행 중 en-GB 오류 1행, en-US 오류 2행이었다. 두 로캘에서 모두 유효하지만 날짜가 달라진 행은 3개였다.",
+    "첫 행의 관측 날짜는 en-GB 2026-04-03, en-US 2026-03-04이었다. 직접 열기 결과는 셀 내부 값과 표시 값을 함께 보존했다."
+  ],
+  "not_verified": [
+    "COM/API execution does not verify the exact Korean ribbon click path, other Excel builds, other OS locales, or human review of the post."
+  ],
+  "differences_from_brief": [],
+  "assertions": [
+    {
+      "name": "Locale conversion audit retains every CSV record",
+      "passed": true
+    },
+    {
+      "name": "At least one valid date silently changes between US and GB interpretations",
+      "passed": true
+    },
+    {
+      "name": "Two nonblank private-data-free native Excel PNGs recorded",
+      "passed": true
+    }
+  ],
+  "expectations": [
+    {
+      "name": "03/04/2026 swaps day and month between en-GB and en-US",
+      "matched": true
+    }
+  ],
+  "screenshots": [
+    {
+      "file": "before.png",
+      "valid": true,
+      "method": "ExportAsFixedFormat + PyMuPDF",
+      "sheet": "Q_us_audit",
+      "range": "$A$1:$E$7",
+      "width": 1110,
+      "height": 278,
+      "distinct_colors": 813,
+      "pdf_text_checked": true,
+      "pdf_pages": 1,
+      "bytes": 58653,
+      "sha256": "0bbf96393beacfc817367cc0ef9023237f579d9080ad530bcc9f5d723196f616",
+      "clipboard": "Untouched: GetDataObject failed in this session; both CopyPicture modes require clipboard access"
+    },
+    {
+      "file": "after.png",
+      "valid": true,
+      "method": "ExportAsFixedFormat + PyMuPDF",
+      "sheet": "Q_gb_audit",
+      "range": "$A$1:$E$7",
+      "width": 1110,
+      "height": 278,
+      "distinct_colors": 811,
+      "pdf_text_checked": true,
+      "pdf_pages": 1,
+      "bytes": 49795,
+      "sha256": "482b7f27f7460082af8319bb30b8da4deeb7e908c69c4c6aa5a798b51321222b",
+      "clipboard": "Untouched: GetDataObject failed in this session; both CopyPicture modes require clipboard access"
+    }
+  ],
+  "status": "pass",
+  "failure": null,
+  "environment": {
+    "os_culture": "ko-KR",
+    "excel_decimal_separator": ".",
+    "excel_thousands_separator": ",",
+    "excel_date_order": 2,
+    "excel_list_separator": ",",
+    "synthetic": true
+  },
+  "query_refresh_attempts": 5,
+  "cleanup_verified": true
+}

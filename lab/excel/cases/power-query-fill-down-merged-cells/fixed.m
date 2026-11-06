@@ -1,0 +1,1 @@
+let S=Table.AddColumn(query,"LiteralEmpty",each if [Item]="S1" then "Seed" else if [Item]="S3" then "" else null,type text), N=Table.ReplaceValue(S,"",null,Replacer.ReplaceValue,{"LiteralEmpty"}) in Table.FillDown(N,{"Group","LiteralEmpty"})

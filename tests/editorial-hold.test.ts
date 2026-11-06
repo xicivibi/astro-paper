@@ -1,34 +1,43 @@
 import assert from "node:assert/strict";
-import { existsSync, readFileSync, readdirSync } from "node:fs";
+import { readFileSync, readdirSync } from "node:fs";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import test from "node:test";
 import {
+  isLegacyHoldPostId,
   isLegacyHoldPostPath,
   legacyHoldPostIds,
 } from "../src/config/editorial.ts";
 
 const root = fileURLToPath(new URL("..", import.meta.url));
+const postsDirectory = join(root, "src", "content", "posts");
 
-test("all reviewed legacy posts are explicitly held", () => {
-  const postsDirectory = join(root, "src", "content", "posts");
-  const generatedPostIds = readdirSync(postsDirectory)
-    .filter(name => /^post-\d+-.+\.md$/.test(name))
-    .map(name => name.replace(/\.md$/, ""))
-    .sort();
-
-  assert.equal(legacyHoldPostIds.length, 15);
-  assert.deepEqual([...legacyHoldPostIds].sort(), generatedPostIds);
-
-  for (const id of legacyHoldPostIds) {
-    const markdown = readFileSync(join(postsDirectory, `${id}.md`), "utf8");
-    assert.match(markdown, /^editorialStatus: legacy_hold$/m);
-  }
+test("deleted autopilot posts stay deleted and the hold list is empty", () => {
+  const generated = readdirSync(postsDirectory).filter(name =>
+    /^post-\d{8}-\d{6}-[0-9a-f]+\.mdx?$/.test(name)
+  );
+  assert.deepEqual(generated, []);
+  assert.deepEqual([...legacyHoldPostIds], []);
 });
 
-test("editorial hold is enforced across discovery surfaces", () => {
+test("editorial hold matching works on fixture ids", () => {
+  const fixtureIds = ["post-20990101-000000-abcdef0123"];
+  assert.equal(isLegacyHoldPostId(`${fixtureIds[0]}.md`, fixtureIds), true);
+  assert.equal(isLegacyHoldPostId("other-post", fixtureIds), false);
+  assert.equal(
+    isLegacyHoldPostPath(`/posts/${fixtureIds[0]}/`, fixtureIds),
+    true
+  );
+  assert.equal(isLegacyHoldPostPath("/posts/other/", fixtureIds), false);
+  assert.equal(isLegacyHoldPostPath(`/posts/${fixtureIds[0]}/`), false);
+});
+
+test("editorial hold is still enforced across discovery surfaces", () => {
   const schema = readFileSync(join(root, "src", "content.config.ts"), "utf8");
-  const filter = readFileSync(join(root, "src", "utils", "postFilter.ts"), "utf8");
+  const filter = readFileSync(
+    join(root, "src", "utils", "postFilter.ts"),
+    "utf8"
+  );
   const route = readFileSync(
     join(root, "src", "pages", "posts", "[...slug]", "index.astro"),
     "utf8"
@@ -39,40 +48,10 @@ test("editorial hold is enforced across discovery surfaces", () => {
   assert.match(schema, /legacy_hold/);
   assert.match(filter, /data\.editorialStatus !== "legacy_hold"/);
   assert.match(route, /noindex=\{isHeld \|\| isExpiredTrend\}/);
-  assert.match(route, /data-pagefind-ignore=\{isHeld \|\| isExpiredTrend \? "all"/);
+  assert.match(
+    route,
+    /data-pagefind-ignore=\{isHeld \|\| isExpiredTrend \? "all"/
+  );
   assert.match(route, /PostReviewHoldNotice/);
   assert.match(sitemap, /isLegacyHoldPostPath/);
-});
-
-test("production artifacts preserve held URLs but remove discovery signals", () => {
-  const sampleId = legacyHoldPostIds[0];
-  const samplePath = join(root, "dist", "posts", sampleId, "index.html");
-  const sitemapPath = join(root, "dist", "sitemap-0.xml");
-  const rssPath = join(root, "dist", "rss.xml");
-
-  if (!existsSync(samplePath) || !existsSync(sitemapPath) || !existsSync(rssPath)) {
-    return;
-  }
-
-  const html = readFileSync(samplePath, "utf8");
-  // `npm test` may run before `npm run build` and see an older local dist.
-  // Once the new build marker exists, validate the complete artifact contract.
-  if (!html.includes("data-editorial-hold")) {
-    return;
-  }
-  const sitemap = readFileSync(sitemapPath, "utf8");
-  const rss = readFileSync(rssPath, "utf8");
-
-  assert.match(html, /name="robots" content="noindex, nofollow"/);
-  assert.match(html, /data-editorial-hold/);
-  assert.match(html, /검토 보류된 이전 게시물/);
-  assert.doesNotMatch(html, /application\/ld\+json/);
-  assert.doesNotMatch(html, /id="article"/);
-  assert.doesNotMatch(html, /data-trust-metadata/);
-  assert.equal(isLegacyHoldPostPath(`/posts/${sampleId}/`), true);
-
-  for (const id of legacyHoldPostIds) {
-    assert.doesNotMatch(sitemap, new RegExp(`/posts/${id}/`));
-    assert.doesNotMatch(rss, new RegExp(`/posts/${id}/`));
-  }
 });

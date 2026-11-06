@@ -4,12 +4,15 @@ pubDatetime: 2026-09-20T00:20:00+09:00
 title: "CSV 한글 깨짐·열 밀림 진단: 인코딩과 구분자 확인 순서"
 featured: true
 draft: false
+topic: "excel-csv"
 tags:
   - "csv"
   - "excel"
 description: "CSV의 한글이 깨지거나 열이 한 칸에 몰릴 때, 원본을 덮어쓰기 전에 BOM·인코딩·구분자·따옴표를 차례로 확인하는 실무 절차입니다."
 aiAssisted: true
 lastReviewed: 2026-09-20T00:20:00+09:00
+humanReviewedBy: ""
+humanReviewedAt:
 sources:
   - "https://support.microsoft.com/en-us/excel/opening-csv-utf-8-files-correctly-in-excel"
   - "https://support.microsoft.com/en-us/excel/get-started/import-or-export-text-txt-or-csv-files"

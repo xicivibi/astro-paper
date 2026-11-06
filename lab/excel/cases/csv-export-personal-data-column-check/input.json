@@ -1,0 +1,57 @@
+{
+  "synthetic": true,
+  "columns": [
+    "ID",
+    "FakeName",
+    "FakeEmail",
+    "FakePhone",
+    "Amount"
+  ],
+  "rows": [
+    [
+      "S1",
+      "INVENTED PERSON 1",
+      "fake1@example.invalid",
+      "000-0000-0001",
+      10
+    ],
+    [
+      "S2",
+      "INVENTED PERSON 2",
+      "fake2@example.invalid",
+      "000-0000-0002",
+      20
+    ],
+    [
+      "S3",
+      "INVENTED PERSON 3",
+      "fake3@example.invalid",
+      "000-0000-0003",
+      30
+    ],
+    [
+      "S4",
+      "INVENTED PERSON 4",
+      "fake4@example.invalid",
+      "000-0000-0004",
+      40
+    ],
+    [
+      "S5",
+      "INVENTED PERSON 5",
+      "fake5@example.invalid",
+      "000-0000-0005",
+      50
+    ]
+  ],
+  "hidden_columns": [
+    "B:D"
+  ],
+  "hidden_rows": [
+    [
+      "INVENTED_HIDDEN_SHEET_ONLY",
+      "not a real person"
+    ]
+  ],
+  "query_files": {}
+}

@@ -3,7 +3,15 @@ import { ClientRouter } from "astro:transitions";
 import { resolveDefaultOgImagePath } from "@/utils/resolveDefaultOgImagePath";
 import { getAssetPath } from "@/utils/withBase";
 import config from "@/config";
-import { monetization } from "@/config/monetization";
+import {
+  adsenseLoaderUrl,
+  consentDefaultScript,
+  isAdExcludedPath,
+  monetization,
+  revocationScript,
+} from "@/config/monetization";
+import { assertOperatorForAds, operator } from "@/config/operator";
+import { searchVerification } from "@/config/searchVerification";
 import AnalyticsConsent from "@/components/AnalyticsConsent.astro";
 import "@/styles/global.css";
 
@@ -14,9 +22,13 @@ type Props = {
   canonicalURL?: string;
   pageType?: "website" | "article";
   noindex?: boolean;
+  /** Post pages with manual ad slots set this; it loads the AdSense script once. */
+  ads?: boolean;
 };
 
 const { site } = config;
+// Verify/serve builds stop here when no public operator email is configured.
+assertOperatorForAds(monetization.adsenseMode, operator);
 
 const {
   title = site.title,
@@ -25,7 +37,13 @@ const {
   canonicalURL = new URL(Astro.url.pathname, Astro.site).href,
   pageType = "website",
   noindex = false,
+  ads = false,
 } = Astro.props;
+const serveAds =
+  monetization.adsenseMode === "serve" &&
+  ads &&
+  !noindex &&
+  !isAdExcludedPath(Astro.url.pathname);
 
 const socialImageURL = new URL(ogImage, Astro.site ?? Astro.url);
 ---
@@ -44,7 +62,30 @@ const socialImageURL = new URL(ogImage, Astro.site ?? Astro.url);
     <link rel="canonical" href={canonicalURL} />
     <meta name="generator" content={Astro.generator} />
     {
-      monetization.adsenseMode === "verify" && (
+      serveAds && (
+        <script
+          is:inline
+          set:html={consentDefaultScript(monetization.consentScope)}
+        />
+      )
+    }
+    {
+      serveAds && (
+        <script
+          is:inline
+          async
+          src={adsenseLoaderUrl(monetization)}
+          crossorigin="anonymous"
+        />
+      )
+    }
+    {
+      monetization.adsenseMode === "serve" && (
+        <script is:inline set:html={revocationScript(monetization)} />
+      )
+    }
+    {
+      monetization.adsenseMode !== "off" && (
         <meta
           name="google-adsense-account"
           content={`ca-${monetization.publisherId}`}
@@ -90,6 +131,12 @@ const socialImageURL = new URL(ogImage, Astro.site ?? Astro.url);
 
     <!-- Extra head content injected by child layouts (e.g. JSON-LD, article meta) -->
     <slot name="head" />
+
+    {
+      searchVerification.map(meta => (
+        <meta name={meta.name} content={meta.content} />
+      ))
+    }
 
     {
       site.googleVerification && (

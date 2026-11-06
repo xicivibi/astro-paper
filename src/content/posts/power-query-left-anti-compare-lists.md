@@ -4,6 +4,7 @@ pubDatetime: 2026-09-20T03:20:00+09:00
 title: "Power Query Left Anti로 두 명단의 누락 항목 찾기"
 featured: false
 draft: false
+topic: "excel-csv"
 tags:
   - "excel"
   - "power query"
@@ -11,6 +12,8 @@ tags:
 description: "두 명단을 Power Query Left Anti로 비교할 때 텍스트 형식, 공백, 대소문자, 빈 값 규칙을 먼저 고정하고 누락 항목을 재현하는 절차입니다."
 aiAssisted: true
 lastReviewed: 2026-09-20T03:20:00+09:00
+humanReviewedBy: ""
+humanReviewedAt:
 sources:
   - "https://support.microsoft.com/en-us/excel/merge-queries-power-query"
   - "https://learn.microsoft.com/en-us/power-query/merge-queries-left-anti"

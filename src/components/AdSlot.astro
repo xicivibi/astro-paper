@@ -1,0 +1,30 @@
+---
+import { monetization } from "@/config/monetization";
+
+// Not named `slot`: that attribute is reserved for Astro named slots.
+type Props = { position: "afterArticle" | "beforeNav" };
+const { position } = Astro.props;
+const enabled = monetization.adsenseMode === "serve";
+---
+
+{
+  enabled && (
+    <aside class="my-8" aria-label="광고" data-ad-slot-container={position}>
+      <p class="text-muted-foreground mb-1 text-xs">광고</p>
+      <ins
+        class="adsbygoogle"
+        style="display:block;min-height:280px"
+        data-ad-client={`ca-${monetization.publisherId}`}
+        data-ad-slot={monetization.slots[position]}
+        data-ad-format="auto"
+        data-full-width-responsive="true"
+      />
+    </aside>
+  )
+}
+
+<script>
+  import { installAdSlots } from "@/scripts/ad-slots";
+  // Off-mode pages have no ins.adsbygoogle slots, so nothing is pushed.
+  installAdSlots(window as never, document as never);
+</script>

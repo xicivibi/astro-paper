@@ -1,0 +1,1 @@
+let S=Excel.CurrentWorkbook(){[Name="Input"]}[Content], G=Table.Group(S,{"Group"},{{"Try",each try List.Sum([Amount])}}) in Table.ExpandRecordColumn(Table.AddColumn(G,"Message",each if [Try][HasError] then [Try][Error][Message] else null),"Try",{"HasError"},{"HasError"})

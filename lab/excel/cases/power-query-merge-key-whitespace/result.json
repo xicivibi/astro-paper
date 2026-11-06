@@ -1,0 +1,959 @@
+{
+  "slug": "power-query-merge-key-whitespace",
+  "excel_version": "16.0",
+  "excel_build": "20527",
+  "ui_language": {
+    "lcid": 1042,
+    "culture": "ko-KR"
+  },
+  "run_at": "2026-11-06T17:40:49.6686977Z",
+  "input_sha256": {
+    "input.json": "62f082e9dc95f54bc4e7247614073b0dbf0b2a04bc71957c266860a48105c87c",
+    "input.xlsx": "6a31a40e7352eb03dc058737d7506ea1b595e2df0019192b2201e649bb105c40"
+  },
+  "steps": [
+    {
+      "name": "input_readback",
+      "formula_or_m": "Worksheet.UsedRange.Value2/Text (synthetic fixture)",
+      "observed": {
+        "columns": [
+          "ID",
+          "Key"
+        ],
+        "rows": [
+          [
+            "S1",
+            "ALPHA"
+          ],
+          [
+            "S2",
+            "ALPHA "
+          ],
+          [
+            "S3",
+            "BETA "
+          ],
+          [
+            "S4",
+            "ＧＡＭＭＡ"
+          ],
+          [
+            "S5",
+            "delta"
+          ],
+          [
+            "S6",
+            "OM\tEGA"
+          ],
+          [
+            "S7",
+            "BETA"
+          ]
+        ],
+        "display": [
+          [
+            "S1",
+            "ALPHA"
+          ],
+          [
+            "S2",
+            "ALPHA "
+          ],
+          [
+            "S3",
+            "BETA "
+          ],
+          [
+            "S4",
+            "ＧＡＭＭＡ"
+          ],
+          [
+            "S5",
+            "delta"
+          ],
+          [
+            "S6",
+            "OM\tEGA"
+          ],
+          [
+            "S7",
+            "BETA"
+          ]
+        ],
+        "row_count": 7,
+        "excel_error_cells": []
+      }
+    },
+    {
+      "name": "query_load",
+      "formula_or_m": "let S=Excel.CurrentWorkbook(){[Name=\"Input\"]}[Content], R=Excel.CurrentWorkbook(){[Name=\"Lookup\"]}[Content], J=Table.NestedJoin(S,{\"Key\"},R,{\"Key\"},\"Match\",JoinKind.LeftOuter) in Table.AddColumn(Table.RemoveColumns(Table.AddColumn(J,\"Matched\",each Table.RowCount([Match])>0),{\"Match\"}),\"Stage\",each \"raw\")\r\n",
+      "observed": {
+        "refresh_return": true,
+        "refreshing": false,
+        "load_error": null,
+        "table": {
+          "columns": [
+            "ID",
+            "Key",
+            "Matched",
+            "Stage"
+          ],
+          "rows": [
+            [
+              "S1",
+              "ALPHA",
+              true,
+              "raw"
+            ],
+            [
+              "S2",
+              "ALPHA ",
+              false,
+              "raw"
+            ],
+            [
+              "S3",
+              "BETA ",
+              false,
+              "raw"
+            ],
+            [
+              "S4",
+              "ＧＡＭＭＡ",
+              false,
+              "raw"
+            ],
+            [
+              "S5",
+              "delta",
+              false,
+              "raw"
+            ],
+            [
+              "S6",
+              "OM\tEGA",
+              false,
+              "raw"
+            ],
+            [
+              "S7",
+              "BETA",
+              true,
+              "raw"
+            ]
+          ],
+          "display": [
+            [
+              "S1",
+              "ALPHA",
+              "TRUE",
+              "raw"
+            ],
+            [
+              "S2",
+              "ALPHA ",
+              "FALSE",
+              "raw"
+            ],
+            [
+              "S3",
+              "BETA ",
+              "FALSE",
+              "raw"
+            ],
+            [
+              "S4",
+              "ＧＡＭＭＡ",
+              "FALSE",
+              "raw"
+            ],
+            [
+              "S5",
+              "delta",
+              "FALSE",
+              "raw"
+            ],
+            [
+              "S6",
+              "OM\tEGA",
+              "FALSE",
+              "raw"
+            ],
+            [
+              "S7",
+              "BETA",
+              "TRUE",
+              "raw"
+            ]
+          ],
+          "row_count": 7,
+          "excel_error_cells": []
+        }
+      }
+    },
+    {
+      "name": "trim_load",
+      "formula_or_m": "let S=Table.TransformColumns(Excel.CurrentWorkbook(){[Name=\"Input\"]}[Content],{{\"Key\",Text.Trim,type text}}), R=Excel.CurrentWorkbook(){[Name=\"Lookup\"]}[Content], J=Table.NestedJoin(S,{\"Key\"},R,{\"Key\"},\"Match\",JoinKind.LeftOuter) in Table.RemoveColumns(Table.AddColumn(J,\"Matched\",each Table.RowCount([Match])>0),{\"Match\"})\r\n",
+      "observed": {
+        "refresh_return": true,
+        "refreshing": false,
+        "load_error": null,
+        "table": {
+          "columns": [
+            "ID",
+            "Key",
+            "Matched"
+          ],
+          "rows": [
+            [
+              "S1",
+              "ALPHA",
+              true
+            ],
+            [
+              "S2",
+              "ALPHA",
+              true
+            ],
+            [
+              "S3",
+              "BETA",
+              true
+            ],
+            [
+              "S4",
+              "ＧＡＭＭＡ",
+              false
+            ],
+            [
+              "S5",
+              "delta",
+              false
+            ],
+            [
+              "S6",
+              "OM\tEGA",
+              false
+            ],
+            [
+              "S7",
+              "BETA",
+              true
+            ]
+          ],
+          "display": [
+            [
+              "S1",
+              "ALPHA",
+              "TRUE"
+            ],
+            [
+              "S2",
+              "ALPHA",
+              "TRUE"
+            ],
+            [
+              "S3",
+              "BETA",
+              "TRUE"
+            ],
+            [
+              "S4",
+              "ＧＡＭＭＡ",
+              "FALSE"
+            ],
+            [
+              "S5",
+              "delta",
+              "FALSE"
+            ],
+            [
+              "S6",
+              "OM\tEGA",
+              "FALSE"
+            ],
+            [
+              "S7",
+              "BETA",
+              "TRUE"
+            ]
+          ],
+          "row_count": 7,
+          "excel_error_cells": []
+        }
+      }
+    },
+    {
+      "name": "fixed_load",
+      "formula_or_m": "let S=Table.TransformColumns(Excel.CurrentWorkbook(){[Name=\"Input\"]}[Content],{{\"Key\",each Text.Trim(Text.Clean(Text.Replace(_,Character.FromNumber(160),\" \"))),type text}}), R=Excel.CurrentWorkbook(){[Name=\"Lookup\"]}[Content], J=Table.NestedJoin(S,{\"Key\"},R,{\"Key\"},\"Match\",JoinKind.LeftOuter) in Table.RemoveColumns(Table.AddColumn(J,\"Matched\",each Table.RowCount([Match])>0),{\"Match\"})\r\n",
+      "observed": {
+        "refresh_return": true,
+        "refreshing": false,
+        "load_error": null,
+        "table": {
+          "columns": [
+            "ID",
+            "Key",
+            "Matched"
+          ],
+          "rows": [
+            [
+              "S1",
+              "ALPHA",
+              true
+            ],
+            [
+              "S2",
+              "ALPHA",
+              true
+            ],
+            [
+              "S3",
+              "BETA",
+              true
+            ],
+            [
+              "S4",
+              "ＧＡＭＭＡ",
+              false
+            ],
+            [
+              "S5",
+              "delta",
+              false
+            ],
+            [
+              "S6",
+              "OMEGA",
+              true
+            ],
+            [
+              "S7",
+              "BETA",
+              true
+            ]
+          ],
+          "display": [
+            [
+              "S1",
+              "ALPHA",
+              "TRUE"
+            ],
+            [
+              "S2",
+              "ALPHA",
+              "TRUE"
+            ],
+            [
+              "S3",
+              "BETA",
+              "TRUE"
+            ],
+            [
+              "S4",
+              "ＧＡＭＭＡ",
+              "FALSE"
+            ],
+            [
+              "S5",
+              "delta",
+              "FALSE"
+            ],
+            [
+              "S6",
+              "OMEGA",
+              "TRUE"
+            ],
+            [
+              "S7",
+              "BETA",
+              "TRUE"
+            ]
+          ],
+          "row_count": 7,
+          "excel_error_cells": []
+        }
+      }
+    },
+    {
+      "name": "diagnostics_load",
+      "formula_or_m": "let S=Excel.CurrentWorkbook(){[Name=\"Input\"]}[Content], T=Table.AddColumn(S,\"Trim\",each Text.Trim([Key])), C=Table.AddColumn(T,\"Clean\",each Text.Clean([Key])), N=Table.AddColumn(C,\"Normalized\",each Text.Trim(Text.Clean(Text.Replace([Key],Character.FromNumber(160),\" \")))) in N\r\n",
+      "observed": {
+        "refresh_return": true,
+        "refreshing": false,
+        "load_error": null,
+        "table": {
+          "columns": [
+            "ID",
+            "Key",
+            "Trim",
+            "Clean",
+            "Normalized"
+          ],
+          "rows": [
+            [
+              "S1",
+              "ALPHA",
+              "ALPHA",
+              "ALPHA",
+              "ALPHA"
+            ],
+            [
+              "S2",
+              "ALPHA ",
+              "ALPHA",
+              "ALPHA ",
+              "ALPHA"
+            ],
+            [
+              "S3",
+              "BETA ",
+              "BETA",
+              "BETA ",
+              "BETA"
+            ],
+            [
+              "S4",
+              "ＧＡＭＭＡ",
+              "ＧＡＭＭＡ",
+              "ＧＡＭＭＡ",
+              "ＧＡＭＭＡ"
+            ],
+            [
+              "S5",
+              "delta",
+              "delta",
+              "delta",
+              "delta"
+            ],
+            [
+              "S6",
+              "OM\tEGA",
+              "OM\tEGA",
+              "OMEGA",
+              "OMEGA"
+            ],
+            [
+              "S7",
+              "BETA",
+              "BETA",
+              "BETA",
+              "BETA"
+            ]
+          ],
+          "display": [
+            [
+              "S1",
+              "ALPHA",
+              "ALPHA",
+              "ALPHA",
+              "ALPHA"
+            ],
+            [
+              "S2",
+              "ALPHA ",
+              "ALPHA",
+              "ALPHA ",
+              "ALPHA"
+            ],
+            [
+              "S3",
+              "BETA ",
+              "BETA",
+              "BETA ",
+              "BETA"
+            ],
+            [
+              "S4",
+              "ＧＡＭＭＡ",
+              "ＧＡＭＭＡ",
+              "ＧＡＭＭＡ",
+              "ＧＡＭＭＡ"
+            ],
+            [
+              "S5",
+              "delta",
+              "delta",
+              "delta",
+              "delta"
+            ],
+            [
+              "S6",
+              "OM\tEGA",
+              "OM\tEGA",
+              "OMEGA",
+              "OMEGA"
+            ],
+            [
+              "S7",
+              "BETA",
+              "BETA",
+              "BETA",
+              "BETA"
+            ]
+          ],
+          "row_count": 7,
+          "excel_error_cells": []
+        }
+      }
+    }
+  ],
+  "wrong_result": {
+    "columns": [
+      "ID",
+      "Key",
+      "Matched",
+      "Stage"
+    ],
+    "rows": [
+      [
+        "S1",
+        "ALPHA",
+        true,
+        "raw"
+      ],
+      [
+        "S2",
+        "ALPHA ",
+        false,
+        "raw"
+      ],
+      [
+        "S3",
+        "BETA ",
+        false,
+        "raw"
+      ],
+      [
+        "S4",
+        "ＧＡＭＭＡ",
+        false,
+        "raw"
+      ],
+      [
+        "S5",
+        "delta",
+        false,
+        "raw"
+      ],
+      [
+        "S6",
+        "OM\tEGA",
+        false,
+        "raw"
+      ],
+      [
+        "S7",
+        "BETA",
+        true,
+        "raw"
+      ]
+    ],
+    "display": [
+      [
+        "S1",
+        "ALPHA",
+        "TRUE",
+        "raw"
+      ],
+      [
+        "S2",
+        "ALPHA ",
+        "FALSE",
+        "raw"
+      ],
+      [
+        "S3",
+        "BETA ",
+        "FALSE",
+        "raw"
+      ],
+      [
+        "S4",
+        "ＧＡＭＭＡ",
+        "FALSE",
+        "raw"
+      ],
+      [
+        "S5",
+        "delta",
+        "FALSE",
+        "raw"
+      ],
+      [
+        "S6",
+        "OM\tEGA",
+        "FALSE",
+        "raw"
+      ],
+      [
+        "S7",
+        "BETA",
+        "TRUE",
+        "raw"
+      ]
+    ],
+    "row_count": 7,
+    "excel_error_cells": []
+  },
+  "fixed_result": {
+    "columns": [
+      "ID",
+      "Key",
+      "Matched"
+    ],
+    "rows": [
+      [
+        "S1",
+        "ALPHA",
+        true
+      ],
+      [
+        "S2",
+        "ALPHA",
+        true
+      ],
+      [
+        "S3",
+        "BETA",
+        true
+      ],
+      [
+        "S4",
+        "ＧＡＭＭＡ",
+        false
+      ],
+      [
+        "S5",
+        "delta",
+        false
+      ],
+      [
+        "S6",
+        "OMEGA",
+        true
+      ],
+      [
+        "S7",
+        "BETA",
+        true
+      ]
+    ],
+    "display": [
+      [
+        "S1",
+        "ALPHA",
+        "TRUE"
+      ],
+      [
+        "S2",
+        "ALPHA",
+        "TRUE"
+      ],
+      [
+        "S3",
+        "BETA",
+        "TRUE"
+      ],
+      [
+        "S4",
+        "ＧＡＭＭＡ",
+        "FALSE"
+      ],
+      [
+        "S5",
+        "delta",
+        "FALSE"
+      ],
+      [
+        "S6",
+        "OMEGA",
+        "TRUE"
+      ],
+      [
+        "S7",
+        "BETA",
+        "TRUE"
+      ]
+    ],
+    "row_count": 7,
+    "excel_error_cells": []
+  },
+  "reconciliation": {
+    "raw_matches": 2,
+    "normalization_diagnostics": {
+      "columns": [
+        "ID",
+        "Key",
+        "Trim",
+        "Clean",
+        "Normalized"
+      ],
+      "rows": [
+        [
+          "S1",
+          "ALPHA",
+          "ALPHA",
+          "ALPHA",
+          "ALPHA"
+        ],
+        [
+          "S2",
+          "ALPHA ",
+          "ALPHA",
+          "ALPHA ",
+          "ALPHA"
+        ],
+        [
+          "S3",
+          "BETA ",
+          "BETA",
+          "BETA ",
+          "BETA"
+        ],
+        [
+          "S4",
+          "ＧＡＭＭＡ",
+          "ＧＡＭＭＡ",
+          "ＧＡＭＭＡ",
+          "ＧＡＭＭＡ"
+        ],
+        [
+          "S5",
+          "delta",
+          "delta",
+          "delta",
+          "delta"
+        ],
+        [
+          "S6",
+          "OM\tEGA",
+          "OM\tEGA",
+          "OMEGA",
+          "OMEGA"
+        ],
+        [
+          "S7",
+          "BETA",
+          "BETA",
+          "BETA",
+          "BETA"
+        ]
+      ],
+      "display": [
+        [
+          "S1",
+          "ALPHA",
+          "ALPHA",
+          "ALPHA",
+          "ALPHA"
+        ],
+        [
+          "S2",
+          "ALPHA ",
+          "ALPHA",
+          "ALPHA ",
+          "ALPHA"
+        ],
+        [
+          "S3",
+          "BETA ",
+          "BETA",
+          "BETA ",
+          "BETA"
+        ],
+        [
+          "S4",
+          "ＧＡＭＭＡ",
+          "ＧＡＭＭＡ",
+          "ＧＡＭＭＡ",
+          "ＧＡＭＭＡ"
+        ],
+        [
+          "S5",
+          "delta",
+          "delta",
+          "delta",
+          "delta"
+        ],
+        [
+          "S6",
+          "OM\tEGA",
+          "OM\tEGA",
+          "OMEGA",
+          "OMEGA"
+        ],
+        [
+          "S7",
+          "BETA",
+          "BETA",
+          "BETA",
+          "BETA"
+        ]
+      ],
+      "row_count": 7,
+      "excel_error_cells": []
+    },
+    "unmatched_after_normalization": [
+      "S4",
+      "S5"
+    ],
+    "trim_only": {
+      "columns": [
+        "ID",
+        "Key",
+        "Matched"
+      ],
+      "rows": [
+        [
+          "S1",
+          "ALPHA",
+          true
+        ],
+        [
+          "S2",
+          "ALPHA",
+          true
+        ],
+        [
+          "S3",
+          "BETA",
+          true
+        ],
+        [
+          "S4",
+          "ＧＡＭＭＡ",
+          false
+        ],
+        [
+          "S5",
+          "delta",
+          false
+        ],
+        [
+          "S6",
+          "OM\tEGA",
+          false
+        ],
+        [
+          "S7",
+          "BETA",
+          true
+        ]
+      ],
+      "display": [
+        [
+          "S1",
+          "ALPHA",
+          "TRUE"
+        ],
+        [
+          "S2",
+          "ALPHA",
+          "TRUE"
+        ],
+        [
+          "S3",
+          "BETA",
+          "TRUE"
+        ],
+        [
+          "S4",
+          "ＧＡＭＭＡ",
+          "FALSE"
+        ],
+        [
+          "S5",
+          "delta",
+          "FALSE"
+        ],
+        [
+          "S6",
+          "OM\tEGA",
+          "FALSE"
+        ],
+        [
+          "S7",
+          "BETA",
+          "TRUE"
+        ]
+      ],
+      "row_count": 7,
+      "excel_error_cells": []
+    },
+    "trim_matches": 4,
+    "normalized_matches": 5,
+    "source_rows": 7
+  },
+  "observations_ko": [
+    "병합 일치 수는 원본 2, Trim 4, Trim/Clean/NBSP 치환 5였다. 최종 미일치 ID는 S4, S5였다."
+  ],
+  "not_verified": [
+    "COM/API execution does not verify the exact Korean ribbon click path, other Excel builds, other OS locales, or human review of the post."
+  ],
+  "differences_from_brief": [],
+  "assertions": [
+    {
+      "name": "Normalization preserves input rows and does not reduce matches",
+      "passed": true
+    },
+    {
+      "name": "Two nonblank private-data-free native Excel PNGs recorded",
+      "passed": true
+    }
+  ],
+  "expectations": [
+    {
+      "name": "Trim/Clean/NBSP replacement does not fix full-width characters or case",
+      "matched": true
+    },
+    {
+      "name": "Text.Trim already trims a trailing NBSP in this Excel build",
+      "matched": true
+    }
+  ],
+  "screenshots": [
+    {
+      "file": "before.png",
+      "valid": true,
+      "method": "ExportAsFixedFormat + PyMuPDF",
+      "sheet": "Q_query",
+      "range": "$A$1:$D$8",
+      "width": 510,
+      "height": 315,
+      "distinct_colors": 806,
+      "pdf_text_checked": true,
+      "pdf_pages": 1,
+      "bytes": 35760,
+      "sha256": "5e9b7293db15426bac280e834ed3a6974e511d8bc5394fe02e9dd68969635fe8",
+      "clipboard": "Untouched: GetDataObject failed in this session; both CopyPicture modes require clipboard access"
+    },
+    {
+      "file": "after.png",
+      "valid": true,
+      "method": "ExportAsFixedFormat + PyMuPDF",
+      "sheet": "Q_fixed",
+      "range": "$A$1:$C$8",
+      "width": 395,
+      "height": 315,
+      "distinct_colors": 768,
+      "pdf_text_checked": true,
+      "pdf_pages": 1,
+      "bytes": 26678,
+      "sha256": "4f039b907232c34ed550969e204d25f4105c8c2c521cde5ee622d723c6697703",
+      "clipboard": "Untouched: GetDataObject failed in this session; both CopyPicture modes require clipboard access"
+    }
+  ],
+  "status": "pass",
+  "failure": null,
+  "environment": {
+    "os_culture": "ko-KR",
+    "excel_decimal_separator": ".",
+    "excel_thousands_separator": ",",
+    "excel_date_order": 2,
+    "excel_list_separator": ",",
+    "synthetic": true
+  },
+  "query_refresh_attempts": 4,
+  "cleanup_verified": true
+}

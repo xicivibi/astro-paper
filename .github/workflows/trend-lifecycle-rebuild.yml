@@ -1,8 +1,7 @@
 name: Trend lifecycle rebuild
 
+# 정기 실행(schedule)은 AdSense 준비 작업에서 동결했습니다. 필요하면 수동 실행만 합니다.
 on:
-  schedule:
-    - cron: "17 * * * *"
   workflow_dispatch:
     inputs:
       smoke_rebuild:

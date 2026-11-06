@@ -7,17 +7,21 @@
   },
   "scripts": {
     "dev": "astro dev",
-    "build": "astro check && astro build && node scripts/copy-deployment-files.mjs && pagefind --site dist && node scripts/copy-pagefind.mjs",
+    "build": "node scripts/check-post-quality.mjs && astro check && astro build && node scripts/copy-deployment-files.mjs && pagefind --site dist && node scripts/copy-pagefind.mjs && node scripts/adsense-readiness.mjs",
     "preview": "astro preview",
     "sync": "astro sync",
     "astro": "astro",
-    "test": "node --experimental-strip-types --test tests/*.test.ts",
+    "test": "node --experimental-strip-types --test --test-concurrency=1 tests/*.test.ts",
     "check": "astro check",
+    "check:posts": "node scripts/check-post-quality.mjs",
+    "sign:post": "node scripts/sign-post.mjs",
+    "check:adsense": "node scripts/adsense-readiness.mjs",
     "format:check": "prettier --check .",
     "format:changed": "node scripts/check-changed-format.mjs",
     "format": "prettier --write .",
     "lint": "eslint .",
-    "release:cloudflare": "node scripts/release-cloudflare.mjs"
+    "release:cloudflare": "node scripts/release-cloudflare.mjs",
+    "redirects:vercel": "node scripts/generate-vercel-redirects.mjs"
   },
   "dependencies": {
     "@astrojs/mdx": "^5.0.6",

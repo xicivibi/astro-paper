@@ -1,0 +1,1 @@
+let S=Table.TransformColumnTypes(Excel.CurrentWorkbook(){[Name="Input"]}[Content],{{"Amount",type number}},"en-US") in Table.Group(S,{"Group"},{{"Sum",each List.Sum([Amount]),type number},{"Rows",each Table.RowCount(_),Int64.Type},{"NonNulls",each List.NonNullCount([Amount]),Int64.Type}})

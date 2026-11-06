@@ -8,6 +8,9 @@ function normalize(value: string) {
 }
 
 export function postMatchesTopic(post: Post, topic: TopicDefinition) {
+  // An explicit topic is authoritative; tags are the fallback for posts
+  // written before the topic field existed.
+  if (post.data.topic) return post.data.topic === topic.slug;
   const allowedTags = new Set(topic.tags.map(normalize));
   return (post.data.tags ?? []).some(tag => allowedTags.has(normalize(tag)));
 }

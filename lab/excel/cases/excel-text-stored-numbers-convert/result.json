@@ -1,0 +1,1077 @@
+{
+  "slug": "excel-text-stored-numbers-convert",
+  "excel_version": "16.0",
+  "excel_build": "20527",
+  "ui_language": {
+    "lcid": 1042,
+    "culture": "ko-KR"
+  },
+  "run_at": "2026-11-06T17:42:34.8584783Z",
+  "input_sha256": {
+    "input.json": "4acbd07ede6c65d11a7d9497ea14acc50ef0ff6fac6582b76bf55bbe6ad5a1b0",
+    "input.xlsx": "b3434942684efdb16aaedbd236c350bc141fb452430c8e6870398fd04bc563e6"
+  },
+  "steps": [
+    {
+      "name": "input_readback",
+      "formula_or_m": "Worksheet.UsedRange.Value2/Text (synthetic fixture)",
+      "observed": {
+        "columns": [
+          "ID",
+          "Amount"
+        ],
+        "rows": [
+          [
+            "S1",
+            "10"
+          ],
+          [
+            "S2",
+            " 20 "
+          ],
+          [
+            "S3",
+            " 30 "
+          ],
+          [
+            "S4",
+            "1 234"
+          ],
+          [
+            "S5",
+            "0"
+          ],
+          [
+            "S6",
+            "40"
+          ]
+        ],
+        "display": [
+          [
+            "S1",
+            "10"
+          ],
+          [
+            "S2",
+            " 20 "
+          ],
+          [
+            "S3",
+            " 30 "
+          ],
+          [
+            "S4",
+            "1 234"
+          ],
+          [
+            "S5",
+            "0"
+          ],
+          [
+            "S6",
+            "40"
+          ]
+        ],
+        "row_count": 6,
+        "excel_error_cells": []
+      }
+    },
+    {
+      "name": "worksheet_conversions",
+      "formula_or_m": "VALUE(Bn); --Bn; VALUE(SUBSTITUTE(TRIM(CLEAN(Bn)),UNICHAR(160),\"\"))",
+      "observed": {
+        "columns": [
+          "ID",
+          "Amount",
+          "VALUE",
+          "DoubleUnary",
+          "Normalized"
+        ],
+        "rows": [
+          [
+            "S1",
+            "10",
+            10,
+            10,
+            10
+          ],
+          [
+            "S2",
+            " 20 ",
+            20,
+            20,
+            20
+          ],
+          [
+            "S3",
+            " 30 ",
+            -2146826273,
+            -2146826273,
+            30
+          ],
+          [
+            "S4",
+            "1 234",
+            -2146826273,
+            -2146826273,
+            1234
+          ],
+          [
+            "S5",
+            "0",
+            0,
+            0,
+            0
+          ],
+          [
+            "S6",
+            "40",
+            40,
+            40,
+            40
+          ]
+        ],
+        "display": [
+          [
+            "S1",
+            "10",
+            "10.",
+            "10.",
+            "10."
+          ],
+          [
+            "S2",
+            " 20 ",
+            "20.",
+            "20.",
+            "20."
+          ],
+          [
+            "S3",
+            " 30 ",
+            "#VALUE!",
+            "#VALUE!",
+            "30."
+          ],
+          [
+            "S4",
+            "1 234",
+            "#VALUE!",
+            "#VALUE!",
+            "1234."
+          ],
+          [
+            "S5",
+            "0",
+            "0.",
+            "0.",
+            "0."
+          ],
+          [
+            "S6",
+            "40",
+            "40.",
+            "40.",
+            "40."
+          ]
+        ],
+        "row_count": 6,
+        "excel_error_cells": [
+          {
+            "row": 3,
+            "column": "VALUE",
+            "value": -2146826273,
+            "text": "#VALUE!"
+          },
+          {
+            "row": 3,
+            "column": "DoubleUnary",
+            "value": -2146826273,
+            "text": "#VALUE!"
+          },
+          {
+            "row": 4,
+            "column": "VALUE",
+            "value": -2146826273,
+            "text": "#VALUE!"
+          },
+          {
+            "row": 4,
+            "column": "DoubleUnary",
+            "value": -2146826273,
+            "text": "#VALUE!"
+          }
+        ],
+        "formulas": [
+          {
+            "row": 2,
+            "column": 3,
+            "text": "10.",
+            "value": 10,
+            "formula": "=VALUE(B2)"
+          },
+          {
+            "row": 2,
+            "column": 4,
+            "text": "10.",
+            "value": 10,
+            "formula": "=--B2"
+          },
+          {
+            "row": 2,
+            "column": 5,
+            "text": "10.",
+            "value": 10,
+            "formula": "=VALUE(SUBSTITUTE(TRIM(CLEAN(B2)),UNICHAR(160),\"\"))"
+          },
+          {
+            "row": 3,
+            "column": 3,
+            "text": "20.",
+            "value": 20,
+            "formula": "=VALUE(B3)"
+          },
+          {
+            "row": 3,
+            "column": 4,
+            "text": "20.",
+            "value": 20,
+            "formula": "=--B3"
+          },
+          {
+            "row": 3,
+            "column": 5,
+            "text": "20.",
+            "value": 20,
+            "formula": "=VALUE(SUBSTITUTE(TRIM(CLEAN(B3)),UNICHAR(160),\"\"))"
+          },
+          {
+            "row": 4,
+            "column": 3,
+            "text": "#VALUE!",
+            "value": -2146826273,
+            "formula": "=VALUE(B4)"
+          },
+          {
+            "row": 4,
+            "column": 4,
+            "text": "#VALUE!",
+            "value": -2146826273,
+            "formula": "=--B4"
+          },
+          {
+            "row": 4,
+            "column": 5,
+            "text": "30.",
+            "value": 30,
+            "formula": "=VALUE(SUBSTITUTE(TRIM(CLEAN(B4)),UNICHAR(160),\"\"))"
+          },
+          {
+            "row": 5,
+            "column": 3,
+            "text": "#VALUE!",
+            "value": -2146826273,
+            "formula": "=VALUE(B5)"
+          },
+          {
+            "row": 5,
+            "column": 4,
+            "text": "#VALUE!",
+            "value": -2146826273,
+            "formula": "=--B5"
+          },
+          {
+            "row": 5,
+            "column": 5,
+            "text": "1234.",
+            "value": 1234,
+            "formula": "=VALUE(SUBSTITUTE(TRIM(CLEAN(B5)),UNICHAR(160),\"\"))"
+          },
+          {
+            "row": 6,
+            "column": 3,
+            "text": "0.",
+            "value": 0,
+            "formula": "=VALUE(B6)"
+          },
+          {
+            "row": 6,
+            "column": 4,
+            "text": "0.",
+            "value": 0,
+            "formula": "=--B6"
+          },
+          {
+            "row": 6,
+            "column": 5,
+            "text": "0.",
+            "value": 0,
+            "formula": "=VALUE(SUBSTITUTE(TRIM(CLEAN(B6)),UNICHAR(160),\"\"))"
+          },
+          {
+            "row": 7,
+            "column": 3,
+            "text": "40.",
+            "value": 40,
+            "formula": "=VALUE(B7)"
+          },
+          {
+            "row": 7,
+            "column": 4,
+            "text": "40.",
+            "value": 40,
+            "formula": "=--B7"
+          },
+          {
+            "row": 7,
+            "column": 5,
+            "text": "40.",
+            "value": 40,
+            "formula": "=VALUE(SUBSTITUTE(TRIM(CLEAN(B7)),UNICHAR(160),\"\"))"
+          }
+        ]
+      }
+    },
+    {
+      "name": "text_to_columns_general",
+      "formula_or_m": "Range.TextToColumns(DataType=xlDelimited, TextQualifier=xlDoubleQuote, General field)",
+      "observed": {
+        "columns": [
+          "ID",
+          "Amount"
+        ],
+        "rows": [
+          [
+            "S1",
+            10
+          ],
+          [
+            "S2",
+            20
+          ],
+          [
+            "S3",
+            " 30 "
+          ],
+          [
+            "S4",
+            "1 234"
+          ],
+          [
+            "S5",
+            0
+          ],
+          [
+            "S6",
+            40
+          ]
+        ],
+        "display": [
+          [
+            "S1",
+            "10"
+          ],
+          [
+            "S2",
+            "20"
+          ],
+          [
+            "S3",
+            " 30 "
+          ],
+          [
+            "S4",
+            "1 234"
+          ],
+          [
+            "S5",
+            "0"
+          ],
+          [
+            "S6",
+            "40"
+          ]
+        ],
+        "row_count": 6,
+        "excel_error_cells": []
+      }
+    },
+    {
+      "name": "query_load",
+      "formula_or_m": "Table.TransformColumnTypes(Excel.CurrentWorkbook(){[Name=\"Input\"]}[Content],{{\"Amount\",type number}},\"en-US\")\r\n",
+      "observed": {
+        "refresh_return": true,
+        "refreshing": false,
+        "load_error": null,
+        "table": {
+          "columns": [
+            "ID",
+            "Amount"
+          ],
+          "rows": [
+            [
+              "S1",
+              10
+            ],
+            [
+              "S2",
+              20
+            ],
+            [
+              "S3",
+              30
+            ],
+            [
+              "S4",
+              null
+            ],
+            [
+              "S5",
+              0
+            ],
+            [
+              "S6",
+              40
+            ]
+          ],
+          "display": [
+            [
+              "S1",
+              "10"
+            ],
+            [
+              "S2",
+              "20"
+            ],
+            [
+              "S3",
+              "30"
+            ],
+            [
+              "S4",
+              ""
+            ],
+            [
+              "S5",
+              "0"
+            ],
+            [
+              "S6",
+              "40"
+            ]
+          ],
+          "row_count": 6,
+          "excel_error_cells": []
+        }
+      }
+    },
+    {
+      "name": "fixed_load",
+      "formula_or_m": "let S=Table.TransformColumns(Excel.CurrentWorkbook(){[Name=\"Input\"]}[Content],{{\"Amount\",each Text.Replace(Text.Trim(Text.Clean(_)),Character.FromNumber(160),\"\"),type text}}) in Table.TransformColumnTypes(S,{{\"Amount\",type number}},\"en-US\")\r\n",
+      "observed": {
+        "refresh_return": true,
+        "refreshing": false,
+        "load_error": null,
+        "table": {
+          "columns": [
+            "ID",
+            "Amount"
+          ],
+          "rows": [
+            [
+              "S1",
+              10
+            ],
+            [
+              "S2",
+              20
+            ],
+            [
+              "S3",
+              30
+            ],
+            [
+              "S4",
+              1234
+            ],
+            [
+              "S5",
+              0
+            ],
+            [
+              "S6",
+              40
+            ]
+          ],
+          "display": [
+            [
+              "S1",
+              "10"
+            ],
+            [
+              "S2",
+              "20"
+            ],
+            [
+              "S3",
+              "30"
+            ],
+            [
+              "S4",
+              "1234"
+            ],
+            [
+              "S5",
+              "0"
+            ],
+            [
+              "S6",
+              "40"
+            ]
+          ],
+          "row_count": 6,
+          "excel_error_cells": []
+        }
+      }
+    }
+  ],
+  "wrong_result": {
+    "formulas": {
+      "columns": [
+        "ID",
+        "Amount",
+        "VALUE",
+        "DoubleUnary",
+        "Normalized"
+      ],
+      "rows": [
+        [
+          "S1",
+          "10",
+          10,
+          10,
+          10
+        ],
+        [
+          "S2",
+          " 20 ",
+          20,
+          20,
+          20
+        ],
+        [
+          "S3",
+          " 30 ",
+          -2146826273,
+          -2146826273,
+          30
+        ],
+        [
+          "S4",
+          "1 234",
+          -2146826273,
+          -2146826273,
+          1234
+        ],
+        [
+          "S5",
+          "0",
+          0,
+          0,
+          0
+        ],
+        [
+          "S6",
+          "40",
+          40,
+          40,
+          40
+        ]
+      ],
+      "display": [
+        [
+          "S1",
+          "10",
+          "10.",
+          "10.",
+          "10."
+        ],
+        [
+          "S2",
+          " 20 ",
+          "20.",
+          "20.",
+          "20."
+        ],
+        [
+          "S3",
+          " 30 ",
+          "#VALUE!",
+          "#VALUE!",
+          "30."
+        ],
+        [
+          "S4",
+          "1 234",
+          "#VALUE!",
+          "#VALUE!",
+          "1234."
+        ],
+        [
+          "S5",
+          "0",
+          "0.",
+          "0.",
+          "0."
+        ],
+        [
+          "S6",
+          "40",
+          "40.",
+          "40.",
+          "40."
+        ]
+      ],
+      "row_count": 6,
+      "excel_error_cells": [
+        {
+          "row": 3,
+          "column": "VALUE",
+          "value": -2146826273,
+          "text": "#VALUE!"
+        },
+        {
+          "row": 3,
+          "column": "DoubleUnary",
+          "value": -2146826273,
+          "text": "#VALUE!"
+        },
+        {
+          "row": 4,
+          "column": "VALUE",
+          "value": -2146826273,
+          "text": "#VALUE!"
+        },
+        {
+          "row": 4,
+          "column": "DoubleUnary",
+          "value": -2146826273,
+          "text": "#VALUE!"
+        }
+      ],
+      "formulas": [
+        {
+          "row": 2,
+          "column": 3,
+          "text": "10.",
+          "value": 10,
+          "formula": "=VALUE(B2)"
+        },
+        {
+          "row": 2,
+          "column": 4,
+          "text": "10.",
+          "value": 10,
+          "formula": "=--B2"
+        },
+        {
+          "row": 2,
+          "column": 5,
+          "text": "10.",
+          "value": 10,
+          "formula": "=VALUE(SUBSTITUTE(TRIM(CLEAN(B2)),UNICHAR(160),\"\"))"
+        },
+        {
+          "row": 3,
+          "column": 3,
+          "text": "20.",
+          "value": 20,
+          "formula": "=VALUE(B3)"
+        },
+        {
+          "row": 3,
+          "column": 4,
+          "text": "20.",
+          "value": 20,
+          "formula": "=--B3"
+        },
+        {
+          "row": 3,
+          "column": 5,
+          "text": "20.",
+          "value": 20,
+          "formula": "=VALUE(SUBSTITUTE(TRIM(CLEAN(B3)),UNICHAR(160),\"\"))"
+        },
+        {
+          "row": 4,
+          "column": 3,
+          "text": "#VALUE!",
+          "value": -2146826273,
+          "formula": "=VALUE(B4)"
+        },
+        {
+          "row": 4,
+          "column": 4,
+          "text": "#VALUE!",
+          "value": -2146826273,
+          "formula": "=--B4"
+        },
+        {
+          "row": 4,
+          "column": 5,
+          "text": "30.",
+          "value": 30,
+          "formula": "=VALUE(SUBSTITUTE(TRIM(CLEAN(B4)),UNICHAR(160),\"\"))"
+        },
+        {
+          "row": 5,
+          "column": 3,
+          "text": "#VALUE!",
+          "value": -2146826273,
+          "formula": "=VALUE(B5)"
+        },
+        {
+          "row": 5,
+          "column": 4,
+          "text": "#VALUE!",
+          "value": -2146826273,
+          "formula": "=--B5"
+        },
+        {
+          "row": 5,
+          "column": 5,
+          "text": "1234.",
+          "value": 1234,
+          "formula": "=VALUE(SUBSTITUTE(TRIM(CLEAN(B5)),UNICHAR(160),\"\"))"
+        },
+        {
+          "row": 6,
+          "column": 3,
+          "text": "0.",
+          "value": 0,
+          "formula": "=VALUE(B6)"
+        },
+        {
+          "row": 6,
+          "column": 4,
+          "text": "0.",
+          "value": 0,
+          "formula": "=--B6"
+        },
+        {
+          "row": 6,
+          "column": 5,
+          "text": "0.",
+          "value": 0,
+          "formula": "=VALUE(SUBSTITUTE(TRIM(CLEAN(B6)),UNICHAR(160),\"\"))"
+        },
+        {
+          "row": 7,
+          "column": 3,
+          "text": "40.",
+          "value": 40,
+          "formula": "=VALUE(B7)"
+        },
+        {
+          "row": 7,
+          "column": 4,
+          "text": "40.",
+          "value": 40,
+          "formula": "=--B7"
+        },
+        {
+          "row": 7,
+          "column": 5,
+          "text": "40.",
+          "value": 40,
+          "formula": "=VALUE(SUBSTITUTE(TRIM(CLEAN(B7)),UNICHAR(160),\"\"))"
+        }
+      ]
+    },
+    "sum_of_text": 0,
+    "power_query": {
+      "refresh_return": true,
+      "refreshing": false,
+      "load_error": null,
+      "table": {
+        "columns": [
+          "ID",
+          "Amount"
+        ],
+        "rows": [
+          [
+            "S1",
+            10
+          ],
+          [
+            "S2",
+            20
+          ],
+          [
+            "S3",
+            30
+          ],
+          [
+            "S4",
+            null
+          ],
+          [
+            "S5",
+            0
+          ],
+          [
+            "S6",
+            40
+          ]
+        ],
+        "display": [
+          [
+            "S1",
+            "10"
+          ],
+          [
+            "S2",
+            "20"
+          ],
+          [
+            "S3",
+            "30"
+          ],
+          [
+            "S4",
+            ""
+          ],
+          [
+            "S5",
+            "0"
+          ],
+          [
+            "S6",
+            "40"
+          ]
+        ],
+        "row_count": 6,
+        "excel_error_cells": []
+      }
+    },
+    "text_to_columns": {
+      "columns": [
+        "ID",
+        "Amount"
+      ],
+      "rows": [
+        [
+          "S1",
+          10
+        ],
+        [
+          "S2",
+          20
+        ],
+        [
+          "S3",
+          " 30 "
+        ],
+        [
+          "S4",
+          "1 234"
+        ],
+        [
+          "S5",
+          0
+        ],
+        [
+          "S6",
+          40
+        ]
+      ],
+      "display": [
+        [
+          "S1",
+          "10"
+        ],
+        [
+          "S2",
+          "20"
+        ],
+        [
+          "S3",
+          " 30 "
+        ],
+        [
+          "S4",
+          "1 234"
+        ],
+        [
+          "S5",
+          "0"
+        ],
+        [
+          "S6",
+          "40"
+        ]
+      ],
+      "row_count": 6,
+      "excel_error_cells": []
+    }
+  },
+  "fixed_result": {
+    "columns": [
+      "ID",
+      "Amount"
+    ],
+    "rows": [
+      [
+        "S1",
+        10
+      ],
+      [
+        "S2",
+        20
+      ],
+      [
+        "S3",
+        30
+      ],
+      [
+        "S4",
+        1234
+      ],
+      [
+        "S5",
+        0
+      ],
+      [
+        "S6",
+        40
+      ]
+    ],
+    "display": [
+      [
+        "S1",
+        "10"
+      ],
+      [
+        "S2",
+        "20"
+      ],
+      [
+        "S3",
+        "30"
+      ],
+      [
+        "S4",
+        "1234"
+      ],
+      [
+        "S5",
+        "0"
+      ],
+      [
+        "S6",
+        "40"
+      ]
+    ],
+    "row_count": 6,
+    "excel_error_cells": []
+  },
+  "reconciliation": {
+    "normalized_excel_sum": 1334,
+    "text_to_columns_sum": 70,
+    "worksheet_error_cells": [
+      {
+        "row": 3,
+        "column": "VALUE",
+        "value": -2146826273,
+        "text": "#VALUE!"
+      },
+      {
+        "row": 3,
+        "column": "DoubleUnary",
+        "value": -2146826273,
+        "text": "#VALUE!"
+      },
+      {
+        "row": 4,
+        "column": "VALUE",
+        "value": -2146826273,
+        "text": "#VALUE!"
+      },
+      {
+        "row": 4,
+        "column": "DoubleUnary",
+        "value": -2146826273,
+        "text": "#VALUE!"
+      }
+    ],
+    "power_query_normalized_sum": 1334,
+    "raw_excel_sum": 0
+  },
+  "observations_ko": [
+    "텍스트 원본 SUM은 0, NBSP 정규화 후 Excel 합계와 Power Query 합계는 모두 1334이었다. Text to Columns 합계는 70였다."
+  ],
+  "not_verified": [
+    "COM/API execution does not verify the exact Korean ribbon click path, other Excel builds, other OS locales, or human review of the post."
+  ],
+  "differences_from_brief": [],
+  "assertions": [
+    {
+      "name": "Worksheet NBSP normalization agrees with Power Query and intended numeric total",
+      "passed": true
+    },
+    {
+      "name": "Two nonblank private-data-free native Excel PNGs recorded",
+      "passed": true
+    }
+  ],
+  "expectations": [
+    {
+      "name": "SUM ignores text and direct VALUE/unary conversion fails on at least one NBSP value",
+      "matched": true
+    }
+  ],
+  "screenshots": [
+    {
+      "file": "before.png",
+      "valid": true,
+      "method": "ExportAsFixedFormat + PyMuPDF",
+      "sheet": "Conversions",
+      "range": "$A$1:$D$9",
+      "width": 574,
+      "height": 352,
+      "distinct_colors": 254,
+      "pdf_text_checked": true,
+      "pdf_pages": 1,
+      "bytes": 28850,
+      "sha256": "89b2db105ed52121aecb340dd6a5f97b2fe76119a0281666a59f079d0ffeb992",
+      "clipboard": "Untouched: GetDataObject failed in this session; both CopyPicture modes require clipboard access"
+    },
+    {
+      "file": "after.png",
+      "valid": true,
+      "method": "ExportAsFixedFormat + PyMuPDF",
+      "sheet": "Q_fixed",
+      "range": "$A$1:$B$7",
+      "width": 234,
+      "height": 278,
+      "distinct_colors": 687,
+      "pdf_text_checked": true,
+      "pdf_pages": 1,
+      "bytes": 13118,
+      "sha256": "9f22d2f26a88716fff90bbbaa2592d08c8c2cd3fb759a5110340fb471670b23c",
+      "clipboard": "Untouched: GetDataObject failed in this session; both CopyPicture modes require clipboard access"
+    }
+  ],
+  "status": "pass",
+  "failure": null,
+  "environment": {
+    "os_culture": "ko-KR",
+    "excel_decimal_separator": ".",
+    "excel_thousands_separator": ",",
+    "excel_date_order": 2,
+    "excel_list_separator": ",",
+    "synthetic": true
+  },
+  "query_refresh_attempts": 2,
+  "cleanup_verified": true
+}

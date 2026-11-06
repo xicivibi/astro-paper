@@ -1,0 +1,40 @@
+{
+  "synthetic": true,
+  "columns": [
+    "ID",
+    "Note",
+    "Amount"
+  ],
+  "rows": [
+    [
+      "S1",
+      "first\r\nsecond",
+      10
+    ],
+    [
+      "S2",
+      "plain",
+      20
+    ],
+    [
+      "S3",
+      "has \"quotes\", comma",
+      30
+    ],
+    [
+      "S4",
+      "third\r\nfourth",
+      40
+    ],
+    [
+      "S5",
+      "end",
+      50
+    ]
+  ],
+  "csv": true,
+  "query_files": {
+    "query": "query.m",
+    "none": "none.m"
+  }
+}

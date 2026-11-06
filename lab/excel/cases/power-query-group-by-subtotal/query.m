@@ -1,0 +1,1 @@
+let S=Excel.CurrentWorkbook(){[Name="Input"]}[Content] in Table.Group(S,{"Group"},{{"Sum", each List.Sum([Amount])},{"Rows",each Table.RowCount(_),Int64.Type},{"NonNulls",each List.NonNullCount([Amount]),Int64.Type}})

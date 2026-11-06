@@ -3,6 +3,8 @@ import { z } from "astro/zod";
 import { glob } from "astro/loaders";
 import config from "@/config";
 import { trendBundleSchema } from "@/utils/trendBundle";
+import { topicSlugs } from "@/config/topics";
+import { topicIssue } from "@/utils/postRules";
 
 export const BLOG_PATH = "src/content/posts";
 const httpUrl = z.string().refine(
@@ -39,6 +41,7 @@ const posts = defineCollection({
           .enum(["published", "legacy_hold"])
           .default("published"),
         tags: z.array(z.string()).default(["others"]),
+        topic: z.enum(topicSlugs).optional(),
         ogImage: image().or(z.string()).optional(),
         description: z.string(),
         canonicalURL: z.string().optional(),
@@ -46,6 +49,9 @@ const posts = defineCollection({
         timezone: z.string().optional(),
         aiAssisted: z.boolean().optional(),
         lastReviewed: z.date().optional().nullable(),
+        // Signed by the owner only. Tools never write a default here.
+        humanReviewedBy: z.string().max(120).optional(),
+        humanReviewedAt: z.coerce.date().optional().nullable(),
         sources: z.array(httpUrl).max(8).optional(),
         testingStatus: z
           .enum([
@@ -90,6 +96,10 @@ const posts = defineCollection({
           .optional(),
       })
       .superRefine((data, context) => {
+        const missingTopic = topicIssue(data);
+        if (missingTopic) {
+          context.addIssue({ code: "custom", message: missingTopic });
+        }
         if (
           data.marketplaceQuery &&
           (!data.tags.includes("trend") ||
@@ -143,6 +153,8 @@ const pages = defineCollection({
   schema: z.object({
     title: z.string(),
     description: z.string().optional(),
+    // Owner-written pages stay hidden until the owner marks them written.
+    ownerStatus: z.enum(["placeholder", "written"]).optional(),
     ogImage: z.string().optional(),
     canonicalURL: z.string().optional(),
   }),

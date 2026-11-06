@@ -24,7 +24,7 @@ export default defineAstroPaperConfig({
     url: siteUrl,
     title: "Xici",
     description:
-      "검색 트렌드에서 출발해 구매 전 비교와 원문을 짧게 묶는 한국어 콘텐츠 사이트.",
+      "엑셀·CSV·Power Query·구글 시트 업무 데이터 정리 문제를 재현 가능한 절차와 무료 브라우저 도구로 해결하는 한국어 실무 사이트.",
     author: "Xici",
     profile: siteUrl,
     ogImage: "default-og.jpg",

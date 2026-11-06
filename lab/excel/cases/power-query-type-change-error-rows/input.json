@@ -1,0 +1,41 @@
+{
+  "synthetic": true,
+  "columns": [
+    "Code",
+    "Amount"
+  ],
+  "rows": [
+    [
+      "00101",
+      "10"
+    ],
+    [
+      "00102",
+      "bad"
+    ],
+    [
+      "00103",
+      "0"
+    ],
+    [
+      "00104",
+      null
+    ],
+    [
+      "00105",
+      "12x"
+    ],
+    [
+      "00106",
+      "25"
+    ]
+  ],
+  "all_text": true,
+  "query_files": {
+    "query": "query.m",
+    "keep_errors": "keep_errors.m",
+    "replace_errors": "replace_errors.m",
+    "diagnostics": "diagnostics.m",
+    "fixed": "fixed.m"
+  }
+}

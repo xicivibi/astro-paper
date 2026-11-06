@@ -1,0 +1,1 @@
+let S=Table.TransformColumns(Excel.CurrentWorkbook(){[Name="Input"]}[Content],{{"Key",Text.Trim,type text}}), R=Excel.CurrentWorkbook(){[Name="Lookup"]}[Content], J=Table.NestedJoin(S,{"Key"},R,{"Key"},"Match",JoinKind.LeftOuter) in Table.RemoveColumns(Table.AddColumn(J,"Matched",each Table.RowCount([Match])>0),{"Match"})

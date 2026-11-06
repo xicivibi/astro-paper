@@ -1,0 +1,69 @@
+{
+  "synthetic": true,
+  "columns": [
+    "ID",
+    "Key"
+  ],
+  "rows": [
+    [
+      "S1",
+      "ALPHA"
+    ],
+    [
+      "S2",
+      "ALPHA "
+    ],
+    [
+      "S3",
+      "BETA "
+    ],
+    [
+      "S4",
+      "ＧＡＭＭＡ"
+    ],
+    [
+      "S5",
+      "delta"
+    ],
+    [
+      "S6",
+      "OM\tEGA"
+    ],
+    [
+      "S7",
+      "BETA"
+    ]
+  ],
+  "lookup_columns": [
+    "Key",
+    "Value"
+  ],
+  "lookup_rows": [
+    [
+      "ALPHA",
+      1
+    ],
+    [
+      "BETA",
+      2
+    ],
+    [
+      "GAMMA",
+      3
+    ],
+    [
+      "DELTA",
+      4
+    ],
+    [
+      "OMEGA",
+      5
+    ]
+  ],
+  "query_files": {
+    "query": "query.m",
+    "trim": "trim.m",
+    "fixed": "fixed.m",
+    "diagnostics": "diagnostics.m"
+  }
+}

@@ -1,0 +1,888 @@
+{
+  "slug": "power-query-split-column-delimiter",
+  "excel_version": "16.0",
+  "excel_build": "20527",
+  "ui_language": {
+    "lcid": 1042,
+    "culture": "ko-KR"
+  },
+  "run_at": "2026-11-06T17:39:31.1424831Z",
+  "input_sha256": {
+    "input.json": "23b5c1494dcf53885611670bca75552739f96b455ee4562e22603c9e4d1e2347",
+    "input.xlsx": "30a7d3ed7b714cf09f21dd43fc87759ff884953cd94b202f1e9a17a3b103bf9b"
+  },
+  "steps": [
+    {
+      "name": "input_readback",
+      "formula_or_m": "Worksheet.UsedRange.Value2/Text (synthetic fixture)",
+      "observed": {
+        "columns": [
+          "ID",
+          "Parts"
+        ],
+        "rows": [
+          [
+            "S1",
+            "A|B|C"
+          ],
+          [
+            "S2",
+            "D|E"
+          ],
+          [
+            "S3",
+            "F"
+          ],
+          [
+            "S4",
+            "G|H, I|J"
+          ],
+          [
+            "S5",
+            "K||M"
+          ]
+        ],
+        "display": [
+          [
+            "S1",
+            "A|B|C"
+          ],
+          [
+            "S2",
+            "D|E"
+          ],
+          [
+            "S3",
+            "F"
+          ],
+          [
+            "S4",
+            "G|H, I|J"
+          ],
+          [
+            "S5",
+            "K||M"
+          ]
+        ],
+        "row_count": 5,
+        "excel_error_cells": []
+      }
+    },
+    {
+      "name": "query_load",
+      "formula_or_m": "let S=Excel.CurrentWorkbook(){[Name=\"Input\"]}[Content] in Table.SplitColumn(S,\"Parts\",Splitter.SplitTextByDelimiter(\"|\",QuoteStyle.Csv),{\"P1\",\"P2\",\"P3\"})\r\n",
+      "observed": {
+        "refresh_return": true,
+        "refreshing": false,
+        "load_error": null,
+        "table": {
+          "columns": [
+            "ID",
+            "P1",
+            "P2",
+            "P3"
+          ],
+          "rows": [
+            [
+              "S1",
+              "A",
+              "B",
+              "C"
+            ],
+            [
+              "S2",
+              "D",
+              "E",
+              null
+            ],
+            [
+              "S3",
+              "F",
+              null,
+              null
+            ],
+            [
+              "S4",
+              "G",
+              "H, I",
+              "J"
+            ],
+            [
+              "S5",
+              "K",
+              "",
+              "M"
+            ]
+          ],
+          "display": [
+            [
+              "S1",
+              "A",
+              "B",
+              "C"
+            ],
+            [
+              "S2",
+              "D",
+              "E",
+              ""
+            ],
+            [
+              "S3",
+              "F",
+              "",
+              ""
+            ],
+            [
+              "S4",
+              "G",
+              "H, I",
+              "J"
+            ],
+            [
+              "S5",
+              "K",
+              "",
+              "M"
+            ]
+          ],
+          "row_count": 5,
+          "excel_error_cells": []
+        }
+      }
+    },
+    {
+      "name": "refresh_after_more_parts",
+      "formula_or_m": "let S=Excel.CurrentWorkbook(){[Name=\"Input\"]}[Content] in Table.SplitColumn(S,\"Parts\",Splitter.SplitTextByDelimiter(\"|\",QuoteStyle.Csv),{\"P1\",\"P2\",\"P3\"})\r\n",
+      "observed": {
+        "refresh_return": true,
+        "refreshing": false,
+        "load_error": null,
+        "table": {
+          "columns": [
+            "ID",
+            "P1",
+            "P2",
+            "P3"
+          ],
+          "rows": [
+            [
+              "S1",
+              "A",
+              "B",
+              "C"
+            ],
+            [
+              "S2",
+              "D",
+              "E",
+              null
+            ],
+            [
+              "S3",
+              "F",
+              null,
+              null
+            ],
+            [
+              "S4",
+              "G",
+              "H, I",
+              "J"
+            ],
+            [
+              "S5",
+              "K",
+              "",
+              "M"
+            ],
+            [
+              "S6",
+              "N",
+              "O",
+              "P"
+            ]
+          ],
+          "display": [
+            [
+              "S1",
+              "A",
+              "B",
+              "C"
+            ],
+            [
+              "S2",
+              "D",
+              "E",
+              ""
+            ],
+            [
+              "S3",
+              "F",
+              "",
+              ""
+            ],
+            [
+              "S4",
+              "G",
+              "H, I",
+              "J"
+            ],
+            [
+              "S5",
+              "K",
+              "",
+              "M"
+            ],
+            [
+              "S6",
+              "N",
+              "O",
+              "P"
+            ]
+          ],
+          "row_count": 6,
+          "excel_error_cells": []
+        }
+      }
+    },
+    {
+      "name": "strict_load",
+      "formula_or_m": "let S=Excel.CurrentWorkbook(){[Name=\"Input\"]}[Content], T=Table.SplitColumn(S,\"Parts\",Splitter.SplitTextByDelimiter(\"|\",QuoteStyle.Csv),{\"P1\",\"P2\",\"P3\"},null,ExtraValues.Error) in T\r\n",
+      "observed": {
+        "refresh_return": true,
+        "refreshing": false,
+        "load_error": null,
+        "table": {
+          "columns": [
+            "ID",
+            "P1",
+            "P2",
+            "P3"
+          ],
+          "rows": [
+            [
+              "S1",
+              "A",
+              "B",
+              "C"
+            ],
+            [
+              "S2",
+              "D",
+              "E",
+              null
+            ],
+            [
+              "S3",
+              "F",
+              null,
+              null
+            ],
+            [
+              "S4",
+              "G",
+              "H, I",
+              "J"
+            ],
+            [
+              "S5",
+              "K",
+              "",
+              "M"
+            ],
+            [
+              "S6",
+              null,
+              null,
+              null
+            ]
+          ],
+          "display": [
+            [
+              "S1",
+              "A",
+              "B",
+              "C"
+            ],
+            [
+              "S2",
+              "D",
+              "E",
+              ""
+            ],
+            [
+              "S3",
+              "F",
+              "",
+              ""
+            ],
+            [
+              "S4",
+              "G",
+              "H, I",
+              "J"
+            ],
+            [
+              "S5",
+              "K",
+              "",
+              "M"
+            ],
+            [
+              "S6",
+              "",
+              "",
+              ""
+            ]
+          ],
+          "row_count": 6,
+          "excel_error_cells": []
+        }
+      }
+    },
+    {
+      "name": "dynamic_load",
+      "formula_or_m": "let S=Excel.CurrentWorkbook(){[Name=\"Input\"]}[Content], N=List.Max(List.Transform(S[Parts], each List.Count(Splitter.SplitTextByDelimiter(\"|\",QuoteStyle.Csv)(_)))) in Table.SplitColumn(S,\"Parts\",Splitter.SplitTextByDelimiter(\"|\",QuoteStyle.Csv),List.Transform({1..N},each \"P\" & Text.From(_)),null,ExtraValues.Error)\r\n",
+      "observed": {
+        "refresh_return": true,
+        "refreshing": false,
+        "load_error": null,
+        "table": {
+          "columns": [
+            "ID",
+            "P1",
+            "P2",
+            "P3",
+            "P4"
+          ],
+          "rows": [
+            [
+              "S1",
+              "A",
+              "B",
+              "C",
+              null
+            ],
+            [
+              "S2",
+              "D",
+              "E",
+              null,
+              null
+            ],
+            [
+              "S3",
+              "F",
+              null,
+              null,
+              null
+            ],
+            [
+              "S4",
+              "G",
+              "H, I",
+              "J",
+              null
+            ],
+            [
+              "S5",
+              "K",
+              "",
+              "M",
+              null
+            ],
+            [
+              "S6",
+              "N",
+              "O",
+              "P",
+              "Q"
+            ]
+          ],
+          "display": [
+            [
+              "S1",
+              "A",
+              "B",
+              "C",
+              ""
+            ],
+            [
+              "S2",
+              "D",
+              "E",
+              "",
+              ""
+            ],
+            [
+              "S3",
+              "F",
+              "",
+              "",
+              ""
+            ],
+            [
+              "S4",
+              "G",
+              "H, I",
+              "J",
+              ""
+            ],
+            [
+              "S5",
+              "K",
+              "",
+              "M",
+              ""
+            ],
+            [
+              "S6",
+              "N",
+              "O",
+              "P",
+              "Q"
+            ]
+          ],
+          "row_count": 6,
+          "excel_error_cells": []
+        }
+      }
+    }
+  ],
+  "wrong_result": {
+    "refresh_return": true,
+    "refreshing": false,
+    "load_error": null,
+    "table": {
+      "columns": [
+        "ID",
+        "P1",
+        "P2",
+        "P3"
+      ],
+      "rows": [
+        [
+          "S1",
+          "A",
+          "B",
+          "C"
+        ],
+        [
+          "S2",
+          "D",
+          "E",
+          null
+        ],
+        [
+          "S3",
+          "F",
+          null,
+          null
+        ],
+        [
+          "S4",
+          "G",
+          "H, I",
+          "J"
+        ],
+        [
+          "S5",
+          "K",
+          "",
+          "M"
+        ],
+        [
+          "S6",
+          "N",
+          "O",
+          "P"
+        ]
+      ],
+      "display": [
+        [
+          "S1",
+          "A",
+          "B",
+          "C"
+        ],
+        [
+          "S2",
+          "D",
+          "E",
+          ""
+        ],
+        [
+          "S3",
+          "F",
+          "",
+          ""
+        ],
+        [
+          "S4",
+          "G",
+          "H, I",
+          "J"
+        ],
+        [
+          "S5",
+          "K",
+          "",
+          "M"
+        ],
+        [
+          "S6",
+          "N",
+          "O",
+          "P"
+        ]
+      ],
+      "row_count": 6,
+      "excel_error_cells": []
+    }
+  },
+  "fixed_result": {
+    "columns": [
+      "ID",
+      "P1",
+      "P2",
+      "P3",
+      "P4"
+    ],
+    "rows": [
+      [
+        "S1",
+        "A",
+        "B",
+        "C",
+        null
+      ],
+      [
+        "S2",
+        "D",
+        "E",
+        null,
+        null
+      ],
+      [
+        "S3",
+        "F",
+        null,
+        null,
+        null
+      ],
+      [
+        "S4",
+        "G",
+        "H, I",
+        "J",
+        null
+      ],
+      [
+        "S5",
+        "K",
+        "",
+        "M",
+        null
+      ],
+      [
+        "S6",
+        "N",
+        "O",
+        "P",
+        "Q"
+      ]
+    ],
+    "display": [
+      [
+        "S1",
+        "A",
+        "B",
+        "C",
+        ""
+      ],
+      [
+        "S2",
+        "D",
+        "E",
+        "",
+        ""
+      ],
+      [
+        "S3",
+        "F",
+        "",
+        "",
+        ""
+      ],
+      [
+        "S4",
+        "G",
+        "H, I",
+        "J",
+        ""
+      ],
+      [
+        "S5",
+        "K",
+        "",
+        "M",
+        ""
+      ],
+      [
+        "S6",
+        "N",
+        "O",
+        "P",
+        "Q"
+      ]
+    ],
+    "row_count": 6,
+    "excel_error_cells": []
+  },
+  "reconciliation": {
+    "dynamic_column_count": 5,
+    "initial": {
+      "columns": [
+        "ID",
+        "P1",
+        "P2",
+        "P3"
+      ],
+      "rows": [
+        [
+          "S1",
+          "A",
+          "B",
+          "C"
+        ],
+        [
+          "S2",
+          "D",
+          "E",
+          null
+        ],
+        [
+          "S3",
+          "F",
+          null,
+          null
+        ],
+        [
+          "S4",
+          "G",
+          "H, I",
+          "J"
+        ],
+        [
+          "S5",
+          "K",
+          "",
+          "M"
+        ]
+      ],
+      "display": [
+        [
+          "S1",
+          "A",
+          "B",
+          "C"
+        ],
+        [
+          "S2",
+          "D",
+          "E",
+          ""
+        ],
+        [
+          "S3",
+          "F",
+          "",
+          ""
+        ],
+        [
+          "S4",
+          "G",
+          "H, I",
+          "J"
+        ],
+        [
+          "S5",
+          "K",
+          "",
+          "M"
+        ]
+      ],
+      "row_count": 5,
+      "excel_error_cells": []
+    },
+    "comma_preserved": "H, I",
+    "strict_extra_values_error": {
+      "refresh_return": true,
+      "refreshing": false,
+      "load_error": null,
+      "table": {
+        "columns": [
+          "ID",
+          "P1",
+          "P2",
+          "P3"
+        ],
+        "rows": [
+          [
+            "S1",
+            "A",
+            "B",
+            "C"
+          ],
+          [
+            "S2",
+            "D",
+            "E",
+            null
+          ],
+          [
+            "S3",
+            "F",
+            null,
+            null
+          ],
+          [
+            "S4",
+            "G",
+            "H, I",
+            "J"
+          ],
+          [
+            "S5",
+            "K",
+            "",
+            "M"
+          ],
+          [
+            "S6",
+            null,
+            null,
+            null
+          ]
+        ],
+        "display": [
+          [
+            "S1",
+            "A",
+            "B",
+            "C"
+          ],
+          [
+            "S2",
+            "D",
+            "E",
+            ""
+          ],
+          [
+            "S3",
+            "F",
+            "",
+            ""
+          ],
+          [
+            "S4",
+            "G",
+            "H, I",
+            "J"
+          ],
+          [
+            "S5",
+            "K",
+            "",
+            "M"
+          ],
+          [
+            "S6",
+            "",
+            "",
+            ""
+          ]
+        ],
+        "row_count": 6,
+        "excel_error_cells": []
+      }
+    },
+    "fixed_column_count": 4
+  },
+  "observations_ko": [
+    "고정 분할은 ID 포함 4열, 새 행을 반영한 동적 분할은 5열이었다. 쉼표가 있는 조각은 'H, I'로 남았다."
+  ],
+  "not_verified": [
+    "COM/API execution does not verify the exact Korean ribbon click path, other Excel builds, other OS locales, or human review of the post."
+  ],
+  "differences_from_brief": [],
+  "assertions": [
+    {
+      "name": "Dynamic split preserves every input row",
+      "passed": true
+    },
+    {
+      "name": "Dynamic split preserves the late extra part",
+      "passed": true
+    },
+    {
+      "name": "A comma inside a pipe-delimited value remains in its part",
+      "passed": true
+    },
+    {
+      "name": "Two nonblank private-data-free native Excel PNGs recorded",
+      "passed": true
+    }
+  ],
+  "expectations": [
+    {
+      "name": "Fixed split silently omits the extra part by default",
+      "matched": true
+    }
+  ],
+  "screenshots": [
+    {
+      "file": "before.png",
+      "valid": true,
+      "method": "ExportAsFixedFormat + PyMuPDF",
+      "sheet": "Q_query",
+      "range": "$A$1:$D$7",
+      "width": 326,
+      "height": 278,
+      "distinct_colors": 699,
+      "pdf_text_checked": true,
+      "pdf_pages": 1,
+      "bytes": 13865,
+      "sha256": "af2a36d8f4f8466370dd610e590d575f135e518686dd53a24efd2b4cdd00b324",
+      "clipboard": "Untouched: GetDataObject failed in this session; both CopyPicture modes require clipboard access"
+    },
+    {
+      "file": "after.png",
+      "valid": true,
+      "method": "ExportAsFixedFormat + PyMuPDF",
+      "sheet": "Q_dynamic",
+      "range": "$A$1:$E$7",
+      "width": 404,
+      "height": 278,
+      "distinct_colors": 731,
+      "pdf_text_checked": true,
+      "pdf_pages": 1,
+      "bytes": 15111,
+      "sha256": "08eba469982195dd3fb68a3b3310a9fbc5eff8d46124d774da7a9f7ea96a9cb8",
+      "clipboard": "Untouched: GetDataObject failed in this session; both CopyPicture modes require clipboard access"
+    }
+  ],
+  "status": "pass",
+  "failure": null,
+  "environment": {
+    "os_culture": "ko-KR",
+    "excel_decimal_separator": ".",
+    "excel_thousands_separator": ",",
+    "excel_date_order": 2,
+    "excel_list_separator": ",",
+    "synthetic": true
+  },
+  "query_refresh_attempts": 4,
+  "cleanup_verified": true
+}

@@ -1,0 +1,1342 @@
+{
+  "slug": "csv-decimal-thousands-separator",
+  "excel_version": "16.0",
+  "excel_build": "20527",
+  "ui_language": {
+    "lcid": 1042,
+    "culture": "ko-KR"
+  },
+  "run_at": "2026-11-06T17:41:55.5602070Z",
+  "input_sha256": {
+    "input.json": "dc10ff644d461e4800be29ae1db69f4e382dcf249bf73ab86f91393d5be5c831",
+    "input.xlsx": "98c293b4a163f8b1219b4063abe58ba1dff7b4a3c51e63cff6e1e893cdd5fb64",
+    "source.csv": "6e1010d74f7bb267f9bc1175a5e43cb5a51c89cea4f9488c1988a414405e7594"
+  },
+  "steps": [
+    {
+      "name": "input_readback",
+      "formula_or_m": "Worksheet.UsedRange.Value2/Text (synthetic fixture)",
+      "observed": {
+        "columns": [
+          "ID",
+          "Number",
+          "SourceLocale"
+        ],
+        "rows": [
+          [
+            "S1",
+            "1.234,56",
+            "de-DE"
+          ],
+          [
+            "S2",
+            "1,234.56",
+            "en-US"
+          ],
+          [
+            "S3",
+            "1.234",
+            "de-DE"
+          ],
+          [
+            "S4",
+            "1,234",
+            "en-US"
+          ],
+          [
+            "S5",
+            "1234,56",
+            "de-DE"
+          ],
+          [
+            "S6",
+            "1234.56",
+            "en-US"
+          ]
+        ],
+        "display": [
+          [
+            "S1",
+            "1.234,56",
+            "de-DE"
+          ],
+          [
+            "S2",
+            "1,234.56",
+            "en-US"
+          ],
+          [
+            "S3",
+            "1.234",
+            "de-DE"
+          ],
+          [
+            "S4",
+            "1,234",
+            "en-US"
+          ],
+          [
+            "S5",
+            "1234,56",
+            "de-DE"
+          ],
+          [
+            "S6",
+            "1234.56",
+            "en-US"
+          ]
+        ],
+        "row_count": 6,
+        "excel_error_cells": []
+      }
+    },
+    {
+      "name": "query_load",
+      "formula_or_m": "Table.PromoteHeaders(Csv.Document(File.Contents(\"샘플폴더/source.csv\"),[Delimiter=\",\",Encoding=65001,QuoteStyle=QuoteStyle.Csv]),[PromoteAllScalars=true])\r\n",
+      "observed": {
+        "refresh_return": true,
+        "refreshing": false,
+        "load_error": null,
+        "table": {
+          "columns": [
+            "ID",
+            "Number",
+            "SourceLocale"
+          ],
+          "rows": [
+            [
+              "S1",
+              "1.234,56",
+              "de-DE"
+            ],
+            [
+              "S2",
+              "1,234.56",
+              "en-US"
+            ],
+            [
+              "S3",
+              "1.234",
+              "de-DE"
+            ],
+            [
+              "S4",
+              "1,234",
+              "en-US"
+            ],
+            [
+              "S5",
+              "1234,56",
+              "de-DE"
+            ],
+            [
+              "S6",
+              "1234.56",
+              "en-US"
+            ]
+          ],
+          "display": [
+            [
+              "S1",
+              "1.234,56",
+              "de-DE"
+            ],
+            [
+              "S2",
+              "1,234.56",
+              "en-US"
+            ],
+            [
+              "S3",
+              "1.234",
+              "de-DE"
+            ],
+            [
+              "S4",
+              "1,234",
+              "en-US"
+            ],
+            [
+              "S5",
+              "1234,56",
+              "de-DE"
+            ],
+            [
+              "S6",
+              "1234.56",
+              "en-US"
+            ]
+          ],
+          "row_count": 6,
+          "excel_error_cells": []
+        }
+      }
+    },
+    {
+      "name": "de_load",
+      "formula_or_m": "Table.TransformColumnTypes(query,{{\"Number\",type number}},\"de-DE\")\r\n",
+      "observed": {
+        "refresh_return": true,
+        "refreshing": false,
+        "load_error": null,
+        "table": {
+          "columns": [
+            "ID",
+            "Number",
+            "SourceLocale"
+          ],
+          "rows": [
+            [
+              "S1",
+              1234.56,
+              "de-DE"
+            ],
+            [
+              "S2",
+              null,
+              "en-US"
+            ],
+            [
+              "S3",
+              1234,
+              "de-DE"
+            ],
+            [
+              "S4",
+              1.234,
+              "en-US"
+            ],
+            [
+              "S5",
+              1234.56,
+              "de-DE"
+            ],
+            [
+              "S6",
+              123456,
+              "en-US"
+            ]
+          ],
+          "display": [
+            [
+              "S1",
+              "1234.56",
+              "de-DE"
+            ],
+            [
+              "S2",
+              "",
+              "en-US"
+            ],
+            [
+              "S3",
+              "1234",
+              "de-DE"
+            ],
+            [
+              "S4",
+              "1.234",
+              "en-US"
+            ],
+            [
+              "S5",
+              "1234.56",
+              "de-DE"
+            ],
+            [
+              "S6",
+              "123456",
+              "en-US"
+            ]
+          ],
+          "row_count": 6,
+          "excel_error_cells": []
+        }
+      }
+    },
+    {
+      "name": "us_load",
+      "formula_or_m": "Table.TransformColumnTypes(query,{{\"Number\",type number}},\"en-US\")\r\n",
+      "observed": {
+        "refresh_return": true,
+        "refreshing": false,
+        "load_error": null,
+        "table": {
+          "columns": [
+            "ID",
+            "Number",
+            "SourceLocale"
+          ],
+          "rows": [
+            [
+              "S1",
+              null,
+              "de-DE"
+            ],
+            [
+              "S2",
+              1234.56,
+              "en-US"
+            ],
+            [
+              "S3",
+              1.234,
+              "de-DE"
+            ],
+            [
+              "S4",
+              1234,
+              "en-US"
+            ],
+            [
+              "S5",
+              123456,
+              "de-DE"
+            ],
+            [
+              "S6",
+              1234.56,
+              "en-US"
+            ]
+          ],
+          "display": [
+            [
+              "S1",
+              "",
+              "de-DE"
+            ],
+            [
+              "S2",
+              "1234.56",
+              "en-US"
+            ],
+            [
+              "S3",
+              "1.234",
+              "de-DE"
+            ],
+            [
+              "S4",
+              "1234",
+              "en-US"
+            ],
+            [
+              "S5",
+              "123456",
+              "de-DE"
+            ],
+            [
+              "S6",
+              "1234.56",
+              "en-US"
+            ]
+          ],
+          "row_count": 6,
+          "excel_error_cells": []
+        }
+      }
+    },
+    {
+      "name": "de_audit_load",
+      "formula_or_m": "let S=query, A=Table.AddColumn(S,\"Try\",each let T=try Number.FromText([Number],\"de-DE\") in [HasError=T[HasError],Value=if T[HasError] then null else T[Value],Message=if T[HasError] then T[Error][Message] else null]) in Table.ExpandRecordColumn(A,\"Try\",{\"HasError\",\"Value\",\"Message\"})\r\n",
+      "observed": {
+        "refresh_return": true,
+        "refreshing": false,
+        "load_error": null,
+        "table": {
+          "columns": [
+            "ID",
+            "Number",
+            "SourceLocale",
+            "HasError",
+            "Value",
+            "Message"
+          ],
+          "rows": [
+            [
+              "S1",
+              "1.234,56",
+              "de-DE",
+              false,
+              1234.56,
+              null
+            ],
+            [
+              "S2",
+              "1,234.56",
+              "en-US",
+              true,
+              null,
+              "Number로 변환할 수 없습니다."
+            ],
+            [
+              "S3",
+              "1.234",
+              "de-DE",
+              false,
+              1234,
+              null
+            ],
+            [
+              "S4",
+              "1,234",
+              "en-US",
+              false,
+              1.234,
+              null
+            ],
+            [
+              "S5",
+              "1234,56",
+              "de-DE",
+              false,
+              1234.56,
+              null
+            ],
+            [
+              "S6",
+              "1234.56",
+              "en-US",
+              false,
+              123456,
+              null
+            ]
+          ],
+          "display": [
+            [
+              "S1",
+              "1.234,56",
+              "de-DE",
+              "FALSE",
+              "1234.56",
+              ""
+            ],
+            [
+              "S2",
+              "1,234.56",
+              "en-US",
+              "TRUE",
+              "",
+              "Number로 변환할 수 없습니다."
+            ],
+            [
+              "S3",
+              "1.234",
+              "de-DE",
+              "FALSE",
+              "1234",
+              ""
+            ],
+            [
+              "S4",
+              "1,234",
+              "en-US",
+              "FALSE",
+              "1.234",
+              ""
+            ],
+            [
+              "S5",
+              "1234,56",
+              "de-DE",
+              "FALSE",
+              "1234.56",
+              ""
+            ],
+            [
+              "S6",
+              "1234.56",
+              "en-US",
+              "FALSE",
+              "123456",
+              ""
+            ]
+          ],
+          "row_count": 6,
+          "excel_error_cells": []
+        }
+      }
+    },
+    {
+      "name": "us_audit_load",
+      "formula_or_m": "let S=query, A=Table.AddColumn(S,\"Try\",each let T=try Number.FromText([Number],\"en-US\") in [HasError=T[HasError],Value=if T[HasError] then null else T[Value],Message=if T[HasError] then T[Error][Message] else null]) in Table.ExpandRecordColumn(A,\"Try\",{\"HasError\",\"Value\",\"Message\"})\r\n",
+      "observed": {
+        "refresh_return": true,
+        "refreshing": false,
+        "load_error": null,
+        "table": {
+          "columns": [
+            "ID",
+            "Number",
+            "SourceLocale",
+            "HasError",
+            "Value",
+            "Message"
+          ],
+          "rows": [
+            [
+              "S1",
+              "1.234,56",
+              "de-DE",
+              true,
+              null,
+              "Number로 변환할 수 없습니다."
+            ],
+            [
+              "S2",
+              "1,234.56",
+              "en-US",
+              false,
+              1234.56,
+              null
+            ],
+            [
+              "S3",
+              "1.234",
+              "de-DE",
+              false,
+              1.234,
+              null
+            ],
+            [
+              "S4",
+              "1,234",
+              "en-US",
+              false,
+              1234,
+              null
+            ],
+            [
+              "S5",
+              "1234,56",
+              "de-DE",
+              false,
+              123456,
+              null
+            ],
+            [
+              "S6",
+              "1234.56",
+              "en-US",
+              false,
+              1234.56,
+              null
+            ]
+          ],
+          "display": [
+            [
+              "S1",
+              "1.234,56",
+              "de-DE",
+              "TRUE",
+              "",
+              "Number로 변환할 수 없습니다."
+            ],
+            [
+              "S2",
+              "1,234.56",
+              "en-US",
+              "FALSE",
+              "1234.56",
+              ""
+            ],
+            [
+              "S3",
+              "1.234",
+              "de-DE",
+              "FALSE",
+              "1.234",
+              ""
+            ],
+            [
+              "S4",
+              "1,234",
+              "en-US",
+              "FALSE",
+              "1234",
+              ""
+            ],
+            [
+              "S5",
+              "1234,56",
+              "de-DE",
+              "FALSE",
+              "123456",
+              ""
+            ],
+            [
+              "S6",
+              "1234.56",
+              "en-US",
+              "FALSE",
+              "1234.56",
+              ""
+            ]
+          ],
+          "row_count": 6,
+          "excel_error_cells": []
+        }
+      }
+    },
+    {
+      "name": "fixed_load",
+      "formula_or_m": "Table.AddColumn(query,\"Parsed\",each Number.FromText([Number],[SourceLocale]),type number)\r\n",
+      "observed": {
+        "refresh_return": true,
+        "refreshing": false,
+        "load_error": null,
+        "table": {
+          "columns": [
+            "ID",
+            "Number",
+            "SourceLocale",
+            "Parsed"
+          ],
+          "rows": [
+            [
+              "S1",
+              "1.234,56",
+              "de-DE",
+              1234.56
+            ],
+            [
+              "S2",
+              "1,234.56",
+              "en-US",
+              1234.56
+            ],
+            [
+              "S3",
+              "1.234",
+              "de-DE",
+              1234
+            ],
+            [
+              "S4",
+              "1,234",
+              "en-US",
+              1234
+            ],
+            [
+              "S5",
+              "1234,56",
+              "de-DE",
+              1234.56
+            ],
+            [
+              "S6",
+              "1234.56",
+              "en-US",
+              1234.56
+            ]
+          ],
+          "display": [
+            [
+              "S1",
+              "1.234,56",
+              "de-DE",
+              "1234.56"
+            ],
+            [
+              "S2",
+              "1,234.56",
+              "en-US",
+              "1234.56"
+            ],
+            [
+              "S3",
+              "1.234",
+              "de-DE",
+              "1234"
+            ],
+            [
+              "S4",
+              "1,234",
+              "en-US",
+              "1234"
+            ],
+            [
+              "S5",
+              "1234,56",
+              "de-DE",
+              "1234.56"
+            ],
+            [
+              "S6",
+              "1234.56",
+              "en-US",
+              "1234.56"
+            ]
+          ],
+          "row_count": 6,
+          "excel_error_cells": []
+        }
+      }
+    }
+  ],
+  "wrong_result": {
+    "load": {
+      "refresh_return": true,
+      "refreshing": false,
+      "load_error": null,
+      "table": {
+        "columns": [
+          "ID",
+          "Number",
+          "SourceLocale"
+        ],
+        "rows": [
+          [
+            "S1",
+            null,
+            "de-DE"
+          ],
+          [
+            "S2",
+            1234.56,
+            "en-US"
+          ],
+          [
+            "S3",
+            1.234,
+            "de-DE"
+          ],
+          [
+            "S4",
+            1234,
+            "en-US"
+          ],
+          [
+            "S5",
+            123456,
+            "de-DE"
+          ],
+          [
+            "S6",
+            1234.56,
+            "en-US"
+          ]
+        ],
+        "display": [
+          [
+            "S1",
+            "",
+            "de-DE"
+          ],
+          [
+            "S2",
+            "1234.56",
+            "en-US"
+          ],
+          [
+            "S3",
+            "1.234",
+            "de-DE"
+          ],
+          [
+            "S4",
+            "1234",
+            "en-US"
+          ],
+          [
+            "S5",
+            "123456",
+            "de-DE"
+          ],
+          [
+            "S6",
+            "1234.56",
+            "en-US"
+          ]
+        ],
+        "row_count": 6,
+        "excel_error_cells": []
+      }
+    },
+    "en_us": {
+      "columns": [
+        "ID",
+        "Number",
+        "SourceLocale",
+        "HasError",
+        "Value",
+        "Message"
+      ],
+      "rows": [
+        [
+          "S1",
+          "1.234,56",
+          "de-DE",
+          true,
+          null,
+          "Number로 변환할 수 없습니다."
+        ],
+        [
+          "S2",
+          "1,234.56",
+          "en-US",
+          false,
+          1234.56,
+          null
+        ],
+        [
+          "S3",
+          "1.234",
+          "de-DE",
+          false,
+          1.234,
+          null
+        ],
+        [
+          "S4",
+          "1,234",
+          "en-US",
+          false,
+          1234,
+          null
+        ],
+        [
+          "S5",
+          "1234,56",
+          "de-DE",
+          false,
+          123456,
+          null
+        ],
+        [
+          "S6",
+          "1234.56",
+          "en-US",
+          false,
+          1234.56,
+          null
+        ]
+      ],
+      "display": [
+        [
+          "S1",
+          "1.234,56",
+          "de-DE",
+          "TRUE",
+          "",
+          "Number로 변환할 수 없습니다."
+        ],
+        [
+          "S2",
+          "1,234.56",
+          "en-US",
+          "FALSE",
+          "1234.56",
+          ""
+        ],
+        [
+          "S3",
+          "1.234",
+          "de-DE",
+          "FALSE",
+          "1.234",
+          ""
+        ],
+        [
+          "S4",
+          "1,234",
+          "en-US",
+          "FALSE",
+          "1234",
+          ""
+        ],
+        [
+          "S5",
+          "1234,56",
+          "de-DE",
+          "FALSE",
+          "123456",
+          ""
+        ],
+        [
+          "S6",
+          "1234.56",
+          "en-US",
+          "FALSE",
+          "1234.56",
+          ""
+        ]
+      ],
+      "row_count": 6,
+      "excel_error_cells": []
+    }
+  },
+  "fixed_result": {
+    "columns": [
+      "ID",
+      "Number",
+      "SourceLocale",
+      "Parsed"
+    ],
+    "rows": [
+      [
+        "S1",
+        "1.234,56",
+        "de-DE",
+        1234.56
+      ],
+      [
+        "S2",
+        "1,234.56",
+        "en-US",
+        1234.56
+      ],
+      [
+        "S3",
+        "1.234",
+        "de-DE",
+        1234
+      ],
+      [
+        "S4",
+        "1,234",
+        "en-US",
+        1234
+      ],
+      [
+        "S5",
+        "1234,56",
+        "de-DE",
+        1234.56
+      ],
+      [
+        "S6",
+        "1234.56",
+        "en-US",
+        1234.56
+      ]
+    ],
+    "display": [
+      [
+        "S1",
+        "1.234,56",
+        "de-DE",
+        "1234.56"
+      ],
+      [
+        "S2",
+        "1,234.56",
+        "en-US",
+        "1234.56"
+      ],
+      [
+        "S3",
+        "1.234",
+        "de-DE",
+        "1234"
+      ],
+      [
+        "S4",
+        "1,234",
+        "en-US",
+        "1234"
+      ],
+      [
+        "S5",
+        "1234,56",
+        "de-DE",
+        "1234.56"
+      ],
+      [
+        "S6",
+        "1234.56",
+        "en-US",
+        "1234.56"
+      ]
+    ],
+    "row_count": 6,
+    "excel_error_cells": []
+  },
+  "reconciliation": {
+    "mixed_formats_require_per_source_locale": true,
+    "per_source_locale_total": 7406.24,
+    "input": {
+      "columns": [
+        "ID",
+        "Number",
+        "SourceLocale"
+      ],
+      "rows": [
+        [
+          "S1",
+          "1.234,56",
+          "de-DE"
+        ],
+        [
+          "S2",
+          "1,234.56",
+          "en-US"
+        ],
+        [
+          "S3",
+          "1.234",
+          "de-DE"
+        ],
+        [
+          "S4",
+          "1,234",
+          "en-US"
+        ],
+        [
+          "S5",
+          "1234,56",
+          "de-DE"
+        ],
+        [
+          "S6",
+          "1234.56",
+          "en-US"
+        ]
+      ],
+      "display": [
+        [
+          "S1",
+          "1.234,56",
+          "de-DE"
+        ],
+        [
+          "S2",
+          "1,234.56",
+          "en-US"
+        ],
+        [
+          "S3",
+          "1.234",
+          "de-DE"
+        ],
+        [
+          "S4",
+          "1,234",
+          "en-US"
+        ],
+        [
+          "S5",
+          "1234,56",
+          "de-DE"
+        ],
+        [
+          "S6",
+          "1234.56",
+          "en-US"
+        ]
+      ],
+      "row_count": 6,
+      "excel_error_cells": []
+    },
+    "de_total": 127160.354,
+    "ratios": [
+      {
+        "us": 1.234,
+        "larger_over_smaller": 1000,
+        "id": "S3",
+        "de": 1234
+      },
+      {
+        "us": 1234,
+        "larger_over_smaller": 1000,
+        "id": "S4",
+        "de": 1.234
+      },
+      {
+        "us": 123456,
+        "larger_over_smaller": 100,
+        "id": "S5",
+        "de": 1234.56
+      },
+      {
+        "us": 1234.56,
+        "larger_over_smaller": 100,
+        "id": "S6",
+        "de": 123456
+      }
+    ],
+    "de_audit": {
+      "columns": [
+        "ID",
+        "Number",
+        "SourceLocale",
+        "HasError",
+        "Value",
+        "Message"
+      ],
+      "rows": [
+        [
+          "S1",
+          "1.234,56",
+          "de-DE",
+          false,
+          1234.56,
+          null
+        ],
+        [
+          "S2",
+          "1,234.56",
+          "en-US",
+          true,
+          null,
+          "Number로 변환할 수 없습니다."
+        ],
+        [
+          "S3",
+          "1.234",
+          "de-DE",
+          false,
+          1234,
+          null
+        ],
+        [
+          "S4",
+          "1,234",
+          "en-US",
+          false,
+          1.234,
+          null
+        ],
+        [
+          "S5",
+          "1234,56",
+          "de-DE",
+          false,
+          1234.56,
+          null
+        ],
+        [
+          "S6",
+          "1234.56",
+          "en-US",
+          false,
+          123456,
+          null
+        ]
+      ],
+      "display": [
+        [
+          "S1",
+          "1.234,56",
+          "de-DE",
+          "FALSE",
+          "1234.56",
+          ""
+        ],
+        [
+          "S2",
+          "1,234.56",
+          "en-US",
+          "TRUE",
+          "",
+          "Number로 변환할 수 없습니다."
+        ],
+        [
+          "S3",
+          "1.234",
+          "de-DE",
+          "FALSE",
+          "1234",
+          ""
+        ],
+        [
+          "S4",
+          "1,234",
+          "en-US",
+          "FALSE",
+          "1.234",
+          ""
+        ],
+        [
+          "S5",
+          "1234,56",
+          "de-DE",
+          "FALSE",
+          "1234.56",
+          ""
+        ],
+        [
+          "S6",
+          "1234.56",
+          "en-US",
+          "FALSE",
+          "123456",
+          ""
+        ]
+      ],
+      "row_count": 6,
+      "excel_error_cells": []
+    },
+    "us_total": 127160.35399999999,
+    "de_load": {
+      "refresh_return": true,
+      "refreshing": false,
+      "load_error": null,
+      "table": {
+        "columns": [
+          "ID",
+          "Number",
+          "SourceLocale"
+        ],
+        "rows": [
+          [
+            "S1",
+            1234.56,
+            "de-DE"
+          ],
+          [
+            "S2",
+            null,
+            "en-US"
+          ],
+          [
+            "S3",
+            1234,
+            "de-DE"
+          ],
+          [
+            "S4",
+            1.234,
+            "en-US"
+          ],
+          [
+            "S5",
+            1234.56,
+            "de-DE"
+          ],
+          [
+            "S6",
+            123456,
+            "en-US"
+          ]
+        ],
+        "display": [
+          [
+            "S1",
+            "1234.56",
+            "de-DE"
+          ],
+          [
+            "S2",
+            "",
+            "en-US"
+          ],
+          [
+            "S3",
+            "1234",
+            "de-DE"
+          ],
+          [
+            "S4",
+            "1.234",
+            "en-US"
+          ],
+          [
+            "S5",
+            "1234.56",
+            "de-DE"
+          ],
+          [
+            "S6",
+            "123456",
+            "en-US"
+          ]
+        ],
+        "row_count": 6,
+        "excel_error_cells": []
+      }
+    }
+  },
+  "observations_ko": [
+    "de-DE 합계는 127160.354, en-US 합계는 127160.354이었다. 두 해석의 비율이 1000인 행은 2개였다.",
+    "합성 입력에 명시한 SourceLocale을 행마다 적용한 합계는 7406.24이었다. 로캘 하나를 전체에 적용한 결과와 각 오류 메시지를 함께 보존했다."
+  ],
+  "not_verified": [
+    "COM/API execution does not verify the exact Korean ribbon click path, other Excel builds, other OS locales, or human review of the post."
+  ],
+  "differences_from_brief": [],
+  "assertions": [
+    {
+      "name": "Both locale audits retain the mixed-format CSV rows",
+      "passed": true
+    },
+    {
+      "name": "Declared source locale recovers the authored intended number for S1",
+      "passed": true
+    },
+    {
+      "name": "Declared source locale recovers the authored intended number for S2",
+      "passed": true
+    },
+    {
+      "name": "Declared source locale recovers the authored intended number for S3",
+      "passed": true
+    },
+    {
+      "name": "Declared source locale recovers the authored intended number for S4",
+      "passed": true
+    },
+    {
+      "name": "Declared source locale recovers the authored intended number for S5",
+      "passed": true
+    },
+    {
+      "name": "Declared source locale recovers the authored intended number for S6",
+      "passed": true
+    },
+    {
+      "name": "Two nonblank private-data-free native Excel PNGs recorded",
+      "passed": true
+    }
+  ],
+  "expectations": [
+    {
+      "name": "A single-separator value differs by a factor of 1000",
+      "matched": true
+    }
+  ],
+  "screenshots": [
+    {
+      "file": "before.png",
+      "valid": true,
+      "method": "ExportAsFixedFormat + PyMuPDF",
+      "sheet": "Q_us_audit",
+      "range": "$A$1:$F$7",
+      "width": 1062,
+      "height": 278,
+      "distinct_colors": 804,
+      "pdf_text_checked": true,
+      "pdf_pages": 1,
+      "bytes": 51562,
+      "sha256": "f93afa9d86fd5aeaf394a5a34f6f4a747177d4315dd3d6a3aa5493ac9aafc179",
+      "clipboard": "Untouched: GetDataObject failed in this session; both CopyPicture modes require clipboard access"
+    },
+    {
+      "file": "after.png",
+      "valid": true,
+      "method": "ExportAsFixedFormat + PyMuPDF",
+      "sheet": "Q_fixed",
+      "range": "$A$1:$D$7",
+      "width": 573,
+      "height": 278,
+      "distinct_colors": 815,
+      "pdf_text_checked": true,
+      "pdf_pages": 1,
+      "bytes": 39653,
+      "sha256": "340a8cefe2056494f18a5ae10c9f184726b90d442171261505ea345a0674c4d6",
+      "clipboard": "Untouched: GetDataObject failed in this session; both CopyPicture modes require clipboard access"
+    }
+  ],
+  "status": "pass",
+  "failure": null,
+  "environment": {
+    "os_culture": "ko-KR",
+    "excel_decimal_separator": ".",
+    "excel_thousands_separator": ",",
+    "excel_date_order": 2,
+    "excel_list_separator": ",",
+    "synthetic": true
+  },
+  "query_refresh_attempts": 6,
+  "cleanup_verified": true
+}

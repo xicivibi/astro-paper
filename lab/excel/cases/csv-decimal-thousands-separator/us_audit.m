@@ -1,0 +1,1 @@
+let S=query, A=Table.AddColumn(S,"Try",each let T=try Number.FromText([Number],"en-US") in [HasError=T[HasError],Value=if T[HasError] then null else T[Value],Message=if T[HasError] then T[Error][Message] else null]) in Table.ExpandRecordColumn(A,"Try",{"HasError","Value","Message"})

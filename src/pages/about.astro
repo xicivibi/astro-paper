@@ -17,6 +17,11 @@ if (!about) {
 }
 
 const { Content } = await render(about);
+const experience = await getEntry("pages", "operator-experience");
+const experienceWritten = experience?.data.ownerStatus === "written";
+const ExperienceContent = experienceWritten
+  ? (await render(experience)).Content
+  : null;
 ---
 
 <Layout
@@ -31,7 +36,19 @@ const { Content } = await render(about);
 
   <Main pageTitle={about.data.title} class="app-prose">
     <Content />
-    <OperatorReadiness heading="운영자 정보" />
+    {
+      experienceWritten && ExperienceContent ? (
+        <section data-operator-experience="written">
+          <h2>{experience?.data.title}</h2>
+          <ExperienceContent />
+        </section>
+      ) : (
+        <div hidden data-operator-experience="pending" />
+      )
+    }
+    <section id="operator">
+      <OperatorReadiness heading="운영자 정보" />
+    </section>
   </Main>
 
   <Footer />

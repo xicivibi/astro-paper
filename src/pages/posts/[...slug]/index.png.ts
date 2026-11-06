@@ -2,7 +2,7 @@ import type { APIRoute } from "astro";
 import { getCollection } from "astro:content";
 import satori from "satori";
 import sharp from "sharp";
-import { loadHanjinFont } from "@/utils/hanjinFont";
+import { loadSiteFont } from "@/utils/siteFont";
 import { getPostSlug } from "@/utils/getPostPaths";
 import config from "@/config";
 
@@ -26,7 +26,7 @@ export const GET: APIRoute = async ({ props }) => {
     return new Response(null, { status: 404, statusText: "Not found" });
   }
 
-  const fontData = await loadHanjinFont();
+  const fontData = await loadSiteFont();
 
   const svg = await satori(
     {
@@ -157,13 +157,13 @@ export const GET: APIRoute = async ({ props }) => {
       embedFont: true,
       fonts: [
         {
-          name: "Hanjin Group Sans",
+          name: "Pretendard",
           data: fontData,
           weight: 400,
           style: "normal",
         },
         {
-          name: "Hanjin Group Sans",
+          name: "Pretendard",
           data: fontData,
           weight: 700,
           style: "normal",

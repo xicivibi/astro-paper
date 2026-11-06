@@ -1,0 +1,1 @@
+let S=Table.AddColumn(query,"LiteralEmpty",each if [Item]="S1" then "Seed" else if [Item]="S3" then "" else null,type text), F=Table.FillDown(S,{"Group","LiteralEmpty"}) in Table.AddColumn(F,"IsEmptyString",each [LiteralEmpty]="",type logical)

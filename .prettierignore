@@ -17,3 +17,7 @@
 
 # Generated trend bundle frontmatter is canonical one-line JSON read by lifecycle checks.
 /src/content/posts/xici-trend-*.md
+
+# Whitespace in inline code and code blocks is the subject of this guide
+# (" A " vs "A"); Prettier would strip it and change the meaning.
+src/content/posts/power-query-remove-duplicates-key-normalization.md

@@ -1,0 +1,38 @@
+{
+  "synthetic": true,
+  "columns": [
+    "ID",
+    "Amount"
+  ],
+  "rows": [
+    [
+      "S1",
+      "10"
+    ],
+    [
+      "S2",
+      " 20 "
+    ],
+    [
+      "S3",
+      " 30 "
+    ],
+    [
+      "S4",
+      "1 234"
+    ],
+    [
+      "S5",
+      "0"
+    ],
+    [
+      "S6",
+      "40"
+    ]
+  ],
+  "all_text": true,
+  "query_files": {
+    "query": "query.m",
+    "fixed": "fixed.m"
+  }
+}

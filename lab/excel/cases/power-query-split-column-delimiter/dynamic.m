@@ -1,0 +1,1 @@
+let S=Excel.CurrentWorkbook(){[Name="Input"]}[Content], N=List.Max(List.Transform(S[Parts], each List.Count(Splitter.SplitTextByDelimiter("|",QuoteStyle.Csv)(_)))) in Table.SplitColumn(S,"Parts",Splitter.SplitTextByDelimiter("|",QuoteStyle.Csv),List.Transform({1..N},each "P" & Text.From(_)),null,ExtraValues.Error)

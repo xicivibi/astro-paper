@@ -1,0 +1,1 @@
+let S=Excel.CurrentWorkbook(){[Name="Input"]}[Content], T=Table.AddColumn(S,"Attempt",each try Number.FromText([Amount],"en-US")), H=Table.AddColumn(T,"HasError",each [Attempt][HasError]), M=Table.AddColumn(H,"Message",each if [HasError] then [Attempt][Error][Message] else null) in Table.RemoveColumns(M,{"Attempt"})

@@ -1,0 +1,1 @@
+let S=Excel.CurrentWorkbook(){[Name="Input"]}[Content], V=List.Combine(Table.ToColumns(Table.SelectColumns(S,List.Skip(Table.ColumnNames(S),3)))) in #table({"Rows","MonthColumns","Nulls","NonNulls"},{{Table.RowCount(S),Table.ColumnCount(S)-3,List.Count(V)-List.NonNullCount(V),List.NonNullCount(V)}})

@@ -10,13 +10,22 @@ type TestingStatus =
 type Props = {
   aiAssisted: boolean;
   lastReviewed?: Date | null;
+  humanReviewedBy?: string;
+  humanReviewedAt?: Date | null;
   sources: string[];
   testingStatus: TestingStatus;
   correctionNote?: string;
 };
 
-const { aiAssisted, lastReviewed, sources, testingStatus, correctionNote } =
-  Astro.props;
+const {
+  aiAssisted,
+  lastReviewed,
+  humanReviewedBy,
+  humanReviewedAt,
+  sources,
+  testingStatus,
+  correctionNote,
+} = Astro.props;
 
 const testingStatusLabel: Record<TestingStatus, string> = {
   not_tested: "테스트 미실시",
@@ -32,6 +41,16 @@ const reviewedLabel = lastReviewed
       day: "2-digit",
     }).format(lastReviewed)
   : "검토일 미제공";
+const signer = humanReviewedBy?.trim() ?? "";
+const humanReviewLabel =
+  signer && humanReviewedAt
+    ? `${signer} · ${new Intl.DateTimeFormat("en-CA", {
+        timeZone: config.site.timezone,
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+      }).format(humanReviewedAt)}`
+    : "운영자 서명 전";
 ---
 
 <aside
@@ -59,6 +78,10 @@ const reviewedLabel = lastReviewed
     <div>
       <dt class="text-muted-foreground">테스트 상태</dt>
       <dd class="font-medium">{testingStatusLabel[testingStatus]}</dd>
+    </div>
+    <div>
+      <dt class="text-muted-foreground">사람 검토</dt>
+      <dd class="font-medium" data-human-review>{humanReviewLabel}</dd>
     </div>
     <div>
       <dt class="text-muted-foreground">정정 메모</dt>

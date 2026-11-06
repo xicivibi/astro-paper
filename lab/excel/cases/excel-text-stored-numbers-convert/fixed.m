@@ -1,0 +1,1 @@
+let S=Table.TransformColumns(Excel.CurrentWorkbook(){[Name="Input"]}[Content],{{"Amount",each Text.Replace(Text.Trim(Text.Clean(_)),Character.FromNumber(160),""),type text}}) in Table.TransformColumnTypes(S,{{"Amount",type number}},"en-US")

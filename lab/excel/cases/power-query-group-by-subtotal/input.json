@@ -1,0 +1,45 @@
+{
+  "synthetic": true,
+  "columns": [
+    "Group",
+    "Amount"
+  ],
+  "rows": [
+    [
+      "A",
+      10
+    ],
+    [
+      "A",
+      null
+    ],
+    [
+      "A",
+      0
+    ],
+    [
+      "B",
+      "20"
+    ],
+    [
+      "B",
+      5
+    ],
+    [
+      "C",
+      0
+    ],
+    [
+      "C",
+      null
+    ]
+  ],
+  "text_cells": [
+    "B5"
+  ],
+  "query_files": {
+    "query": "query.m",
+    "fixed": "fixed.m",
+    "errors": "errors.m"
+  }
+}

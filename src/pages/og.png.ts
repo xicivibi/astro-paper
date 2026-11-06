@@ -1,11 +1,11 @@
 import type { APIRoute } from "astro";
 import satori from "satori";
 import sharp from "sharp";
-import { loadHanjinFont } from "@/utils/hanjinFont";
+import { loadSiteFont } from "@/utils/siteFont";
 import config from "@/config";
 
 export const GET: APIRoute = async () => {
-  const fontData = await loadHanjinFont();
+  const fontData = await loadSiteFont();
 
   const svg = await satori(
     {
@@ -18,7 +18,7 @@ export const GET: APIRoute = async () => {
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          fontFamily: "Hanjin Group Sans",
+          fontFamily: "Pretendard",
         },
         children: [
           {
@@ -129,13 +129,13 @@ export const GET: APIRoute = async () => {
       embedFont: true,
       fonts: [
         {
-          name: "Hanjin Group Sans",
+          name: "Pretendard",
           data: fontData,
           weight: 400,
           style: "normal",
         },
         {
-          name: "Hanjin Group Sans",
+          name: "Pretendard",
           data: fontData,
           weight: 700,
           style: "normal",

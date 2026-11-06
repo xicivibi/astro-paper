@@ -1,0 +1,1 @@
+let P=Excel.CurrentWorkbook(){[Name="SourcePath"]}[Content]{0}[Column1], S=Csv.Document(File.Contents(P),[Delimiter=",",Encoding=65001,QuoteStyle=QuoteStyle.Csv]) in Table.PromoteHeaders(S,[PromoteAllScalars=true])

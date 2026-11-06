@@ -7,9 +7,9 @@
   --color-muted: var(--muted);
   --color-muted-foreground: var(--muted-foreground);
   --color-border: var(--border);
-  --font-app: "Hanjin Group Sans", sans-serif;
-  --font-sans: "Hanjin Group Sans", sans-serif;
-  --font-mono: "Hanjin Group Sans", sans-serif;
+  --font-app: "Pretendard", sans-serif;
+  --font-sans: "Pretendard", sans-serif;
+  --font-mono: "Pretendard", sans-serif;
 }
 
 /* Light theme values */

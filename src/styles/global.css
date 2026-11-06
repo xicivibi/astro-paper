@@ -3,8 +3,8 @@
 @import "./typography.css";
 
 @font-face {
-  font-family: "Hanjin Group Sans";
-  src: url("/fonts/HanjinGroupSans-Regular.ttf") format("truetype");
+  font-family: "Pretendard";
+  src: url("/fonts/Pretendard-Regular.woff2") format("woff2");
   font-style: normal;
   font-weight: 400;
   font-display: swap;

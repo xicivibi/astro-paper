@@ -1,0 +1,966 @@
+{
+  "slug": "excel-duplicate-key-before-vlookup",
+  "excel_version": "16.0",
+  "excel_build": "20527",
+  "ui_language": {
+    "lcid": 1042,
+    "culture": "ko-KR"
+  },
+  "run_at": "2026-11-06T17:42:54.3620556Z",
+  "input_sha256": {
+    "input.json": "dcde59e8dc6a1966393b9bfdb5c69deb6f81b33ae6bfe87dbeb3cfcbd4c3c9ed",
+    "input.xlsx": "4896a3adf94f6527c7bb1db54f45a6f938fe4bf583b107853e69af28bd2f98d1"
+  },
+  "steps": [
+    {
+      "name": "input_readback",
+      "formula_or_m": "Worksheet.UsedRange.Value2/Text (synthetic fixture)",
+      "observed": {
+        "columns": [
+          "ID",
+          "Key",
+          "Quantity"
+        ],
+        "rows": [
+          [
+            "S1",
+            "A",
+            1
+          ],
+          [
+            "S2",
+            "B",
+            2
+          ],
+          [
+            "S3",
+            "C",
+            3
+          ],
+          [
+            "S4",
+            "D",
+            1
+          ],
+          [
+            "S5",
+            "E",
+            2
+          ]
+        ],
+        "display": [
+          [
+            "S1",
+            "A",
+            "1"
+          ],
+          [
+            "S2",
+            "B",
+            "2"
+          ],
+          [
+            "S3",
+            "C",
+            "3"
+          ],
+          [
+            "S4",
+            "D",
+            "1"
+          ],
+          [
+            "S5",
+            "E",
+            "2"
+          ]
+        ],
+        "row_count": 5,
+        "excel_error_cells": []
+      }
+    },
+    {
+      "name": "query_load",
+      "formula_or_m": "let S=Excel.CurrentWorkbook(){[Name=\"Lookup\"]}[Content], G=Table.Group(S,{\"Key\"},{{\"Count\",each Table.RowCount(_),Int64.Type},{\"Minimum\",each List.Min([Price]),type number},{\"Maximum\",each List.Max([Price]),type number}}) in Table.SelectRows(G,each [Count]>1)\r\n",
+      "observed": {
+        "refresh_return": true,
+        "refreshing": false,
+        "load_error": null,
+        "table": {
+          "columns": [
+            "Key",
+            "Count",
+            "Minimum",
+            "Maximum"
+          ],
+          "rows": [
+            [
+              "B",
+              2,
+              20,
+              200
+            ]
+          ],
+          "display": [
+            [
+              "B",
+              "2",
+              "20",
+              "200"
+            ]
+          ],
+          "row_count": 1,
+          "excel_error_cells": []
+        }
+      }
+    },
+    {
+      "name": "lookup_and_duplicate_check",
+      "formula_or_m": "VLOOKUP exact match; XLOOKUP default; COUNTIF; approved unique lookup; quantity * price",
+      "observed": {
+        "columns": [
+          "ID",
+          "Key",
+          "Quantity",
+          "VLOOKUP",
+          "XLOOKUP",
+          "COUNTIF",
+          "ApprovedPrice",
+          "WrongAmount",
+          "ApprovedAmount"
+        ],
+        "rows": [
+          [
+            "S1",
+            "A",
+            1,
+            10,
+            10,
+            1,
+            10,
+            10,
+            10
+          ],
+          [
+            "S2",
+            "B",
+            2,
+            20,
+            20,
+            2,
+            200,
+            40,
+            400
+          ],
+          [
+            "S3",
+            "C",
+            3,
+            30,
+            30,
+            1,
+            30,
+            90,
+            90
+          ],
+          [
+            "S4",
+            "D",
+            1,
+            40,
+            40,
+            1,
+            40,
+            40,
+            40
+          ],
+          [
+            "S5",
+            "E",
+            2,
+            50,
+            50,
+            1,
+            50,
+            100,
+            100
+          ]
+        ],
+        "display": [
+          [
+            "S1",
+            "A",
+            "1",
+            "10.",
+            "10",
+            "1.",
+            "10.",
+            "10.",
+            "10."
+          ],
+          [
+            "S2",
+            "B",
+            "2",
+            "20.",
+            "20",
+            "2.",
+            "200.",
+            "40.",
+            "400."
+          ],
+          [
+            "S3",
+            "C",
+            "3",
+            "30.",
+            "30",
+            "1.",
+            "30.",
+            "90.",
+            "90."
+          ],
+          [
+            "S4",
+            "D",
+            "1",
+            "40.",
+            "40",
+            "1.",
+            "40.",
+            "40.",
+            "40."
+          ],
+          [
+            "S5",
+            "E",
+            "2",
+            "50.",
+            "50",
+            "1.",
+            "50.",
+            "100.",
+            "100."
+          ]
+        ],
+        "row_count": 5,
+        "excel_error_cells": [],
+        "formulas": [
+          {
+            "row": 2,
+            "column": 4,
+            "text": "10.",
+            "value": 10,
+            "formula": "=VLOOKUP(B2,Lookup!$A$2:$B$7,2,FALSE)"
+          },
+          {
+            "row": 2,
+            "column": 5,
+            "text": "10",
+            "value": 10,
+            "formula": "=XLOOKUP(B2,Lookup!$A$2:$A$7,Lookup!$B$2:$B$7)"
+          },
+          {
+            "row": 2,
+            "column": 6,
+            "text": "1.",
+            "value": 1,
+            "formula": "=COUNTIF(Lookup!$A$2:$A$7,B2)"
+          },
+          {
+            "row": 2,
+            "column": 7,
+            "text": "10.",
+            "value": 10,
+            "formula": "=VLOOKUP(B2,Approved!$A$2:$B$6,2,FALSE)"
+          },
+          {
+            "row": 2,
+            "column": 8,
+            "text": "10.",
+            "value": 10,
+            "formula": "=C2*D2"
+          },
+          {
+            "row": 2,
+            "column": 9,
+            "text": "10.",
+            "value": 10,
+            "formula": "=C2*G2"
+          },
+          {
+            "row": 3,
+            "column": 4,
+            "text": "20.",
+            "value": 20,
+            "formula": "=VLOOKUP(B3,Lookup!$A$2:$B$7,2,FALSE)"
+          },
+          {
+            "row": 3,
+            "column": 5,
+            "text": "20",
+            "value": 20,
+            "formula": "=XLOOKUP(B3,Lookup!$A$2:$A$7,Lookup!$B$2:$B$7)"
+          },
+          {
+            "row": 3,
+            "column": 6,
+            "text": "2.",
+            "value": 2,
+            "formula": "=COUNTIF(Lookup!$A$2:$A$7,B3)"
+          },
+          {
+            "row": 3,
+            "column": 7,
+            "text": "200.",
+            "value": 200,
+            "formula": "=VLOOKUP(B3,Approved!$A$2:$B$6,2,FALSE)"
+          },
+          {
+            "row": 3,
+            "column": 8,
+            "text": "40.",
+            "value": 40,
+            "formula": "=C3*D3"
+          },
+          {
+            "row": 3,
+            "column": 9,
+            "text": "400.",
+            "value": 400,
+            "formula": "=C3*G3"
+          },
+          {
+            "row": 4,
+            "column": 4,
+            "text": "30.",
+            "value": 30,
+            "formula": "=VLOOKUP(B4,Lookup!$A$2:$B$7,2,FALSE)"
+          },
+          {
+            "row": 4,
+            "column": 5,
+            "text": "30",
+            "value": 30,
+            "formula": "=XLOOKUP(B4,Lookup!$A$2:$A$7,Lookup!$B$2:$B$7)"
+          },
+          {
+            "row": 4,
+            "column": 6,
+            "text": "1.",
+            "value": 1,
+            "formula": "=COUNTIF(Lookup!$A$2:$A$7,B4)"
+          },
+          {
+            "row": 4,
+            "column": 7,
+            "text": "30.",
+            "value": 30,
+            "formula": "=VLOOKUP(B4,Approved!$A$2:$B$6,2,FALSE)"
+          },
+          {
+            "row": 4,
+            "column": 8,
+            "text": "90.",
+            "value": 90,
+            "formula": "=C4*D4"
+          },
+          {
+            "row": 4,
+            "column": 9,
+            "text": "90.",
+            "value": 90,
+            "formula": "=C4*G4"
+          },
+          {
+            "row": 5,
+            "column": 4,
+            "text": "40.",
+            "value": 40,
+            "formula": "=VLOOKUP(B5,Lookup!$A$2:$B$7,2,FALSE)"
+          },
+          {
+            "row": 5,
+            "column": 5,
+            "text": "40",
+            "value": 40,
+            "formula": "=XLOOKUP(B5,Lookup!$A$2:$A$7,Lookup!$B$2:$B$7)"
+          },
+          {
+            "row": 5,
+            "column": 6,
+            "text": "1.",
+            "value": 1,
+            "formula": "=COUNTIF(Lookup!$A$2:$A$7,B5)"
+          },
+          {
+            "row": 5,
+            "column": 7,
+            "text": "40.",
+            "value": 40,
+            "formula": "=VLOOKUP(B5,Approved!$A$2:$B$6,2,FALSE)"
+          },
+          {
+            "row": 5,
+            "column": 8,
+            "text": "40.",
+            "value": 40,
+            "formula": "=C5*D5"
+          },
+          {
+            "row": 5,
+            "column": 9,
+            "text": "40.",
+            "value": 40,
+            "formula": "=C5*G5"
+          },
+          {
+            "row": 6,
+            "column": 4,
+            "text": "50.",
+            "value": 50,
+            "formula": "=VLOOKUP(B6,Lookup!$A$2:$B$7,2,FALSE)"
+          },
+          {
+            "row": 6,
+            "column": 5,
+            "text": "50",
+            "value": 50,
+            "formula": "=XLOOKUP(B6,Lookup!$A$2:$A$7,Lookup!$B$2:$B$7)"
+          },
+          {
+            "row": 6,
+            "column": 6,
+            "text": "1.",
+            "value": 1,
+            "formula": "=COUNTIF(Lookup!$A$2:$A$7,B6)"
+          },
+          {
+            "row": 6,
+            "column": 7,
+            "text": "50.",
+            "value": 50,
+            "formula": "=VLOOKUP(B6,Approved!$A$2:$B$6,2,FALSE)"
+          },
+          {
+            "row": 6,
+            "column": 8,
+            "text": "100.",
+            "value": 100,
+            "formula": "=C6*D6"
+          },
+          {
+            "row": 6,
+            "column": 9,
+            "text": "100.",
+            "value": 100,
+            "formula": "=C6*G6"
+          }
+        ]
+      }
+    }
+  ],
+  "wrong_result": {
+    "total": 280,
+    "lookups": {
+      "columns": [
+        "ID",
+        "Key",
+        "Quantity",
+        "VLOOKUP",
+        "XLOOKUP",
+        "COUNTIF",
+        "ApprovedPrice",
+        "WrongAmount",
+        "ApprovedAmount"
+      ],
+      "rows": [
+        [
+          "S1",
+          "A",
+          1,
+          10,
+          10,
+          1,
+          10,
+          10,
+          10
+        ],
+        [
+          "S2",
+          "B",
+          2,
+          20,
+          20,
+          2,
+          200,
+          40,
+          400
+        ],
+        [
+          "S3",
+          "C",
+          3,
+          30,
+          30,
+          1,
+          30,
+          90,
+          90
+        ],
+        [
+          "S4",
+          "D",
+          1,
+          40,
+          40,
+          1,
+          40,
+          40,
+          40
+        ],
+        [
+          "S5",
+          "E",
+          2,
+          50,
+          50,
+          1,
+          50,
+          100,
+          100
+        ]
+      ],
+      "display": [
+        [
+          "S1",
+          "A",
+          "1",
+          "10.",
+          "10",
+          "1.",
+          "10.",
+          "10.",
+          "10."
+        ],
+        [
+          "S2",
+          "B",
+          "2",
+          "20.",
+          "20",
+          "2.",
+          "200.",
+          "40.",
+          "400."
+        ],
+        [
+          "S3",
+          "C",
+          "3",
+          "30.",
+          "30",
+          "1.",
+          "30.",
+          "90.",
+          "90."
+        ],
+        [
+          "S4",
+          "D",
+          "1",
+          "40.",
+          "40",
+          "1.",
+          "40.",
+          "40.",
+          "40."
+        ],
+        [
+          "S5",
+          "E",
+          "2",
+          "50.",
+          "50",
+          "1.",
+          "50.",
+          "100.",
+          "100."
+        ]
+      ],
+      "row_count": 5,
+      "excel_error_cells": [],
+      "formulas": [
+        {
+          "row": 2,
+          "column": 4,
+          "text": "10.",
+          "value": 10,
+          "formula": "=VLOOKUP(B2,Lookup!$A$2:$B$7,2,FALSE)"
+        },
+        {
+          "row": 2,
+          "column": 5,
+          "text": "10",
+          "value": 10,
+          "formula": "=XLOOKUP(B2,Lookup!$A$2:$A$7,Lookup!$B$2:$B$7)"
+        },
+        {
+          "row": 2,
+          "column": 6,
+          "text": "1.",
+          "value": 1,
+          "formula": "=COUNTIF(Lookup!$A$2:$A$7,B2)"
+        },
+        {
+          "row": 2,
+          "column": 7,
+          "text": "10.",
+          "value": 10,
+          "formula": "=VLOOKUP(B2,Approved!$A$2:$B$6,2,FALSE)"
+        },
+        {
+          "row": 2,
+          "column": 8,
+          "text": "10.",
+          "value": 10,
+          "formula": "=C2*D2"
+        },
+        {
+          "row": 2,
+          "column": 9,
+          "text": "10.",
+          "value": 10,
+          "formula": "=C2*G2"
+        },
+        {
+          "row": 3,
+          "column": 4,
+          "text": "20.",
+          "value": 20,
+          "formula": "=VLOOKUP(B3,Lookup!$A$2:$B$7,2,FALSE)"
+        },
+        {
+          "row": 3,
+          "column": 5,
+          "text": "20",
+          "value": 20,
+          "formula": "=XLOOKUP(B3,Lookup!$A$2:$A$7,Lookup!$B$2:$B$7)"
+        },
+        {
+          "row": 3,
+          "column": 6,
+          "text": "2.",
+          "value": 2,
+          "formula": "=COUNTIF(Lookup!$A$2:$A$7,B3)"
+        },
+        {
+          "row": 3,
+          "column": 7,
+          "text": "200.",
+          "value": 200,
+          "formula": "=VLOOKUP(B3,Approved!$A$2:$B$6,2,FALSE)"
+        },
+        {
+          "row": 3,
+          "column": 8,
+          "text": "40.",
+          "value": 40,
+          "formula": "=C3*D3"
+        },
+        {
+          "row": 3,
+          "column": 9,
+          "text": "400.",
+          "value": 400,
+          "formula": "=C3*G3"
+        },
+        {
+          "row": 4,
+          "column": 4,
+          "text": "30.",
+          "value": 30,
+          "formula": "=VLOOKUP(B4,Lookup!$A$2:$B$7,2,FALSE)"
+        },
+        {
+          "row": 4,
+          "column": 5,
+          "text": "30",
+          "value": 30,
+          "formula": "=XLOOKUP(B4,Lookup!$A$2:$A$7,Lookup!$B$2:$B$7)"
+        },
+        {
+          "row": 4,
+          "column": 6,
+          "text": "1.",
+          "value": 1,
+          "formula": "=COUNTIF(Lookup!$A$2:$A$7,B4)"
+        },
+        {
+          "row": 4,
+          "column": 7,
+          "text": "30.",
+          "value": 30,
+          "formula": "=VLOOKUP(B4,Approved!$A$2:$B$6,2,FALSE)"
+        },
+        {
+          "row": 4,
+          "column": 8,
+          "text": "90.",
+          "value": 90,
+          "formula": "=C4*D4"
+        },
+        {
+          "row": 4,
+          "column": 9,
+          "text": "90.",
+          "value": 90,
+          "formula": "=C4*G4"
+        },
+        {
+          "row": 5,
+          "column": 4,
+          "text": "40.",
+          "value": 40,
+          "formula": "=VLOOKUP(B5,Lookup!$A$2:$B$7,2,FALSE)"
+        },
+        {
+          "row": 5,
+          "column": 5,
+          "text": "40",
+          "value": 40,
+          "formula": "=XLOOKUP(B5,Lookup!$A$2:$A$7,Lookup!$B$2:$B$7)"
+        },
+        {
+          "row": 5,
+          "column": 6,
+          "text": "1.",
+          "value": 1,
+          "formula": "=COUNTIF(Lookup!$A$2:$A$7,B5)"
+        },
+        {
+          "row": 5,
+          "column": 7,
+          "text": "40.",
+          "value": 40,
+          "formula": "=VLOOKUP(B5,Approved!$A$2:$B$6,2,FALSE)"
+        },
+        {
+          "row": 5,
+          "column": 8,
+          "text": "40.",
+          "value": 40,
+          "formula": "=C5*D5"
+        },
+        {
+          "row": 5,
+          "column": 9,
+          "text": "40.",
+          "value": 40,
+          "formula": "=C5*G5"
+        },
+        {
+          "row": 6,
+          "column": 4,
+          "text": "50.",
+          "value": 50,
+          "formula": "=VLOOKUP(B6,Lookup!$A$2:$B$7,2,FALSE)"
+        },
+        {
+          "row": 6,
+          "column": 5,
+          "text": "50",
+          "value": 50,
+          "formula": "=XLOOKUP(B6,Lookup!$A$2:$A$7,Lookup!$B$2:$B$7)"
+        },
+        {
+          "row": 6,
+          "column": 6,
+          "text": "1.",
+          "value": 1,
+          "formula": "=COUNTIF(Lookup!$A$2:$A$7,B6)"
+        },
+        {
+          "row": 6,
+          "column": 7,
+          "text": "50.",
+          "value": 50,
+          "formula": "=VLOOKUP(B6,Approved!$A$2:$B$6,2,FALSE)"
+        },
+        {
+          "row": 6,
+          "column": 8,
+          "text": "100.",
+          "value": 100,
+          "formula": "=C6*D6"
+        },
+        {
+          "row": 6,
+          "column": 9,
+          "text": "100.",
+          "value": 100,
+          "formula": "=C6*G6"
+        }
+      ]
+    }
+  },
+  "fixed_result": {
+    "approved_unique_rows": {
+      "columns": [
+        "Key",
+        "Price"
+      ],
+      "rows": [
+        [
+          "A",
+          10
+        ],
+        [
+          "B",
+          200
+        ],
+        [
+          "C",
+          30
+        ],
+        [
+          "D",
+          40
+        ],
+        [
+          "E",
+          50
+        ]
+      ],
+      "display": [
+        [
+          "A",
+          "10"
+        ],
+        [
+          "B",
+          "200"
+        ],
+        [
+          "C",
+          "30"
+        ],
+        [
+          "D",
+          "40"
+        ],
+        [
+          "E",
+          "50"
+        ]
+      ],
+      "row_count": 5,
+      "excel_error_cells": []
+    },
+    "total": 640,
+    "duplicate_groups": {
+      "columns": [
+        "Key",
+        "Count",
+        "Minimum",
+        "Maximum"
+      ],
+      "rows": [
+        [
+          "B",
+          2,
+          20,
+          200
+        ]
+      ],
+      "display": [
+        [
+          "B",
+          "2",
+          "20",
+          "200"
+        ]
+      ],
+      "row_count": 1,
+      "excel_error_cells": []
+    }
+  },
+  "reconciliation": {
+    "duplicated_keys": 1,
+    "approved_total": 640,
+    "policy": "The synthetic Approved table explicitly chooses price 200 for B; first/last alone is not a business correction.",
+    "understatement": 360,
+    "wrong_total": 280
+  },
+  "observations_ko": [
+    "중복 키의 VLOOKUP은 20, XLOOKUP은 20, COUNTIF는 2였다. 첫 일치 기준 합계 280과 승인된 고유 키 기준 합계 640의 차이는 360였다."
+  ],
+  "not_verified": [
+    "COM/API execution does not verify the exact Korean ribbon click path, other Excel builds, other OS locales, or human review of the post."
+  ],
+  "differences_from_brief": [],
+  "assertions": [
+    {
+      "name": "VLOOKUP returns the first duplicate and both duplicate checks detect B",
+      "passed": true
+    },
+    {
+      "name": "Approved price reconciliation quantifies the synthetic understatement",
+      "passed": true
+    },
+    {
+      "name": "Two nonblank private-data-free native Excel PNGs recorded",
+      "passed": true
+    }
+  ],
+  "expectations": [
+    {
+      "name": "XLOOKUP defaults to the same first duplicate",
+      "matched": true
+    }
+  ],
+  "screenshots": [
+    {
+      "file": "before.png",
+      "valid": true,
+      "method": "ExportAsFixedFormat + PyMuPDF",
+      "sheet": "Input",
+      "range": "$A$1:$F$6",
+      "width": 857,
+      "height": 241,
+      "distinct_colors": 782,
+      "pdf_text_checked": true,
+      "pdf_pages": 1,
+      "bytes": 24126,
+      "sha256": "338a118a55563fe871b7b351d82de066f5ebe4b6a99d054759dda50dcf08cc82",
+      "clipboard": "Untouched: GetDataObject failed in this session; both CopyPicture modes require clipboard access"
+    },
+    {
+      "file": "after.png",
+      "valid": true,
+      "method": "ExportAsFixedFormat + PyMuPDF",
+      "sheet": "ApprovedResult",
+      "range": "$A$1:$E$6",
+      "width": 661,
+      "height": 241,
+      "distinct_colors": 255,
+      "pdf_text_checked": true,
+      "pdf_pages": 1,
+      "bytes": 21835,
+      "sha256": "9b9c43d41aca843ff40f3d1024ceeb1ad84c8c24006f08f731c9c8b542e53be2",
+      "clipboard": "Untouched: GetDataObject failed in this session; both CopyPicture modes require clipboard access"
+    }
+  ],
+  "status": "pass",
+  "failure": null,
+  "environment": {
+    "os_culture": "ko-KR",
+    "excel_decimal_separator": ".",
+    "excel_thousands_separator": ",",
+    "excel_date_order": 2,
+    "excel_list_separator": ",",
+    "synthetic": true
+  },
+  "query_refresh_attempts": 1,
+  "cleanup_verified": true
+}

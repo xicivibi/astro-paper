@@ -1,0 +1,41 @@
+{
+  "synthetic": true,
+  "columns": [
+    "ID",
+    "Date"
+  ],
+  "rows": [
+    [
+      "S1",
+      "03/04/2026"
+    ],
+    [
+      "S2",
+      "25/04/2026"
+    ],
+    [
+      "S3",
+      "04/03/2026"
+    ],
+    [
+      "S4",
+      "12/11/2026"
+    ],
+    [
+      "S5",
+      "31/02/2026"
+    ],
+    [
+      "S6",
+      ""
+    ]
+  ],
+  "csv": true,
+  "query_files": {
+    "query": "query.m",
+    "gb": "gb.m",
+    "gb_audit": "gb_audit.m",
+    "us": "us.m",
+    "us_audit": "us_audit.m"
+  }
+}

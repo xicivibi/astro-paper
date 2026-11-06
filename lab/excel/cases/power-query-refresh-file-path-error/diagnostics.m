@@ -1,0 +1,1 @@
+let T=try Binary.Length(Binary.Buffer(File.Contents("{{SOURCE_CSV}}"))) in #table({"HasError","Reason","Message","Detail"},{{T[HasError],if T[HasError] then T[Error][Reason] else null,if T[HasError] then T[Error][Message] else null,if T[HasError] then (try Text.From(T[Error][Detail]) otherwise Text.FromBinary(Json.FromValue(T[Error][Detail]),TextEncoding.Utf8)) else null}})

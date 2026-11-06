@@ -1,0 +1,51 @@
+{
+  "synthetic": true,
+  "columns": [
+    "Group",
+    "Item",
+    "Note"
+  ],
+  "rows": [
+    [
+      "Invented-A",
+      "S1",
+      "Seed"
+    ],
+    [
+      null,
+      "S2",
+      null
+    ],
+    [
+      "Invented-B",
+      "S3",
+      ""
+    ],
+    [
+      null,
+      "S4",
+      null
+    ],
+    [
+      "Invented-C",
+      "S5",
+      "Next"
+    ],
+    [
+      null,
+      "S6",
+      null
+    ]
+  ],
+  "merges": [
+    "A2:A3",
+    "A4:A5",
+    "A6:A7"
+  ],
+  "query_files": {
+    "query": "query.m",
+    "fill": "fill.m",
+    "empty_string": "empty_string.m",
+    "fixed": "fixed.m"
+  }
+}

@@ -4,6 +4,7 @@ pubDatetime: 2026-09-20T03:08:00+09:00
 title: "Power Query 중복 제거: 비교 키와 공백·대소문자 규칙부터 정하기"
 featured: false
 draft: false
+topic: "excel-csv"
 tags:
   - "excel"
   - "power query"
@@ -11,6 +12,8 @@ tags:
 description: "Power Query에서 중복 행을 지우기 전에 비교할 열, 공백과 대소문자 정규화, 남길 행의 기준을 정하고 원본과 결과를 검증하는 절차입니다."
 aiAssisted: true
 lastReviewed: 2026-09-20T03:08:00+09:00
+humanReviewedBy: ""
+humanReviewedAt:
 sources:
   - "https://learn.microsoft.com/en-us/power-query/working-with-duplicates"
   - "https://support.microsoft.com/en-us/excel/keep-or-remove-duplicate-rows-power-query"

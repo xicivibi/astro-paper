@@ -1,0 +1,35 @@
+{
+  "synthetic": true,
+  "columns": [
+    "ID",
+    "Amount"
+  ],
+  "rows": [
+    [
+      "S1",
+      10
+    ],
+    [
+      "S2",
+      20
+    ],
+    [
+      "S3",
+      30
+    ],
+    [
+      "S4",
+      40
+    ],
+    [
+      "S5",
+      50
+    ]
+  ],
+  "csv": true,
+  "query_files": {
+    "query": "query.m",
+    "diagnostics": "diagnostics.m",
+    "fixed": "fixed.m"
+  }
+}

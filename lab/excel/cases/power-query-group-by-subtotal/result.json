@@ -1,0 +1,488 @@
+{
+  "slug": "power-query-group-by-subtotal",
+  "excel_version": "16.0",
+  "excel_build": "20527",
+  "ui_language": {
+    "lcid": 1042,
+    "culture": "ko-KR"
+  },
+  "run_at": "2026-11-06T17:39:51.1639480Z",
+  "input_sha256": {
+    "input.json": "8566e5b209189ab703d42475cc2c72d12e130e1e5ad78b4510fbdb11fdae65d2",
+    "input.xlsx": "84262e24f52017f37ac6429c7f5f2c35d2227384ef51147a31e0a6f691536625"
+  },
+  "steps": [
+    {
+      "name": "input_readback",
+      "formula_or_m": "Worksheet.UsedRange.Value2/Text (synthetic fixture)",
+      "observed": {
+        "columns": [
+          "Group",
+          "Amount"
+        ],
+        "rows": [
+          [
+            "A",
+            10
+          ],
+          [
+            "A",
+            null
+          ],
+          [
+            "A",
+            0
+          ],
+          [
+            "B",
+            "20"
+          ],
+          [
+            "B",
+            5
+          ],
+          [
+            "C",
+            0
+          ],
+          [
+            "C",
+            null
+          ]
+        ],
+        "display": [
+          [
+            "A",
+            "10"
+          ],
+          [
+            "A",
+            ""
+          ],
+          [
+            "A",
+            "0"
+          ],
+          [
+            "B",
+            "20"
+          ],
+          [
+            "B",
+            "5"
+          ],
+          [
+            "C",
+            "0"
+          ],
+          [
+            "C",
+            ""
+          ]
+        ],
+        "row_count": 7,
+        "excel_error_cells": []
+      }
+    },
+    {
+      "name": "query_load",
+      "formula_or_m": "let S=Excel.CurrentWorkbook(){[Name=\"Input\"]}[Content] in Table.Group(S,{\"Group\"},{{\"Sum\", each List.Sum([Amount])},{\"Rows\",each Table.RowCount(_),Int64.Type},{\"NonNulls\",each List.NonNullCount([Amount]),Int64.Type}})\r\n",
+      "observed": {
+        "refresh_return": true,
+        "refreshing": false,
+        "load_error": null,
+        "table": {
+          "columns": [
+            "Group",
+            "Sum",
+            "Rows",
+            "NonNulls"
+          ],
+          "rows": [
+            [
+              "A",
+              10,
+              3,
+              2
+            ],
+            [
+              "B",
+              null,
+              2,
+              2
+            ],
+            [
+              "C",
+              0,
+              2,
+              1
+            ]
+          ],
+          "display": [
+            [
+              "A",
+              "10",
+              "3",
+              "2"
+            ],
+            [
+              "B",
+              "",
+              "2",
+              "2"
+            ],
+            [
+              "C",
+              "0",
+              "2",
+              "1"
+            ]
+          ],
+          "row_count": 3,
+          "excel_error_cells": []
+        }
+      }
+    },
+    {
+      "name": "errors_load",
+      "formula_or_m": "let S=Excel.CurrentWorkbook(){[Name=\"Input\"]}[Content], G=Table.Group(S,{\"Group\"},{{\"Try\",each try List.Sum([Amount])}}) in Table.ExpandRecordColumn(Table.AddColumn(G,\"Message\",each if [Try][HasError] then [Try][Error][Message] else null),\"Try\",{\"HasError\"},{\"HasError\"})\r\n",
+      "observed": {
+        "refresh_return": true,
+        "refreshing": false,
+        "load_error": null,
+        "table": {
+          "columns": [
+            "Group",
+            "HasError",
+            "Message"
+          ],
+          "rows": [
+            [
+              "A",
+              false,
+              null
+            ],
+            [
+              "B",
+              true,
+              "- 연산자를 형식 Text 및 Text에 적용할 수 없습니다."
+            ],
+            [
+              "C",
+              false,
+              null
+            ]
+          ],
+          "display": [
+            [
+              "A",
+              "FALSE",
+              ""
+            ],
+            [
+              "B",
+              "TRUE",
+              "- 연산자를 형식 Text 및 Text에 적용할 수 없습니다."
+            ],
+            [
+              "C",
+              "FALSE",
+              ""
+            ]
+          ],
+          "row_count": 3,
+          "excel_error_cells": []
+        }
+      }
+    },
+    {
+      "name": "fixed_load",
+      "formula_or_m": "let S=Table.TransformColumnTypes(Excel.CurrentWorkbook(){[Name=\"Input\"]}[Content],{{\"Amount\",type number}},\"en-US\") in Table.Group(S,{\"Group\"},{{\"Sum\",each List.Sum([Amount]),type number},{\"Rows\",each Table.RowCount(_),Int64.Type},{\"NonNulls\",each List.NonNullCount([Amount]),Int64.Type}})\r\n",
+      "observed": {
+        "refresh_return": true,
+        "refreshing": false,
+        "load_error": null,
+        "table": {
+          "columns": [
+            "Group",
+            "Sum",
+            "Rows",
+            "NonNulls"
+          ],
+          "rows": [
+            [
+              "A",
+              10,
+              3,
+              2
+            ],
+            [
+              "B",
+              25,
+              2,
+              2
+            ],
+            [
+              "C",
+              0,
+              2,
+              1
+            ]
+          ],
+          "display": [
+            [
+              "A",
+              "10",
+              "3",
+              "2"
+            ],
+            [
+              "B",
+              "25",
+              "2",
+              "2"
+            ],
+            [
+              "C",
+              "0",
+              "2",
+              "1"
+            ]
+          ],
+          "row_count": 3,
+          "excel_error_cells": []
+        }
+      }
+    }
+  ],
+  "wrong_result": {
+    "group_load": {
+      "refresh_return": true,
+      "refreshing": false,
+      "load_error": null,
+      "table": {
+        "columns": [
+          "Group",
+          "Sum",
+          "Rows",
+          "NonNulls"
+        ],
+        "rows": [
+          [
+            "A",
+            10,
+            3,
+            2
+          ],
+          [
+            "B",
+            null,
+            2,
+            2
+          ],
+          [
+            "C",
+            0,
+            2,
+            1
+          ]
+        ],
+        "display": [
+          [
+            "A",
+            "10",
+            "3",
+            "2"
+          ],
+          [
+            "B",
+            "",
+            "2",
+            "2"
+          ],
+          [
+            "C",
+            "0",
+            "2",
+            "1"
+          ]
+        ],
+        "row_count": 3,
+        "excel_error_cells": []
+      }
+    },
+    "group_diagnostics": {
+      "columns": [
+        "Group",
+        "HasError",
+        "Message"
+      ],
+      "rows": [
+        [
+          "A",
+          false,
+          null
+        ],
+        [
+          "B",
+          true,
+          "- 연산자를 형식 Text 및 Text에 적용할 수 없습니다."
+        ],
+        [
+          "C",
+          false,
+          null
+        ]
+      ],
+      "display": [
+        [
+          "A",
+          "FALSE",
+          ""
+        ],
+        [
+          "B",
+          "TRUE",
+          "- 연산자를 형식 Text 및 Text에 적용할 수 없습니다."
+        ],
+        [
+          "C",
+          "FALSE",
+          ""
+        ]
+      ],
+      "row_count": 3,
+      "excel_error_cells": []
+    },
+    "excel_sum_ignores_text": 15
+  },
+  "fixed_result": {
+    "columns": [
+      "Group",
+      "Sum",
+      "Rows",
+      "NonNulls"
+    ],
+    "rows": [
+      [
+        "A",
+        10,
+        3,
+        2
+      ],
+      [
+        "B",
+        25,
+        2,
+        2
+      ],
+      [
+        "C",
+        0,
+        2,
+        1
+      ]
+    ],
+    "display": [
+      [
+        "A",
+        "10",
+        "3",
+        "2"
+      ],
+      [
+        "B",
+        "25",
+        "2",
+        "2"
+      ],
+      [
+        "C",
+        "0",
+        "2",
+        "1"
+      ]
+    ],
+    "row_count": 3,
+    "excel_error_cells": []
+  },
+  "reconciliation": {
+    "typed_group_total": 35,
+    "raw_excel_sum": 15,
+    "difference": 20,
+    "source_rows": 7,
+    "group_row_counts": 7,
+    "nonnull_counts": 5
+  },
+  "observations_ko": [
+    "Excel 원본 SUM은 15, 숫자형 변환 후 그룹 합계는 35였다. 그룹 행 수 합계는 7, null 제외 개수는 5였다."
+  ],
+  "not_verified": [
+    "COM/API execution does not verify the exact Korean ribbon click path, other Excel builds, other OS locales, or human review of the post."
+  ],
+  "differences_from_brief": [],
+  "assertions": [
+    {
+      "name": "Table.RowCount counts null and zero rows",
+      "passed": true
+    },
+    {
+      "name": "Typed grouped sum includes the synthetic text number",
+      "passed": true
+    },
+    {
+      "name": "Two nonblank private-data-free native Excel PNGs recorded",
+      "passed": true
+    }
+  ],
+  "expectations": [
+    {
+      "name": "List.Sum over text mixed with numbers creates an error",
+      "matched": true
+    }
+  ],
+  "screenshots": [
+    {
+      "file": "before.png",
+      "valid": true,
+      "method": "ExportAsFixedFormat + PyMuPDF",
+      "sheet": "Q_query",
+      "range": "$A$1:$D$4",
+      "width": 508,
+      "height": 167,
+      "distinct_colors": 598,
+      "pdf_text_checked": true,
+      "pdf_pages": 1,
+      "bytes": 10440,
+      "sha256": "85027035d1f9c4902daf813150c355482896e010d3cca8d7065f13cff4dca9a0",
+      "clipboard": "Untouched: GetDataObject failed in this session; both CopyPicture modes require clipboard access"
+    },
+    {
+      "file": "after.png",
+      "valid": true,
+      "method": "ExportAsFixedFormat + PyMuPDF",
+      "sheet": "Q_fixed",
+      "range": "$A$1:$D$4",
+      "width": 508,
+      "height": 167,
+      "distinct_colors": 658,
+      "pdf_text_checked": true,
+      "pdf_pages": 1,
+      "bytes": 11242,
+      "sha256": "858783933036382c6879f42a58729c18eed04616d443e3eb2f21fb4017bb08c8",
+      "clipboard": "Untouched: GetDataObject failed in this session; both CopyPicture modes require clipboard access"
+    }
+  ],
+  "status": "pass",
+  "failure": null,
+  "environment": {
+    "os_culture": "ko-KR",
+    "excel_decimal_separator": ".",
+    "excel_thousands_separator": ",",
+    "excel_date_order": 2,
+    "excel_list_separator": ",",
+    "synthetic": true
+  },
+  "query_refresh_attempts": 3,
+  "cleanup_verified": true
+}

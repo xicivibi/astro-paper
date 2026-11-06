@@ -1,0 +1,5 @@
+{
+  "method": "undecided",
+  "options": ["direct-upload", "git-integration"],
+  "note": "소유자가 docs/domain-migration.md를 읽고 하나를 고릅니다. undecided이면 release:cloudflare --deploy가 거부됩니다."
+}

@@ -115,9 +115,30 @@ test("hosting disclosure follows the configured or inferred provider", () => {
 });
 
 test("Cloudflare release input rejects the current non-commercial origin", () => {
+  const pagesDev = validateReleaseInput(
+    "https://xici-example.pages.dev",
+    "xici-example"
+  );
+  assert.equal(pagesDev.origin, "https://xici-example.pages.dev");
+  assert.equal(pagesDev.project, "xici-example");
+  assert.equal(pagesDev.adsenseMode, "off");
+  assert.match(pagesDev.warnings.join("\n"), /AdSense site addition/);
+  assert.throws(
+    () =>
+      validateReleaseInput(
+        "https://xici-example.pages.dev",
+        "xici-example",
+        "verify"
+      ),
+    /pages\.dev/
+  );
   assert.deepEqual(
-    validateReleaseInput("https://xici-example.pages.dev", "xici-example"),
-    { origin: "https://xici-example.pages.dev", project: "xici-example" }
+    validateReleaseInput("https://xici-site.kr", "xici", "verify").warnings,
+    []
+  );
+  assert.throws(
+    () => validateReleaseInput("https://xici-site.kr", "xici", "bogus"),
+    /--adsense-mode/
   );
   assert.throws(
     () => validateReleaseInput("https://xici.vercel.app", "xici"),

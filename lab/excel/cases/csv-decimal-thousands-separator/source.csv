@@ -1,0 +1,7 @@
+﻿ID,Number,SourceLocale
+S1,"1.234,56",de-DE
+S2,"1,234.56",en-US
+S3,1.234,de-DE
+S4,"1,234",en-US
+S5,"1234,56",de-DE
+S6,1234.56,en-US

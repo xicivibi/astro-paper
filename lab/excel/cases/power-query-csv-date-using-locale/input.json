@@ -1,0 +1,44 @@
+{
+  "synthetic": true,
+  "columns": [
+    "ID",
+    "Date"
+  ],
+  "rows": [
+    [
+      "S1",
+      "02/03/2026"
+    ],
+    [
+      "S2",
+      "13/03/2026"
+    ],
+    [
+      "S3",
+      "2026-03-13"
+    ],
+    [
+      "S4",
+      "31/02/2026"
+    ],
+    [
+      "S5",
+      ""
+    ],
+    [
+      "S6",
+      "03/04/2026"
+    ]
+  ],
+  "csv": true,
+  "published_post": "src/content/posts/power-query-csv-date-using-locale.md",
+  "query_files": {
+    "query": "query.m",
+    "gb": "gb.m",
+    "gb_audit": "gb_audit.m",
+    "us": "us.m",
+    "us_audit": "us_audit.m",
+    "kept_errors": "kept_errors.m",
+    "replaced_errors": "replaced_errors.m"
+  }
+}

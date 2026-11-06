@@ -9,6 +9,7 @@ import TrendBundle from "@/components/TrendBundle.astro";
 import MarketplaceSearch from "@/components/MarketplaceSearch.astro";
 import ReproductionKit from "@/components/ReproductionKit.astro";
 import PostReviewHoldNotice from "@/components/PostReviewHoldNotice.astro";
+import AdSlot from "@/components/AdSlot.astro";
 import Tag from "@/components/Tag.astro";
 import { getPostSlug, getPostUrl } from "@/utils/getPostPaths";
 import { getSortedPosts } from "@/utils/getSortedPosts";
@@ -20,6 +21,7 @@ import BackToTopButton from "./_components/BackToTopButton.astro";
 import AdjacentPostNav from "./_components/AdjacentPostNav.astro";
 import RelatedPosts from "./_components/RelatedPosts.astro";
 import config from "@/config";
+import { featureFlags } from "@/config/features";
 import { getRelatedPosts } from "@/utils/getRelatedPosts";
 import { routablePostFilter } from "@/utils/postFilter";
 
@@ -91,6 +93,8 @@ const {
   hideEditPost,
   aiAssisted,
   lastReviewed,
+  humanReviewedBy,
+  humanReviewedAt,
   sources,
   testingStatus,
   correctionNote,
@@ -186,6 +190,12 @@ const ogImage = ogImageUrl
             </span>
             <EditPost {hideEditPost} {post} class="max-sm:hidden" />
           </div>
+          <p class="text-muted-foreground text-sm" data-post-byline>
+            글: {post.data.author} ·{" "}
+            <a href="/about/#operator" class="underline underline-offset-4">
+              운영자 소개
+            </a>
+          </p>
 
           <article
             id="article"
@@ -195,7 +205,7 @@ const ogImage = ogImageUrl
               "prose-pre:bg-(--shiki-light-bg) dark:prose-pre:bg-(--shiki-dark-bg)",
             ]}
           >
-            {trendLifecycle && (
+            {featureFlags.trendSurfaces && trendLifecycle && (
               <div
                 data-trend-lifecycle
                 data-fresh-until={trendLifecycle.freshUntil.toISOString()}
@@ -221,7 +231,7 @@ const ogImage = ogImageUrl
                 )}
               </div>
             )}
-            {trendBundle ? (
+            {featureFlags.trendSurfaces && trendBundle ? (
               <TrendBundle
                 bundle={trendBundle}
                 marketplaceQuery={marketplaceQuery}
@@ -229,13 +239,17 @@ const ogImage = ogImageUrl
             ) : (
               <Content />
             )}
-            {marketplaceQuery && trendLifecycle && (
-              <MarketplaceSearch
-                query={marketplaceQuery}
-                freshUntil={trendLifecycle.freshUntil}
-              />
-            )}
+            {featureFlags.trendSurfaces &&
+              marketplaceQuery &&
+              trendLifecycle && (
+                <MarketplaceSearch
+                  query={marketplaceQuery}
+                  freshUntil={trendLifecycle.freshUntil}
+                />
+              )}
           </article>
+
+          {!isExpiredTrend && <AdSlot position="afterArticle" />}
 
           <hr class="my-8 border-dashed" />
 
@@ -244,6 +258,8 @@ const ogImage = ogImageUrl
           <PostTrustPanel
             {aiAssisted}
             {lastReviewed}
+            {humanReviewedBy}
+            {humanReviewedAt}
             {sources}
             {testingStatus}
             {correctionNote}
@@ -276,6 +292,8 @@ const ogImage = ogImageUrl
           <ShareLinks />
 
           <hr class="my-8 border-dashed" />
+
+          {!isExpiredTrend && <AdSlot position="beforeNav" />}
 
           <AdjacentPostNav {prevPost} {nextPost} />
           <RelatedPosts posts={relatedPosts} />

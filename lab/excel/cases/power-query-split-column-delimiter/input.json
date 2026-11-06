@@ -1,0 +1,38 @@
+{
+  "synthetic": true,
+  "columns": [
+    "ID",
+    "Parts"
+  ],
+  "rows": [
+    [
+      "S1",
+      "A|B|C"
+    ],
+    [
+      "S2",
+      "D|E"
+    ],
+    [
+      "S3",
+      "F"
+    ],
+    [
+      "S4",
+      "G|H, I|J"
+    ],
+    [
+      "S5",
+      "K||M"
+    ]
+  ],
+  "added_row": [
+    "S6",
+    "N|O|P|Q"
+  ],
+  "query_files": {
+    "query": "query.m",
+    "dynamic": "dynamic.m",
+    "strict": "strict.m"
+  }
+}

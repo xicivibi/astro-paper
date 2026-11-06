@@ -25,6 +25,8 @@ const maxFiles = 20_000;
 const maxFileBytes = 25 * 1024 * 1024;
 const productionRepository = "https://github.com/xicivibi/astro-paper.git";
 const releaseMarker = "/.well-known/xici-release.json";
+const adsLinePattern =
+  /^google\.com, pub-[0-9]{16}, DIRECT, f08c47fec0942fa0\n$/;
 
 function print(value) {
   process.stdout.write(`${value}\n`);
@@ -75,7 +77,27 @@ function run(executable, args, options = {}) {
   return result.stdout || "";
 }
 
-export function validateReleaseInput(originValue, projectValue) {
+export const ADSENSE_MODES = Object.freeze(["off", "verify", "serve"]);
+const disabledAdsTxt = "# Advertising is not enabled on this deployment.\n";
+const publisherPattern = /^(?:ca-)?pub-([0-9]{16})$/;
+const placeholderPublishers = new Set([
+  "0000000000000000",
+  "1111111111111111",
+  "1234567890123456",
+]);
+const emailPattern =
+  /^[A-Za-z0-9.!$&'*+/=`{|}~-]+@[A-Za-z0-9](?:[A-Za-z0-9.-]*[A-Za-z0-9])?\.[A-Za-z]{2,}$/;
+const sampleEmail =
+  /@(?:example\.(?:com|org|net)|test\.invalid)$|^(?:you|your|name|email|owner)@/i;
+
+export function validateReleaseInput(
+  originValue,
+  projectValue,
+  adsenseMode = "off"
+) {
+  if (!ADSENSE_MODES.includes(adsenseMode)) {
+    throw new Error(`--adsense-mode must be one of ${ADSENSE_MODES.join(", ")}`);
+  }
   const origin = new URL(originValue);
   if (
     origin.protocol !== "https:" ||
@@ -91,13 +113,92 @@ export function validateReleaseInput(originValue, projectValue) {
   ) {
     throw new Error("origin must be the account-owned commercial host");
   }
+  const warnings = [];
+  if (origin.hostname.endsWith(".pages.dev")) {
+    if (adsenseMode !== "off") {
+      throw new Error(
+        "AdSense cannot add a shared pages.dev subdomain; release verify mode on an owned domain"
+      );
+    }
+    warnings.push(
+      "pages.dev origin: AdSense site addition is not possible on a shared subdomain; use an owned domain before verify mode"
+    );
+  }
   const project = String(projectValue || "").trim();
   if (!/^[a-z0-9](?:[a-z0-9-]{0,56}[a-z0-9])?$/.test(project)) {
     throw new Error(
       "project must contain 1-58 lowercase letters, numbers, or hyphens"
     );
   }
-  return { origin: origin.origin, project };
+  return { origin: origin.origin, project, adsenseMode, warnings };
+}
+
+/**
+ * Build variables for one release. The publisher ID is read from the
+ * environment only and is never echoed back in output or errors.
+ * @param {string} origin
+ * @param {string} adsenseMode
+ * @param {Record<string, string | undefined>} [env]
+ * @returns {Record<string, string | undefined>}
+ */
+export function releaseBuildEnv(origin, adsenseMode, env = process.env) {
+  const base = {
+    ...env,
+    PUBLIC_SITE_URL: origin,
+    PUBLIC_HOSTING_PROVIDER: "cloudflare",
+    PUBLIC_ANALYTICS_ENABLED: "false",
+  };
+  if (adsenseMode === "off") {
+    return {
+      ...base,
+      PUBLIC_ADSENSE_MODE: "off",
+      PUBLIC_COMMERCIAL_HOSTING_CONFIRMED: "false",
+    };
+  }
+  const match = publisherPattern.exec(
+    String(env.PUBLIC_ADSENSE_PUBLISHER_ID || "").trim()
+  );
+  if (!match || placeholderPublishers.has(match[1])) {
+    throw new Error(
+      "verify mode requires a real PUBLIC_ADSENSE_PUBLISHER_ID in the environment"
+    );
+  }
+  if (env.PUBLIC_COMMERCIAL_HOSTING_CONFIRMED !== "true") {
+    throw new Error(
+      "verify mode requires PUBLIC_COMMERCIAL_HOSTING_CONFIRMED=true set by the owner"
+    );
+  }
+  const email = String(
+    env.PUBLIC_OPERATOR_EMAIL ?? env.PUBLIC_CONTACT_EMAIL ?? ""
+  ).trim();
+  if (!emailPattern.test(email) || sampleEmail.test(email)) {
+    throw new Error("verify mode requires a real PUBLIC_OPERATOR_EMAIL");
+  }
+  if (adsenseMode === "serve" && env.PUBLIC_ADSENSE_CMP !== "google") {
+    throw new Error(
+      "serve mode requires PUBLIC_ADSENSE_CMP=google after the Privacy & messaging consent message is published"
+    );
+  }
+  return {
+    ...base,
+    PUBLIC_ADSENSE_MODE: adsenseMode,
+    PUBLIC_ADSENSE_PUBLISHER_ID: `pub-${match[1]}`,
+    PUBLIC_COMMERCIAL_HOSTING_CONFIRMED: "true",
+  };
+}
+
+/** @param {string} root */
+export function readDeployMethod(root) {
+  const path = join(root, "deploy", "deploy-method.json");
+  const method = existsSync(path)
+    ? JSON.parse(readFileSync(path, "utf8")).method
+    : "undecided";
+  if (!["undecided", "direct-upload", "git-integration"].includes(method)) {
+    throw new Error(
+      "deploy/deploy-method.json method must be undecided, direct-upload, or git-integration"
+    );
+  }
+  return method;
 }
 
 export function verifyProductionSource(commitHash, execute = run) {
@@ -140,7 +241,7 @@ function listFiles(directory) {
   return files;
 }
 
-export function inspectDist(distDirectory, expectedOrigin) {
+export function inspectDist(distDirectory, expectedOrigin, adsenseMode = "off") {
   const dist = resolve(distDirectory);
   for (const file of requiredFiles) {
     if (!existsSync(join(dist, file))) {
@@ -183,8 +284,17 @@ export function inspectDist(distDirectory, expectedOrigin) {
   if (!rss.includes(`<link>${expectedOrigin}/</link>`)) {
     throw new Error("RSS channel does not match the release origin");
   }
-  if (ads !== "# Advertising is not enabled on this deployment.\n") {
-    throw new Error("first commercial-host release must keep advertising off");
+  if (adsenseMode === "off" && ads !== disabledAdsTxt) {
+    throw new Error("an off-mode release must keep advertising off");
+  }
+  if (adsenseMode !== "off" && !adsLinePattern.test(ads)) {
+    throw new Error("a verify-mode release needs a one-line publisher ads.txt");
+  }
+  if (adsenseMode === "serve") {
+    const headers = readFileSync(join(dist, "_headers"), "utf8");
+    if (!/script-src 'self' 'sha256-[^']+'/.test(headers)) {
+      throw new Error("a serve-mode release needs the generated hash-based CSP");
+    }
   }
   return {
     files: files.length,
@@ -194,12 +304,15 @@ export function inspectDist(distDirectory, expectedOrigin) {
   };
 }
 
-function parseArgs(args) {
-  const values = { deploy: false };
+export function parseArgs(args) {
+  const values = { deploy: false, adsenseMode: "off" };
   for (let index = 0; index < args.length; index += 1) {
     const arg = args[index];
     if (arg === "--deploy") values.deploy = true;
-    else if (arg === "--origin" || arg === "--project") {
+    else if (arg === "--adsense-mode") {
+      values.adsenseMode = args[index + 1];
+      index += 1;
+    } else if (arg === "--origin" || arg === "--project") {
       values[arg.slice(2)] = args[index + 1];
       index += 1;
     } else if (arg === "--help") values.help = true;
@@ -216,7 +329,12 @@ function parseJsonArray(output) {
   return JSON.parse(output.slice(start, end + 1));
 }
 
-export async function verifyRemote(origin, commitHash, fetcher = fetch) {
+export async function verifyRemote(
+  origin,
+  commitHash,
+  fetcher = fetch,
+  adsenseMode = "off"
+) {
   const paths = [
     releaseMarker,
     "/",
@@ -254,27 +372,76 @@ export async function verifyRemote(origin, commitHash, fetcher = fetch) {
         "remote homepage canonical does not match the release origin"
       );
     }
-    if (
-      path === "/ads.txt" &&
-      body !== "# Advertising is not enabled on this deployment.\n"
-    ) {
-      throw new Error("remote ads.txt is not fail-closed");
+    if (path === "/ads.txt") {
+      if (adsenseMode === "off" && body !== disabledAdsTxt) {
+        throw new Error("remote ads.txt is not fail-closed");
+      }
+      if (adsenseMode !== "off" && !adsLinePattern.test(body)) {
+        throw new Error("remote ads.txt does not carry the publisher line");
+      }
     }
     results.push({ path, status: response.status });
   }
   return results;
 }
 
-async function main() {
-  const args = parseArgs(process.argv.slice(2));
+/**
+ * Runs one release. Every side effect goes through `deps` so tests can run
+ * the whole preflight with mocked processes, files and network.
+ * @param {string[]} argv
+ * @param {Record<string, any>} [deps]
+ * @returns {Promise<Record<string, any>>}
+ */
+export async function runRelease(argv, deps = {}) {
+  const execute = deps.run ?? run;
+  const fetcher = deps.fetcher ?? fetch;
+  const env = deps.env ?? process.env;
+  const projectRoot = deps.root ?? root;
+  const distDirectory = deps.distDir ?? join(projectRoot, "dist");
+  const out = deps.print ?? print;
+  const writeMarker =
+    deps.writeMarker ??
+    ((directory, body) => {
+      mkdirSync(join(directory, ".well-known"), { recursive: true });
+      writeFileSync(join(directory, releaseMarker.slice(1)), body);
+    });
+  const readiness =
+    deps.readiness ??
+    (async (distDir, mode, origin) => {
+      const { evaluateReadiness } = await import("./adsense-readiness.mjs");
+      const { checkPostDirectory } = await import("./check-post-quality.mjs");
+      return evaluateReadiness({
+        distDir,
+        mode,
+        origin,
+        env,
+        gate: checkPostDirectory(join(projectRoot, "src", "content", "posts")),
+      });
+    });
+
+  const args = parseArgs(argv);
   if (args.help) {
-    print(
-      "node scripts/release-cloudflare.mjs --origin https://PROJECT.pages.dev --project PROJECT [--deploy]"
+    out(
+      "node scripts/release-cloudflare.mjs --origin https://YOUR-DOMAIN --project PROJECT [--adsense-mode off|verify] [--deploy]"
     );
-    return;
+    return { status: "help" };
   }
-  const { origin, project } = validateReleaseInput(args.origin, args.project);
-  const trackedChanges = run(
+  const { origin, project, adsenseMode, warnings } = validateReleaseInput(
+    args.origin,
+    args.project,
+    args.adsenseMode
+  );
+  for (const warning of warnings) printError(`warning: ${warning}`);
+  const releaseEnv = releaseBuildEnv(origin, adsenseMode, env);
+  const deployMethod = readDeployMethod(projectRoot);
+  if (args.deploy && deployMethod !== "direct-upload") {
+    throw new Error(
+      deployMethod === "git-integration"
+        ? "deploy/deploy-method.json selects Cloudflare Git integration: Cloudflare builds main itself, so do not upload with this script"
+        : "choose the deployment method in deploy/deploy-method.json (direct-upload or git-integration) before --deploy"
+    );
+  }
+  const trackedChanges = execute(
     "git",
     ["status", "--porcelain", "--untracked-files=no"],
     { capture: true }
@@ -284,48 +451,56 @@ async function main() {
       "tracked workspace changes must be committed before release"
     );
   }
-  const commitHash = run("git", ["rev-parse", "HEAD"], {
+  const commitHash = execute("git", ["rev-parse", "HEAD"], {
     capture: true,
   }).trim();
-  if (args.deploy) verifyProductionSource(commitHash);
-  const commitMessage = run("git", ["log", "-1", "--pretty=%s"], {
+  if (args.deploy) verifyProductionSource(commitHash, execute);
+  const commitMessage = execute("git", ["log", "-1", "--pretty=%s"], {
     capture: true,
   }).trim();
-  const releaseEnv = {
-    ...process.env,
-    PUBLIC_SITE_URL: origin,
-    PUBLIC_HOSTING_PROVIDER: "cloudflare",
-    PUBLIC_ADSENSE_MODE: "off",
-    PUBLIC_ANALYTICS_ENABLED: "false",
-    PUBLIC_COMMERCIAL_HOSTING_CONFIRMED: "false",
-  };
-  run("npm", ["run", "build"], { env: releaseEnv, capture: true });
-  mkdirSync(join(root, "dist", ".well-known"), { recursive: true });
-  writeFileSync(
-    join(root, "dist", releaseMarker.slice(1)),
-    JSON.stringify({ commitHash, origin }) + "\n"
-  );
-  const inspection = inspectDist(join(root, "dist"), origin);
-
-  if (!args.deploy) {
-    print(
-      JSON.stringify({
-        status: "preflight_passed",
-        project,
-        commitHash,
-        productionSourceVerified: false,
-        ...inspection,
-        nextCommand: `npm run release:cloudflare -- --origin ${origin} --project ${project} --deploy`,
-      })
-    );
-    return;
+  execute("npm", ["run", "build"], { env: releaseEnv, capture: true });
+  writeMarker(distDirectory, JSON.stringify({ commitHash, origin }) + "\n");
+  const inspection = inspectDist(distDirectory, origin, adsenseMode);
+  let readinessSummary = null;
+  if (adsenseMode !== "off") {
+    const result = await readiness(distDirectory, adsenseMode, origin);
+    readinessSummary = {
+      ready: result.ready,
+      failing: result.checks
+        .filter(check => !check.pass)
+        .map(check => check.id),
+    };
+    if (!result.ready) {
+      throw new Error(
+        `AdSense readiness failed: ${readinessSummary.failing.join(", ")}`
+      );
+    }
   }
 
-  run("npx", ["--yes", "wrangler@4", "whoami"], { capture: true });
+  if (!args.deploy) {
+    const summary = {
+      status: "preflight_passed",
+      project,
+      adsenseMode,
+      deployMethod,
+      commitHash,
+      productionSourceVerified: false,
+      warnings,
+      readiness: readinessSummary,
+      ...inspection,
+      nextCommand: `npm run release:cloudflare -- --origin ${origin} --project ${project} --adsense-mode ${adsenseMode} --deploy`,
+    };
+    out(JSON.stringify(summary));
+    return summary;
+  }
+
+  execute("npx", ["--yes", "wrangler@4", "whoami"], { capture: true });
   const projects = parseJsonArray(
-    run("npx", ["--yes", "wrangler@4", "pages", "project", "list", "--json"], {
-      capture: true,
-    })
+    execute(
+      "npx",
+      ["--yes", "wrangler@4", "pages", "project", "list", "--json"],
+      { capture: true }
+    )
   );
   if (!projects.some(item => item?.name === project)) {
     throw new Error(
@@ -334,8 +509,8 @@ async function main() {
   }
   // Recheck after the build and account lookups so a changed main/HEAD cannot
   // be published under the SHA captured before the build.
-  const source = verifyProductionSource(commitHash);
-  run("npx", [
+  const source = verifyProductionSource(commitHash, execute);
+  execute("npx", [
     "--yes",
     "wrangler@4",
     "pages",
@@ -351,22 +526,23 @@ async function main() {
     commitMessage,
     "--commit-dirty=false",
   ]);
-  const remote = await verifyRemote(origin, commitHash);
-  print(
-    JSON.stringify({
-      status: "deployed_and_verified",
-      project,
-      commitHash,
-      source,
-      ...inspection,
-      remote,
-    })
-  );
+  const remote = await verifyRemote(origin, commitHash, fetcher, adsenseMode);
+  const summary = {
+    status: "deployed_and_verified",
+    project,
+    adsenseMode,
+    commitHash,
+    source,
+    ...inspection,
+    remote,
+  };
+  out(JSON.stringify(summary));
+  return summary;
 }
 
 const invokedPath = process.argv[1] ? resolve(process.argv[1]) : "";
 if (invokedPath === fileURLToPath(import.meta.url)) {
-  main().catch(error => {
+  runRelease(process.argv.slice(2)).catch(error => {
     printError(error instanceof Error ? error.message : String(error));
     process.exitCode = 1;
   });

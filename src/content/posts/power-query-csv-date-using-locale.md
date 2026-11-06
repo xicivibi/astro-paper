@@ -4,6 +4,7 @@ pubDatetime: 2026-09-20T03:23:00+09:00
 title: "Power Query CSV 날짜를 Using Locale로 고정하는 방법"
 featured: false
 draft: false
+topic: "excel-csv"
 tags:
   - "excel"
   - "power query"
@@ -11,6 +12,8 @@ tags:
 description: "02/03/2026처럼 해석이 모호한 CSV 날짜를 Power Query의 Using Locale로 변환하고, 운영체제와 통합 문서 설정 차이로 결과가 바뀌지 않게 관리하는 절차입니다."
 aiAssisted: true
 lastReviewed: 2026-09-20T03:23:00+09:00
+humanReviewedBy: ""
+humanReviewedAt:
 sources:
   - "https://support.microsoft.com/en-us/excel/set-a-locale-or-region-for-data-power-query"
   - "https://support.microsoft.com/en-us/excel/add-or-change-data-types-power-query"
@@ -82,12 +85,12 @@ CSV의 **파일 원본 로캘**은 가져오기 단계의 해석에 영향을 �
 
 변환 후에는 모호하지 않은 경계값과 모호한 값을 함께 확인합니다.
 
-| 원본 예시 | 확인할 점 |
-|---|---|
+| 원본 예시    | 확인할 점                            |
+| ------------ | ------------------------------------ |
 | `02/03/2026` | 2월 3일과 3월 2일 중 의도한 날짜인지 |
-| `13/03/2026` | 일/월/년 규칙에서 정상 변환되는지 |
-| `2026-03-13` | ISO 형태를 같은 열에서 허용하는지 |
-| `31/02/2026` | 오류로 분리되는지 |
+| `13/03/2026` | 일/월/년 규칙에서 정상 변환되는지    |
+| `2026-03-13` | ISO 형태를 같은 열에서 허용하는지    |
+| `31/02/2026` | 오류로 분리되는지                    |
 
 날짜 표시 형식만 바뀌었는지, 실제 날짜 값이 바뀌었는지도 구분합니다. 셀의 화면 표시가 같아 보여도 내부 값이나 변환 단계가 다를 수 있습니다.
 
